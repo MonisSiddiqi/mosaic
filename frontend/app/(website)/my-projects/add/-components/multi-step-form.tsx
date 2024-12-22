@@ -70,7 +70,7 @@ export function MultiStepForm() {
   const CurrentStepIcon = steps[currentStep].icon;
 
   return (
-    <div className="mx-auto max-w-4xl p-4">
+    <div className="mx-auto max-w-4xl md:p-4">
       <div className="mb-8 flex flex-col items-start gap-6 md:flex-row md:justify-between">
         {steps.map((step, index) => (
           <div key={step.title} className="flex items-center gap-4 md:flex-col">
@@ -103,7 +103,7 @@ export function MultiStepForm() {
           </CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent>{renderStep()}</CardContent>
+          <CardContent className="p-4 md:p-6">{renderStep()}</CardContent>
           <CardFooter className="flex justify-between">
             <Button
               type="button"
