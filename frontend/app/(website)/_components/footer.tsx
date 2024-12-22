@@ -45,7 +45,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/add-project"
+                  href="/my-projects/add"
                   className="transition-colors hover:text-white"
                 >
                   Add Project
