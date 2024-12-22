@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 
 const navigationItems = [
   { name: "Home", href: "/" },
+  { name: "Services", href: "/services" },
+  { name: "My Projects", href: "/my-projects" },
   { name: "About", href: "/about" },
-  { name: "My Projects", href: "/projects" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -19,7 +20,7 @@ export const Header = () => {
   const pathname = usePathname();
 
   return (
-    <header className="container py-1 mx-auto">
+    <header className="container mx-auto py-1">
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Image
@@ -31,16 +32,16 @@ export const Header = () => {
           />
         </div>
 
-        <nav className="items-center gap-4 hidden lg:flex">
+        <nav className="hidden items-center gap-4 lg:flex">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                "font-medium transition-colors hover:text-primary border-b-2 border-transparent px-2 py-2 ",
+                "border-b-2 border-transparent px-2 py-2 font-medium transition-colors hover:text-primary",
                 pathname === item.href
-                  ? "text-primary border-brand-gold"
-                  : "text-muted-foreground"
+                  ? "border-brand-gold text-primary"
+                  : "text-muted-foreground",
               )}
             >
               {item.name}
@@ -50,10 +51,7 @@ export const Header = () => {
 
         <div className="flex items-center">
           <Button asChild variant={"secondary"}>
-            <Link
-              href="/login"
-              className="text-sm font-medium hover:text-primary"
-            >
+            <Link href="/" className="text-sm font-medium hover:text-primary">
               Login/Signup
             </Link>
           </Button>

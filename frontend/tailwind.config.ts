@@ -13,6 +13,7 @@ export default {
         "brand-secondary": "#A6AEBF",
         "brand-primary": "#1F509A",
         "brand-gold": "#FFB000",
+        "background-secondary": "#fafaf9",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

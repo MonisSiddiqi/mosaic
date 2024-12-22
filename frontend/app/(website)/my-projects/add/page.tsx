@@ -1,0 +1,13 @@
+import { MultiStepForm } from "@/app/(website)/my-projects/add/-components/multi-step-form";
+import PageHeader from "../../_components/page-header";
+
+export default function AddProjectPage() {
+  return (
+    <main className="bg-background-secondary">
+      <PageHeader title="Add Project" />
+      <div className="container mx-auto px-4 py-10">
+        <MultiStepForm />
+      </div>
+    </main>
+  );
+}

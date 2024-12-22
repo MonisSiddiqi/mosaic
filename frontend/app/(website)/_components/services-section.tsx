@@ -13,7 +13,7 @@ import TreeIcon from "@/app/assets/tree-icon.svg";
 import RoofingIcon from "@/app/assets/roofing-icon.png";
 import PestIcon from "@/app/assets/pest-icon.svg";
 
-import ServicesSectionImage from "@/app/assets/services-section.webp";
+import ServicesSectionImage from "@/app/assets/services-section.svg";
 
 const services = [
   {

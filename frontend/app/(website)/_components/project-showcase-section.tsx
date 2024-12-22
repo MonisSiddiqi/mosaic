@@ -1,14 +1,23 @@
 "use client";
 
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import Project1BeforeImage from "@/app/assets/project-1-before-picture.png";
+import Project1AfterImage from "@/app/assets/project-1-after-picture.png";
+import Project2BeforeImage from "@/app/assets/project-1-before-picture.png";
+import Project2AfterImage from "@/app/assets/project-1-after-picture.png";
+import { Badge } from "@/components/ui/badge";
 
 interface Project {
   id: number;
@@ -23,24 +32,44 @@ const projects: Project[] = [
     id: 1,
     title: "Revitalized Spaces",
     description:
-      "Experience the remarkable transformation as we breathe new life into outdated spaces, turning them into modern, functional, and visually stunning environments. With a meticulous eye for detail and a commitment to excellence, we reimagine and redesign every corner to reflect contemporary aesthetics and enhanced usability. Whether it's upgrading interiors with sleek designs.",
-    beforeImage: "/projects/interior-before.jpg",
-    afterImage: "/projects/interior-after.jpg",
+      "Experience the remarkable transformation as we breathe new life into outdated spaces, turning them into modern, functional, and visually stunning environments.",
+    beforeImage: Project1BeforeImage.src,
+    afterImage: Project1AfterImage.src,
   },
   {
     id: 2,
     title: "Structural Excellence",
     description:
-      "Discover how we transform outdated spaces into modern, functional environments. Through innovative design and expert craftsmanship, we reimagine every detail, creating spaces that blend contemporary aesthetics with practicality. Our projects elevate living and working experiences, turning unremarkable areas into inspiring, elegant, and highly efficient spaces.",
-    beforeImage: "/projects/exterior-before.jpg",
-    afterImage: "/projects/exterior-after.jpg",
+      "Discover how we transform outdated spaces into modern, functional environments. Through innovative design and expert craftsmanship, we reimagine every detail.",
+    beforeImage: Project2BeforeImage.src,
+    afterImage: Project2AfterImage.src,
   },
 ];
 
 export function ProjectShowcaseSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const totalItems = projects.length;
+
+  const carouselNextRef = useRef<HTMLButtonElement | null>(null);
+  const carouselPrevRef = useRef<HTMLButtonElement | null>(null);
+
+  const handleNext = () => {
+    if (currentIndex < totalItems - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      if (carouselNextRef.current) carouselNextRef.current.click();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      if (carouselPrevRef.current) carouselPrevRef.current.click();
+    }
+  };
+
   return (
     <section className="py-20 bg-stone-50">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-12 gap-16">
           {/* Text Content */}
           <div className="lg:col-span-4 space-y-6 px-4">
@@ -52,11 +81,8 @@ export function ProjectShowcaseSection() {
             </h3>
             <p className="text-[#94a3b8] leading-relaxed text-lg">
               Our team is dedicated to delivering outstanding results in every
-              project we undertake. From initial concept to final completion, we
-              prioritize quality, precision, and client satisfaction. Each
-              project reflects our commitment to excellence. Take a look at some
-              of our recent achievements that showcase our expertise and
-              innovation.
+              project we undertake. Each project reflects our commitment to
+              excellence. Take a look at some of our recent achievements.
             </p>
 
             {/* Navigation Buttons */}
@@ -64,22 +90,38 @@ export function ProjectShowcaseSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-16 h-16 rounded-none bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 border-none"
-                onClick={() =>
-                  document.querySelector(".carousel-prev")?.click()
-                }
+                className={`w-16 h-16 rounded-none ${
+                  currentIndex === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-brand-primary hover:bg-brand-primary/90"
+                } border-none`}
+                onClick={handlePrevious}
+                disabled={currentIndex === 0}
               >
-                <ChevronLeft className="h-8 w-8 text-white" />
+                <ChevronLeft
+                  className={`size-10 min-h-10 min-w-10 ${
+                    currentIndex === 0 ? "text-gray-500" : "text-white"
+                  }`}
+                />
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="w-16 h-16 rounded-none bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 border-none"
-                onClick={() =>
-                  document.querySelector(".carousel-next")?.click()
-                }
+                className={`w-16 h-16 rounded-none ${
+                  currentIndex === totalItems - 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-brand-primary hover:bg-brand-primary/90"
+                } border-none`}
+                onClick={handleNext}
+                disabled={currentIndex === totalItems - 1}
               >
-                <ChevronRight className="h-8 w-8 text-white" />
+                <ChevronRight
+                  className={`size-10 min-h-10 min-w-10 ${
+                    currentIndex === totalItems - 1
+                      ? "text-gray-500"
+                      : "text-white"
+                  }`}
+                />
               </Button>
             </div>
           </div>
@@ -94,7 +136,7 @@ export function ProjectShowcaseSection() {
                       <CardContent className="p-0">
                         <div className="space-y-8">
                           {/* Before/After Images */}
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="grid md:grid-cols-2 gap-6">
                             <div className="relative aspect-[4/3]">
                               <Image
                                 src={project.beforeImage}
@@ -102,6 +144,12 @@ export function ProjectShowcaseSection() {
                                 fill
                                 className="object-cover"
                               />
+                              <Badge
+                                variant={"secondary"}
+                                className="absolute top-4 left-4 hover:bg-secondary"
+                              >
+                                Before
+                              </Badge>
                             </div>
                             <div className="relative aspect-[4/3]">
                               <Image
@@ -110,6 +158,12 @@ export function ProjectShowcaseSection() {
                                 fill
                                 className="object-cover"
                               />
+                              <Badge
+                                variant={"secondary"}
+                                className="absolute bg-brand-gold hover:bg-brand-gold top-4 left-4"
+                              >
+                                After
+                              </Badge>
                             </div>
                           </div>
 
@@ -128,6 +182,8 @@ export function ProjectShowcaseSection() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              <CarouselPrevious className="hidden" ref={carouselPrevRef} />
+              <CarouselNext className="hidden" ref={carouselNextRef} />
             </Carousel>
           </div>
         </div>

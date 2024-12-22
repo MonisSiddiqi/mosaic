@@ -2,6 +2,10 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
 
+import SarahJohnsonImage from "@/app/assets/sara-johnson.png";
+import DavidBrownImage from "@/app/assets/devid-brown.png";
+import JamesCarterImage from "@/app/assets/games-carter.png";
+
 interface Testimonial {
   id: number;
   rating: number;
@@ -24,7 +28,7 @@ const testimonials: Testimonial[] = [
     author: {
       name: "Sarah Johnson",
       role: "Homeowner",
-      image: "/testimonials/sarah.jpg",
+      image: SarahJohnsonImage.src,
     },
   },
   {
@@ -36,7 +40,7 @@ const testimonials: Testimonial[] = [
     author: {
       name: "David Brown",
       role: "Homeowner",
-      image: "/testimonials/david.jpg",
+      image: DavidBrownImage.src,
     },
   },
   {
@@ -48,14 +52,14 @@ const testimonials: Testimonial[] = [
     author: {
       name: "James Carter",
       role: "Homeowner",
-      image: "/testimonials/james.jpg",
+      image: JamesCarterImage.src,
     },
   },
 ];
 
 export function TestimonialSection() {
   return (
-    <section className="py-20 bg-[#374151]">
+    <section className="py-24 pb-36 bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-white text-lg mb-4 block">Testimonial</span>
