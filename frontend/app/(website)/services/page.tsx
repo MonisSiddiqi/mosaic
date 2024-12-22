@@ -19,63 +19,63 @@ const services = [
   {
     name: "Plumbing",
     icon: PlumbingIcon,
-    href: "/services/plumbing",
+    href: "/my-projects/add",
     description:
       "Professional plumbing services for repairs, installations, and maintenance.",
   },
   {
     name: "Electrical",
     icon: ElectricianIcon,
-    href: "/services/electrical",
+    href: "/my-projects/add",
     description:
       "Expert electrical solutions, from wiring to appliance installations.",
   },
   {
     name: "Fencing",
     icon: FencingIcon,
-    href: "/services/fencing",
+    href: "/my-projects/add",
     description:
       "Durable and stylish fencing solutions for privacy and security.",
   },
   {
     name: "Painting",
     icon: PaintingIcon,
-    href: "/services/painting",
+    href: "/my-projects/add",
     description:
       "High-quality painting services for interior and exterior spaces.",
   },
   {
     name: "Heating & Cooling",
     icon: AcIcon,
-    href: "/services/hvac",
+    href: "/my-projects/add",
     description:
       "Comprehensive heating and cooling services to maintain indoor comfort.",
   },
   {
     name: "Cleaning",
     icon: CleaningIcon,
-    href: "/services/cleaning",
+    href: "/my-projects/add",
     description:
       "Reliable cleaning services to keep your spaces spotless and fresh.",
   },
   {
     name: "Tree Service",
     icon: TreeIcon,
-    href: "/services/tree-service",
+    href: "/my-projects/add",
     description:
       "Tree trimming, removal, and maintenance services for healthy landscapes.",
   },
   {
     name: "Roofing",
     icon: RoofingIcon,
-    href: "/services/roofing",
+    href: "/my-projects/add",
     description:
       "Roofing repair, installation, and inspection services for your home or business.",
   },
   {
     name: "Pest Control",
     icon: PestIcon,
-    href: "/services/pest-control",
+    href: "/my-projects/add",
     description:
       "Effective pest control solutions to protect your property and health.",
   },
@@ -86,7 +86,7 @@ export default function Service() {
     <main className="w-full bg-background-secondary">
       <PageHeader title="Services" />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12 md:py-16">
         <h1 className="mb-8 text-center text-4xl font-bold">Our Services</h1>
         <p className="mx-auto mb-12 max-w-3xl text-center text-xl text-gray-600">
           Discover our wide range of professional home services designed to meet

@@ -6,7 +6,7 @@ import { MailIcon, PhoneIcon } from "lucide-react";
 export function AboutSection() {
   return (
     <section className="bg-gray-50">
-      <div className="container mx-auto px-4 py-24">
+      <div className="container mx-auto px-4 py-12 md:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Content Column */}
           <div className="max-w-xl">

@@ -9,9 +9,14 @@ type ServiceCardProps = {
   href: string;
 };
 
-export function ServiceCard({ icon, title, description }: ServiceCardProps) {
+export function ServiceCard({
+  icon,
+  title,
+  description,
+  href,
+}: ServiceCardProps) {
   return (
-    <Link href={"/"}>
+    <Link href={href}>
       <Card className="group overflow-hidden transition-shadow hover:shadow-md">
         <CardHeader>
           <div className="h-16 w-16 overflow-hidden">

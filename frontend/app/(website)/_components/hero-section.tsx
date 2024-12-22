@@ -6,11 +6,11 @@ import Link from "next/link";
 
 export const HeroSection = () => {
   return (
-    <div className="w-screen h-screen relative">
-      <div className="absolute w-full h-5/6 flex justify-center">
+    <div className="relative h-screen w-screen">
+      <div className="absolute flex h-5/6 w-full justify-center">
         <div className="container my-auto px-4">
-          <div className="max-w-xl container text-white">
-            <p className="font-extrabold text-4xl md:text-6xl lg:text-6xl xl:text-7xl ">
+          <div className="container max-w-xl text-white">
+            <p className="text-4xl font-extrabold md:text-6xl lg:text-6xl xl:text-7xl">
               Transform your living space with us at ease
             </p>
             <p className="text-lg xl:text-xl">
@@ -19,9 +19,9 @@ export const HeroSection = () => {
             </p>
             <Button
               asChild
-              className="bg-brand-gold hover:bg-brand-gold/95 font-semibold mt-10 w-fit"
+              className="mt-10 w-fit bg-brand-gold font-semibold hover:bg-brand-gold/95"
             >
-              <Link href={"/add-project"}>Start Your Project</Link>
+              <Link href={"/my-projects/add"}>Start Your Project</Link>
             </Button>
           </div>
         </div>
@@ -30,7 +30,7 @@ export const HeroSection = () => {
         width={HeroImage.width}
         height={HeroImage.height}
         src={HeroImage.src}
-        className="w-full h-full object-cover"
+        className="h-full w-full object-cover"
         alt="Hero Section Image"
       />
     </div>

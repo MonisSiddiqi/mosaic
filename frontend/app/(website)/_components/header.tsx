@@ -39,7 +39,7 @@ export const Header = () => {
   return (
     <header className="container mx-auto py-1">
       <div className="flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
+        <Link href={"/"}>
           <Image
             src={LogoImage.src}
             height={30}
@@ -47,7 +47,7 @@ export const Header = () => {
             alt="Brand Logo"
             className="min-h-11 min-w-36"
           />
-        </div>
+        </Link>
 
         <nav className="hidden items-center gap-4 lg:flex">
           {navigationItems.map((item) => (

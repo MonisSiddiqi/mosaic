@@ -12,7 +12,7 @@ type Props = {
 
 const PageHeader: FC<Props> = ({ title }) => {
   return (
-    <div className="relative h-56 w-full">
+    <div className="relative h-44 w-full md:h-56">
       <Image
         src={BackgroundImage.src}
         alt={title}
@@ -23,7 +23,7 @@ const PageHeader: FC<Props> = ({ title }) => {
 
       <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-5xl font-bold">{title}</h1>
+          <h1 className="xl:5xl text-3xl font-bold lg:text-4xl">{title}</h1>
         </div>
       </div>
     </div>

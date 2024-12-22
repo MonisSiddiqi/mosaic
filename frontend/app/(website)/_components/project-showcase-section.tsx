@@ -14,9 +14,9 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import Project1BeforeImage from "@/app/assets/project-1-before-picture.png";
-import Project1AfterImage from "@/app/assets/project-1-after-picture.png";
+import Project1AfterImage from "@/app/assets/project-1-after-image.jpg";
 import Project2BeforeImage from "@/app/assets/project-1-before-picture.png";
-import Project2AfterImage from "@/app/assets/project-1-after-picture.png";
+import Project2AfterImage from "@/app/assets/project-1-after-image.jpg";
 import { Badge } from "@/components/ui/badge";
 
 interface Project {
@@ -68,31 +68,31 @@ export function ProjectShowcaseSection() {
   };
 
   return (
-    <section className="py-20 bg-stone-50">
+    <section className="bg-stone-50 py-20">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-12 gap-16">
+        <div className="grid gap-16 lg:grid-cols-12">
           {/* Text Content */}
-          <div className="lg:col-span-4 space-y-6 px-4">
+          <div className="space-y-6 px-4 lg:col-span-4">
             <h2 className="text-[40px] font-bold text-[#1e3a8a]">
               Projects we have done
             </h2>
             <h3 className="text-[32px] text-[#94a3b8]">
               Discover our recent work
             </h3>
-            <p className="text-[#94a3b8] leading-relaxed text-lg">
+            <p className="text-lg leading-relaxed text-[#94a3b8]">
               Our team is dedicated to delivering outstanding results in every
               project we undertake. Each project reflects our commitment to
               excellence. Take a look at some of our recent achievements.
             </p>
 
             {/* Navigation Buttons */}
-            <div className="flex gap-4 mt-8">
+            <div className="mt-8 hidden gap-4 lg:flex">
               <Button
                 variant="outline"
                 size="lg"
-                className={`w-16 h-16 rounded-none ${
+                className={`h-16 w-16 rounded-none ${
                   currentIndex === 0
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "cursor-not-allowed bg-gray-300"
                     : "bg-brand-primary hover:bg-brand-primary/90"
                 } border-none`}
                 onClick={handlePrevious}
@@ -107,9 +107,9 @@ export function ProjectShowcaseSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className={`w-16 h-16 rounded-none ${
+                className={`h-16 w-16 rounded-none ${
                   currentIndex === totalItems - 1
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "cursor-not-allowed bg-gray-300"
                     : "bg-brand-primary hover:bg-brand-primary/90"
                 } border-none`}
                 onClick={handleNext}
@@ -132,11 +132,11 @@ export function ProjectShowcaseSection() {
               <CarouselContent>
                 {projects.map((project) => (
                   <CarouselItem key={project.id}>
-                    <Card className="bg-transparent border-none">
+                    <Card className="border-none bg-transparent">
                       <CardContent className="p-0">
                         <div className="space-y-8">
                           {/* Before/After Images */}
-                          <div className="grid md:grid-cols-2 gap-6">
+                          <div className="grid gap-6 md:grid-cols-2">
                             <div className="relative aspect-[4/3]">
                               <Image
                                 src={project.beforeImage}
@@ -146,7 +146,7 @@ export function ProjectShowcaseSection() {
                               />
                               <Badge
                                 variant={"secondary"}
-                                className="absolute top-4 left-4 hover:bg-secondary"
+                                className="absolute left-4 top-4 hover:bg-secondary"
                               >
                                 Before
                               </Badge>
@@ -160,7 +160,7 @@ export function ProjectShowcaseSection() {
                               />
                               <Badge
                                 variant={"secondary"}
-                                className="absolute bg-brand-gold hover:bg-brand-gold top-4 left-4"
+                                className="absolute left-4 top-4 bg-brand-gold hover:bg-brand-gold"
                               >
                                 After
                               </Badge>
@@ -172,7 +172,7 @@ export function ProjectShowcaseSection() {
                             <h3 className="text-[28px] font-semibold text-[#1e3a8a]">
                               {project.title}
                             </h3>
-                            <p className="text-[#94a3b8] text-lg leading-relaxed">
+                            <p className="text-lg leading-relaxed text-[#94a3b8]">
                               {project.description}
                             </p>
                           </div>
@@ -185,6 +185,45 @@ export function ProjectShowcaseSection() {
               <CarouselPrevious className="hidden" ref={carouselPrevRef} />
               <CarouselNext className="hidden" ref={carouselNextRef} />
             </Carousel>
+          </div>
+
+          <div className="mt-8 flex gap-4 lg:hidden">
+            <Button
+              variant="outline"
+              size="lg"
+              className={`h-16 w-16 rounded-none ${
+                currentIndex === 0
+                  ? "cursor-not-allowed bg-gray-300"
+                  : "bg-brand-primary hover:bg-brand-primary/90"
+              } border-none`}
+              onClick={handlePrevious}
+              disabled={currentIndex === 0}
+            >
+              <ChevronLeft
+                className={`size-10 min-h-10 min-w-10 ${
+                  currentIndex === 0 ? "text-gray-500" : "text-white"
+                }`}
+              />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className={`h-16 w-16 rounded-none ${
+                currentIndex === totalItems - 1
+                  ? "cursor-not-allowed bg-gray-300"
+                  : "bg-brand-primary hover:bg-brand-primary/90"
+              } border-none`}
+              onClick={handleNext}
+              disabled={currentIndex === totalItems - 1}
+            >
+              <ChevronRight
+                className={`size-10 min-h-10 min-w-10 ${
+                  currentIndex === totalItems - 1
+                    ? "text-gray-500"
+                    : "text-white"
+                }`}
+              />
+            </Button>
           </div>
         </div>
       </div>

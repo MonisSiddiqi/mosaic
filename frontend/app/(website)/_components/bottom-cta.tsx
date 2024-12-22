@@ -21,7 +21,7 @@ export const BottomCta = () => {
             Discover the power of mosaic and create a beautiful, modern home.
           </p>
           <Button className="mt-4 rounded-md px-8 py-3 text-white">
-            <Link href={"/"}> Start Your Project</Link>
+            <Link href={"/my-projects/add"}> Start Your Project</Link>
           </Button>
         </div>
       </div>

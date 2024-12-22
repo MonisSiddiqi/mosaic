@@ -3,7 +3,7 @@ import { ClipboardList, UserCheck, Calendar, ThumbsUp } from "lucide-react";
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20">
+    <section className="py-20" id="how-it-works">
       <div className="container mx-auto px-6">
         <h2 className="mb-12 text-center text-3xl font-bold">How It Works</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">

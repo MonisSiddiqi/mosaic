@@ -71,9 +71,9 @@ export function MultiStepForm() {
 
   return (
     <div className="mx-auto max-w-4xl p-4">
-      <div className="mb-8 flex justify-between">
+      <div className="mb-8 flex flex-col items-start gap-6 md:flex-row md:justify-between">
         {steps.map((step, index) => (
-          <div key={step.title} className="flex flex-col items-center">
+          <div key={step.title} className="flex items-center gap-4 md:flex-col">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${
                 index === currentStep
@@ -84,7 +84,7 @@ export function MultiStepForm() {
               <step.icon className="h-5 w-5" />
             </div>
             <span
-              className={`mt-2 text-sm ${
+              className={`text-sm md:mt-2 ${
                 index === currentStep
                   ? "font-semibold text-blue-600"
                   : "text-gray-500"

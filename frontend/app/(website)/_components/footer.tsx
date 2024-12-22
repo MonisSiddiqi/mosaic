@@ -4,10 +4,10 @@ export function Footer() {
   return (
     <footer className="bg-[#111111] text-gray-400">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Column */}
           <div>
-            <h3 className="text-white font-semibold mb-4">MOSAIC</h3>
+            <h3 className="mb-4 font-semibold text-white">MOSAIC</h3>
             <p className="text-sm leading-relaxed">
               Connecting homeowners with trusted professionals for all your home
               improvement needs.
@@ -16,28 +16,21 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <h3 className="mb-4 font-semibold text-white">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="/services"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Services
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/how-it-works"
-                  className="hover:text-white transition-colors"
-                >
-                  How It Works
-                </Link>
-              </li>
+
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   About Us
                 </Link>
@@ -45,32 +38,17 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Contact
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* For You */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">For You</h3>
-            <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="/add-project"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Add Project
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/success-stories"
-                  className="hover:text-white transition-colors"
-                >
-                  Success Stories
                 </Link>
               </li>
             </ul>
@@ -78,14 +56,14 @@ export function Footer() {
 
           {/* Connect With Us */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Connect With Us</h3>
+            <h3 className="mb-4 font-semibold text-white">Connect With Us</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="https://facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Facebook
                 </Link>
@@ -95,7 +73,7 @@ export function Footer() {
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Twitter
                 </Link>
@@ -105,7 +83,7 @@ export function Footer() {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   Instagram
                 </Link>
@@ -115,7 +93,7 @@ export function Footer() {
                   href="https://linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-white"
                 >
                   LinkedIn
                 </Link>
@@ -125,8 +103,8 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-center">
-          © {new Date().getFullYear()} HomeServices. All rights reserved.
+        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm">
+          © {new Date().getFullYear()} Mosaic. All rights reserved.
         </div>
       </div>
     </footer>

@@ -19,47 +19,47 @@ const services = [
   {
     name: "Plumbing",
     icon: PlumbingIcon,
-    href: "/services/plumbing",
+    href: "/my-projects/add",
   },
   {
     name: "Electrical",
     icon: ElectricianIcon,
-    href: "/services/electrical",
+    href: "/my-projects/add",
   },
   {
     name: "Fencing",
     icon: FencingIcon,
-    href: "/services/fencing",
+    href: "/my-projects/add",
   },
   {
     name: "Painting",
     icon: PaintingIcon,
-    href: "/services/painting",
+    href: "/my-projects/add",
   },
   {
     name: "Heating & Cooling",
     icon: AcIcon,
-    href: "/services/hvac",
+    href: "/my-projects/add",
   },
   {
     name: "Cleaning",
     icon: CleaningIcon,
-    href: "/services/cleaning",
+    href: "/my-projects/add",
   },
   {
     name: "Tree Service",
     icon: TreeIcon,
-    href: "/services/tree-service",
+    href: "/my-projects/add",
   },
   {
     name: "Roofing",
     icon: RoofingIcon,
-    href: "/services/roofing",
+    href: "/my-projects/add",
   },
   {
     name: "Pest Control",
     icon: PestIcon,
-    href: "/services/pest-control",
+    href: "/my-projects/add",
   },
 ];
 
@@ -67,22 +67,22 @@ export function ServicesSection() {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-24 items-start">
+        <div className="grid items-start gap-24 lg:grid-cols-2">
           {/* Services Grid */}
           <div>
-            <h2 className="text-4xl font-bold mb-8">
+            <h2 className="mb-8 text-4xl font-bold">
               Our Services at your <br /> doorstep
             </h2>
-            <div className="bg-white rounded-lg border p-6 shadow-sm">
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="rounded-lg border bg-white p-6 shadow-sm">
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
                 {services.map((service) => (
                   <Link
                     key={service.name}
                     href={service.href}
-                    className="block group"
+                    className="group block"
                   >
-                    <Card className="p-4 border-none shadow-none text-center hover:bg-gray-50 transition-colors ">
-                      <div className="bg-gray-50 rounded-lg p-4 mb-3 group-hover:bg-white transition-colors">
+                    <Card className="border-none p-4 text-center shadow-none transition-colors hover:bg-gray-50">
+                      <div className="mb-3 rounded-lg bg-gray-50 p-4 transition-colors group-hover:bg-white">
                         <Image
                           src={service.icon.src}
                           alt={service.name}
@@ -97,7 +97,7 @@ export function ServicesSection() {
                 ))}
               </div>
             </div>
-            <div className="mt-6 text-center flex justify-end">
+            <div className="mt-6 flex justify-end text-center">
               <Button
                 asChild
                 size="lg"
@@ -111,11 +111,11 @@ export function ServicesSection() {
           </div>
 
           {/* Service Images */}
-          <div className="w-full h-full overflow-hidden">
+          <div className="h-full w-full overflow-hidden">
             <Image
               width={300}
               height={600}
-              className="object-cover w-full h-full"
+              className="h-full w-full object-cover"
               src={ServicesSectionImage.src}
               alt="@Services"
             />

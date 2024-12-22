@@ -24,7 +24,7 @@ export function ProjectsHeader() {
         </div>
       </div>
       <Button asChild className="h-12 bg-[#0F172A] px-6 hover:bg-[#1E293B]">
-        <Link href="/projects/new">
+        <Link href="/my-projects/add">
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Link>
