@@ -107,10 +107,15 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <div className="hidden items-center lg:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <Button asChild variant={"secondary"}>
-            <Link href="/" className="text-sm font-medium hover:text-primary">
-              Login/Signup
+            <Link href="/auth" className="text-sm font-medium">
+              Sign Up
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/auth/register" className="text-sm font-medium">
+              Login
             </Link>
           </Button>
         </div>

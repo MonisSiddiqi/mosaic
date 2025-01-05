@@ -1,0 +1,37 @@
+import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { AddUserForm } from "../forms/add-service-form";
+
+export const AddUserSheet = () => {
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = (open: boolean) => setOpen(open);
+
+  return (
+    <Sheet open={open} onOpenChange={() => setOpen(!open)} modal={false}>
+      <SheetTrigger asChild>
+        <Button>
+          <PlusIcon className="mr-2 h-4 w-4 text-gray-100" />
+          Create
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="overflow-auto">
+        <SheetHeader>
+          <SheetTitle>New User</SheetTitle>
+          <SheetDescription>Add new user and press submit</SheetDescription>
+        </SheetHeader>
+        <AddUserForm toggleOpen={toggleOpen} />
+      </SheetContent>
+    </Sheet>
+  );
+};
