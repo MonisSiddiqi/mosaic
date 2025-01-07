@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  email           String  @unique @db.VarChar(256)
+  password        String  @db.VarChar(256)
+  isEmailVerified Boolean @default(false)
+  isActive        Boolean @default(true)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  UserProfile UserProfile?
+  Address     Address[]
+}
+
+model UserProfile {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique @db.VarChar(36)
+
+  name String @db.VarChar(256)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+}
+
+model Address {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String  @db.VarChar(36)
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  countryId String  @db.VarChar(36)
+  state     State   @relation(fields: [stateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stateId   String  @db.VarChar(36)
+  city      City    @relation(fields: [cityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cityId    String  @db.VarChar(36)
+
+  line1      String
+  line2      String?
+  postalCode String
+  isDefault  Boolean @default(false)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([userId, countryId, stateId, cityId])
+}
+
+model Country {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  name String @unique
+  code String @unique
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  State   State[]
+  Address Address[]
+}
+
+model State {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  name String
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  City    City[]
+  Address Address[]
+
+  @@unique([countryId, name])
+}
+
+model City {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  state   State  @relation(fields: [stateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stateId String @db.VarChar(36)
+
+  name String
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  Address Address[]
+
+  @@unique([stateId, name])
+}
