@@ -16,8 +16,8 @@ datasource db {
 model User {
   id String @id @default(uuid()) @db.VarChar(36)
 
-  email           String  @unique @db.VarChar(256)
-  password        String  @db.VarChar(256)
+  email           String  @unique
+  password        String
   isEmailVerified Boolean @default(false)
   isActive        Boolean @default(true)
 
@@ -25,7 +25,7 @@ model User {
   createdAt DateTime @default(now()) @db.Timestamptz
 
   UserProfile UserProfile?
-  Address     Address[]
+  Project     Project?
 }
 
 model UserProfile {
@@ -34,7 +34,57 @@ model UserProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique @db.VarChar(36)
 
-  name String @db.VarChar(256)
+  name String
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+}
+
+model Service {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  icon        String?
+  title       String
+  description String
+
+  updatedAt DateTime  @updatedAt @db.Timestamptz
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  Project   Project[]
+}
+
+model Project {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String   @unique @db.VarChar(36)
+  Service   Service? @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  serviceId String?
+
+  title          String
+  description    String
+  budget         Decimal? @db.Decimal(10, 2)
+  budgetCurrency String   @default("USD") @db.VarChar(3)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  ProjectTag      ProjectTag[]
+  siteMeasurement SiteMeasurement?
+  Address         Address?
+  ProjectImage    ProjectImage[]
+}
+
+model SiteMeasurement {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String  @unique @db.VarChar(36)
+
+  length Decimal? @db.Decimal(10, 2)
+  width  Decimal? @db.Decimal(10, 2)
+  height Decimal? @db.Decimal(10, 2)
+  area   Decimal? @db.Decimal(10, 2)
+  unit   String   @default("METER")
 
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
@@ -43,8 +93,6 @@ model UserProfile {
 model Address {
   id String @id @default(uuid()) @db.VarChar(36)
 
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    String  @db.VarChar(36)
   country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   countryId String  @db.VarChar(36)
   state     State   @relation(fields: [stateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -55,12 +103,14 @@ model Address {
   line1      String
   line2      String?
   postalCode String
-  isDefault  Boolean @default(false)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String  @unique @db.VarChar(36)
 
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 
-  @@index([userId, countryId, stateId, cityId])
+  @@index([countryId, stateId, cityId])
 }
 
 model Country {
@@ -91,6 +141,7 @@ model State {
   Address Address[]
 
   @@unique([countryId, name])
+  @@index([countryId])
 }
 
 model City {
@@ -107,4 +158,48 @@ model City {
   Address Address[]
 
   @@unique([stateId, name])
+  @@index([stateId])
+}
+
+model Tag {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  name String @unique
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  projects ProjectTag[]
+}
+
+model ProjectTag {
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String  @db.VarChar(36)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tagId     String  @db.VarChar(36)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@id([projectId, tagId])
+  @@index([projectId])
+  @@index([tagId])
+}
+
+model ProjectImage {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String  @db.VarChar(36)
+
+  url  String
+  type ProjectImageType
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+}
+
+enum ProjectImageType {
+  BEFORE
+  AFTER
 }
