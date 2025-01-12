@@ -13,6 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
+import { ServicesController } from './services/service.controller';
 
 @Module({
   imports: [
@@ -55,6 +56,6 @@ export class AppModule {
         { path: '/notification/receive', method: RequestMethod.GET },
         { path: '/notification', method: RequestMethod.GET },
       )
-      .forRoutes(AuthController);
+      .forRoutes(AuthController, ServicesController);
   }
 }

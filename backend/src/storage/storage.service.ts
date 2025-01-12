@@ -1,0 +1,141 @@
+import { ConfigService } from '@nestjs/config';
+import {
+  S3Client,
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
+import { Injectable } from '@nestjs/common';
+import { writeFile } from 'fs-extra';
+import tmp from 'tmp-promise';
+import { readFileSync } from 'fs';
+import sharp from 'sharp';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
+import * as http from 'node:http';
+import * as https from 'node:https';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+import mime from 'mime';
+
+import { NodeEnv, S3Config } from '../config/config.type';
+import { StorageFolderEnum } from './storage-folder.enum';
+
+@Injectable()
+export class StorageService {
+  private readonly s3Client: S3Client;
+  private readonly region: string;
+  private readonly bucketName: string;
+
+  constructor(private readonly configService: ConfigService) {
+    const config = this.configService.get<S3Config>('s3');
+    const nodeEnv = this.configService.get<NodeEnv>('nodeEnv');
+
+    this.region = config?.region || '';
+    this.bucketName = config?.bucketName || '';
+
+    this.s3Client = new S3Client({
+      region: this.region,
+      requestHandler: new NodeHttpHandler({
+        httpAgent: new http.Agent({
+          keepAlive: true,
+          maxSockets: 15000,
+        }),
+        httpsAgent: new https.Agent({
+          keepAlive: true,
+          maxSockets: 15000,
+        }),
+      }),
+      credentials:
+        nodeEnv === 'development'
+          ? {
+              accessKeyId: config?.accessKeyId || '',
+              secretAccessKey: config?.secretAccessKey || '',
+            }
+          : undefined,
+    });
+  }
+
+  public async uploadImageFile(file: Buffer, folder: StorageFolderEnum) {
+    const key = `${folder}/${uuidv4()}.webp`;
+
+    const result = await this.compressImage(file);
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+      Body: result.buffer,
+      ContentType: result.mimeType,
+    });
+
+    await this.s3Client.send(command);
+
+    return key;
+  }
+
+  private async compressImage(file: Buffer) {
+    const tmpDir = tmp.dirSync();
+
+    const inputFilePath = `${tmpDir.name}/${uuidv4()}.png`;
+    const outputFilePath = `${tmpDir.name}/${uuidv4()}.webp`;
+
+    await writeFile(inputFilePath, file);
+
+    const image = sharp(inputFilePath);
+
+    const metadata = await image.metadata();
+
+    if (metadata?.width && metadata?.height) {
+      const newWidth = Math.round(metadata?.width * 0.75);
+      const newHeight = Math.round(metadata?.height * 0.75);
+
+      await image
+        .resize(newWidth, newHeight)
+        .webp({ quality: 80 })
+        .toFile(outputFilePath);
+    } else {
+      await image.webp({ quality: 80 }).toFile(outputFilePath);
+    }
+
+    return {
+      mimeType: mime.getType(outputFilePath),
+      buffer: readFileSync(outputFilePath),
+    };
+  }
+
+  public async findFile(
+    folder: string,
+    fileName: string,
+  ): Promise<GetObjectCommandOutput> {
+    const command = new GetObjectCommand({
+      Key: `${folder}/${fileName}`,
+      Bucket: this.bucketName,
+    });
+
+    return await this.s3Client.send(command);
+  }
+
+  public async getSignedFileUrl(key: string): Promise<string | null> {
+    try {
+      const command = new GetObjectCommand({
+        Key: key,
+        Bucket: this.bucketName,
+      });
+
+      return await getSignedUrl(this.s3Client, command, {
+        expiresIn: 3600 * 24 * 2,
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+    await this.s3Client.send(command);
+  }
+}
