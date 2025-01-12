@@ -1,10 +1,60 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config/configuration';
+import { configValidationSchema } from './config/config-validation.schema';
+
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { AuthCookieMiddleware } from './common/middleware/auth-cookie.middleware';
+import { AuthController } from './auth/auth.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: ['.env', `.env.${process.env.NODE_ENV}`],
+      load: [configuration],
+      validationSchema: configValidationSchema,
+      validationOptions: {
+        convert: true,
+        allowUnknown: true,
+        abortEarly: true,
+      },
+    }),
+    ServeStaticModule.forRoot({
+      exclude: ['/api/(.*)', '/storage/(.*)', '/log-out'],
+    }),
+    AuthModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    JwtService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthCookieMiddleware)
+      .exclude(
+        { path: '/auth/login', method: RequestMethod.POST },
+        { path: '/auth/logout', method: RequestMethod.DELETE },
+        { path: '/auth/check', method: RequestMethod.POST },
+        { path: '/notification/receive', method: RequestMethod.GET },
+        { path: '/notification', method: RequestMethod.GET },
+      )
+      .forRoutes(AuthController);
+  }
+}

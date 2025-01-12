@@ -7,7 +7,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { AppModule } from './app.module';

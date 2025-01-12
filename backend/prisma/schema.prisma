@@ -16,16 +16,26 @@ datasource db {
 model User {
   id String @id @default(uuid()) @db.VarChar(36)
 
-  email           String  @unique
+  email           String       @unique
   password        String
-  isEmailVerified Boolean @default(false)
-  isActive        Boolean @default(true)
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
+  isEmailVerified Boolean      @default(false)
+  isActive        Boolean      @default(true)
+  role            UserRoleEnum
 
   UserProfile UserProfile?
-  Project     Project?
+  projects    Project[] // Projects they created
+  reviews     Review[] // Reviews they've received
+
+  // Vendor-specific fields
+  vendorTags     VendorTag[]
+  vendorServices VendorService[]
+  submittedBids  Bid[]
+  vendorAddress  Address?
+
+  updatedAt     DateTime        @updatedAt @db.Timestamptz
+  createdAt     DateTime        @default(now()) @db.Timestamptz
+  ProjectUpdate ProjectUpdate[]
+  Testimonial   Testimonial[]
 }
 
 model UserProfile {
@@ -47,31 +57,45 @@ model Service {
   title       String
   description String
 
-  updatedAt DateTime  @updatedAt @db.Timestamptz
-  createdAt DateTime  @default(now()) @db.Timestamptz
-  Project   Project[]
+  updatedAt     DateTime        @updatedAt @db.Timestamptz
+  createdAt     DateTime        @default(now()) @db.Timestamptz
+  Project       Project[]
+  VendorService VendorService[]
 }
 
 model Project {
   id String @id @default(uuid()) @db.VarChar(36)
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    String   @unique @db.VarChar(36)
+  userId    String   @db.VarChar(36)
   Service   Service? @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   serviceId String?
 
-  title          String
-  description    String
-  budget         Decimal? @db.Decimal(10, 2)
-  budgetCurrency String   @default("USD") @db.VarChar(3)
+  title       String
+  description String
 
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
+  status         ProjectStatusEnum @default(IN_PROGRESS)
+  startDate      DateTime?         @db.Timestamptz
+  endDate        DateTime?         @db.Timestamptz
+  biddingEndDate DateTime?         @db.Timestamptz
 
+  length Decimal?            @db.Decimal(10, 2)
+  width  Decimal?            @db.Decimal(10, 2)
+  height Decimal?            @db.Decimal(10, 2)
+  area   Decimal?            @db.Decimal(10, 2)
+  unit   MeasurementUnitEnum @default(METER)
+
+  Address       Address?        @relation(fields: [addressId], references: [id])
+  ProjectImage  ProjectImage[]
+  Bid           Bid[]
+  ProjectUpdate ProjectUpdate[]
+
+  updatedAt       DateTime         @updatedAt @db.Timestamptz
+  createdAt       DateTime         @default(now()) @db.Timestamptz
+  SiteMeasurement SiteMeasurement?
   ProjectTag      ProjectTag[]
-  siteMeasurement SiteMeasurement?
-  Address         Address?
-  ProjectImage    ProjectImage[]
+  Review          Review[]
+  addressId       String?          @db.VarChar(36)
 }
 
 model SiteMeasurement {
@@ -104,11 +128,13 @@ model Address {
   line2      String?
   postalCode String
 
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String  @unique @db.VarChar(36)
+  // Relation to User for vendor address
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique @db.VarChar(36)
 
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime  @updatedAt @db.Timestamptz
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  Project   Project[]
 
   @@index([countryId, stateId, cityId])
 }
@@ -169,7 +195,8 @@ model Tag {
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 
-  projects ProjectTag[]
+  projects  ProjectTag[]
+  VendorTag VendorTag[]
 }
 
 model ProjectTag {
@@ -193,13 +220,146 @@ model ProjectImage {
   projectId String  @db.VarChar(36)
 
   url  String
-  type ProjectImageType
+  type ProjectImageEnum
 
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 }
 
-enum ProjectImageType {
+model Bid {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @db.VarChar(36)
+
+  vendor   User          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId String        @db.VarChar(36)
+  status   BidStatusEnum @default(PENDING)
+
+  proposalMessage    String?
+  proposalAttachment String?
+
+  updatedAt     DateTime        @updatedAt @db.Timestamptz
+  createdAt     DateTime        @default(now()) @db.Timestamptz
+  BidAttachment BidAttachment[]
+}
+
+model BidAttachment {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  bid   Bid    @relation(fields: [bidId], references: [id], onDelete: Cascade)
+  bidId String @db.VarChar(36)
+
+  url         String
+  name        String
+  description String?
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([bidId])
+}
+
+model ProjectUpdate {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @db.VarChar(36)
+
+  Vendor   User?   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId String? @db.VarChar(36)
+
+  comment String
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+}
+
+model Review {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @db.VarChar(36)
+
+  vendor   User   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId String @db.VarChar(36)
+
+  rating      Int // 1-5 stars
+  comment     String?
+  isPublished Boolean @default(true)
+
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([projectId])
+  @@index([vendorId])
+}
+
+model VendorTag {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.VarChar(36)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  String @db.VarChar(36)
+
+  @@id([userId, tagId])
+  @@index([userId])
+  @@index([tagId])
+}
+
+model VendorService {
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String  @db.VarChar(36)
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String  @db.VarChar(36)
+
+  @@id([userId, serviceId])
+  @@index([userId])
+  @@index([serviceId])
+}
+
+model Testimonial {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.VarChar(36)
+
+  rating      Int
+  title       String
+  description String
+
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([userId])
+}
+
+enum ProjectImageEnum {
   BEFORE
   AFTER
+}
+
+enum MeasurementUnitEnum {
+  METER
+  FEET
+  YARD
+  SQUARE_METER
+  SQUARE_FEET
+}
+
+enum ProjectStatusEnum {
+  IN_PROGRESS
+  AWARDED
+  COMPLETED
+}
+
+enum BidStatusEnum {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum UserRoleEnum {
+  USER
+  VENDOR
+  ADMIN
 }
