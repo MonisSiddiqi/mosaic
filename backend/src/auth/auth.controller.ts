@@ -9,7 +9,7 @@ import {
   Res,
   Delete,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 import { LoginDto } from './dto/login.dto';
@@ -20,6 +20,10 @@ import { ApiResponse } from '../common/dto/api-response.dto';
 import { SignInResponse } from './types/sign-in-response.type';
 import { cookieOptions } from '../common/helpers/cookie-options';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +31,26 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
   ) {}
+
+  @Post('register')
+  @SkipAuth()
+  register(
+    @Body() registerDto: RegisterDto,
+  ): Promise<ApiResponse<SignInResponse>> {
+    return this.authService.register(registerDto);
+  }
+
+  @Post('verify-otp')
+  @SkipAuth()
+  async verifyOtp(
+    @Body() verifyOtpDto: VerifyOtpDto,
+  ): Promise<ApiResponse<SignInResponse>> {
+    const result = await this.authService.verifyOtp(verifyOtpDto);
+
+    response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
+
+    return result;
+  }
 
   @SkipAuth()
   @Post('login')
@@ -39,6 +63,30 @@ export class AuthController {
     response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
 
     return result;
+  }
+
+  @Post('forgot-password')
+  @SkipAuth()
+  forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<ApiResponse> {
+    return this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  @Post('forgot-password/verify-otp')
+  @SkipAuth()
+  verifyForgotPasswordOtp(
+    @Body() verifyOtpDto: VerifyOtpDto,
+  ): Promise<ApiResponse<SignInResponse>> {
+    return this.authService.verifyForgotPasswordOtp(verifyOtpDto);
+  }
+
+  @Post('create-password')
+  @SkipAuth()
+  createNewPassword(
+    @Body() createNewPasswordDto: CreateNewPasswordDto,
+  ): Promise<ApiResponse> {
+    return this.authService.createNewPassword(createNewPasswordDto);
   }
 
   @SkipAuth()

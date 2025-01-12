@@ -17,8 +17,6 @@ import * as http from 'node:http';
 import * as https from 'node:https';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-import mime from 'mime';
-
 import { NodeEnv, S3Config } from '../config/config.type';
 import { StorageFolderEnum } from './storage-folder.enum';
 
@@ -99,7 +97,7 @@ export class StorageService {
     }
 
     return {
-      mimeType: mime.getType(outputFilePath),
+      mimeType: 'image/webp',
       buffer: readFileSync(outputFilePath),
     };
   }

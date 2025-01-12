@@ -31,18 +31,24 @@ export class ServicesService {
       );
     }
 
-    const iconUrl = await this.storageService.uploadImageFile(
-      icon.buffer,
-      StorageFolderEnum.SERVICES,
-    );
+    const serviceCreateInput: Prisma.ServiceCreateInput = {
+      name,
+      description,
+    };
+
+    if (icon) {
+      const iconUrl = await this.storageService.uploadImageFile(
+        icon.buffer,
+        StorageFolderEnum.SERVICES,
+      );
+
+      serviceCreateInput.iconUrl = iconUrl;
+    }
 
     const service = await this.prismaService.service.create({
-      data: {
-        name,
-        description,
-        iconUrl,
-      },
+      data: serviceCreateInput,
     });
+
     return new ApiResponse(service, 'Service Added Successfully');
   }
 
