@@ -74,7 +74,14 @@ export class ServicesService {
       },
     });
 
-    return new ApiResponse(services, 'Services fetched successfully');
+    const total = await this.prismaService.service.count({
+      where: serviceWhereInput,
+    });
+
+    return new ApiResponse(
+      { total, list: services },
+      'Services fetched successfully',
+    );
   }
 
   /* find one */

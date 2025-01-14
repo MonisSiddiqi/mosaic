@@ -1,5 +1,3 @@
-import { userColumns } from "./services-column";
-import { UserTableToolbar } from "./user-table-toolbar";
 import { DataTable } from "@/components/table";
 import { useState } from "react";
 import {
@@ -7,9 +5,11 @@ import {
   PaginationState,
   SortingState,
 } from "@tanstack/react-table";
-import { useUsersQuery } from "@/queries/users.queries";
+import { useServicesQuery } from "@/queries/services.queries";
+import { servicesColumns } from "./services-column";
+import { ServicesTableToolbar } from "./services-table-toolbar";
 
-export const UserTable = () => {
+export const ServicesTable = () => {
   const [filter, setFilter] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -22,7 +22,7 @@ export const UserTable = () => {
     pageIndex: 0,
   });
 
-  const { data, error, isLoading } = useUsersQuery({
+  const { data, error, isLoading } = useServicesQuery({
     filter,
     pagination,
     sorting,
@@ -35,12 +35,12 @@ export const UserTable = () => {
   return (
     <div className="max-w-[calc(100vw-2rem)] lg:max-w-[calc(100vw-20rem)]">
       <DataTable
-        columns={userColumns}
+        columns={servicesColumns}
         data={{
           total: data?.total || 0,
           data: data?.list || [],
         }}
-        DataTableToolbar={UserTableToolbar}
+        DataTableToolbar={ServicesTableToolbar}
         sorting={sorting}
         setSorting={setSorting}
         pagination={pagination}

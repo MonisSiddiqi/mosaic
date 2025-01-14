@@ -10,9 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { AddUserForm } from "../forms/add-service-form";
+import { AddServiceForm } from "../forms/add-service-form";
 
-export const AddUserSheet = () => {
+export const AddServiceSheet = () => {
   const [open, setOpen] = useState(false);
 
   const toggleOpen = (open: boolean) => setOpen(open);
@@ -30,7 +30,7 @@ export const AddUserSheet = () => {
           <SheetTitle>New User</SheetTitle>
           <SheetDescription>Add new user and press submit</SheetDescription>
         </SheetHeader>
-        <AddUserForm toggleOpen={toggleOpen} />
+        <AddServiceForm toggleOpen={toggleOpen} />
       </SheetContent>
     </Sheet>
   );

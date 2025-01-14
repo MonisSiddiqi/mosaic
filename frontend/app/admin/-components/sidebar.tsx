@@ -25,13 +25,10 @@ import {
 } from "@/components/ui/tooltip";
 
 import { SidebarLink } from "@/app/admin/-components/sidebar-link";
-import { usePathname } from "next/navigation";
 
-import Logo from "@/app/assets/logo.png";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-const routes = [
+export const routes = [
   {
     href: "/admin",
     icon: <Home className="h-5 min-h-5 w-5 min-w-5" />,

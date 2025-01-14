@@ -9,7 +9,9 @@ export type ServicesListDto = {
 };
 
 export type AddServiceDto = {
-  icon: File;
+  icon?: File;
   title: string;
   description: string;
 };
+
+export type EditServiceDto = { id: string } & AddServiceDto;

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Service } from "@/api/services";
 import { DeleteServiceAlert } from "@/app/admin/services/_components/alerts/delete-service-alert";
+import { EditServiceSheet } from "../sheets/edit-service-sheet";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -51,13 +52,14 @@ export function ServicesTableRowActions<TData>({
         </DropdownMenuContent>
       </DropdownMenu>
       <DeleteServiceAlert
-        id={user.id}
+        id={service.id}
         open={open}
         setOpen={() => setOpen(false)}
       />
       <EditServiceSheet
-        id={user.id}
-        role={user.role}
+        id={service.id}
+        title={service.name}
+        description={service.description}
         open={openEdit}
         setOpen={() => setOpenEdit(false)}
       />

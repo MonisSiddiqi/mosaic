@@ -1,6 +1,8 @@
 import {
   AddServiceDto,
+  EditServiceDto,
   GetAllServicesApiResponse,
+  Service,
   ServicesListDto,
 } from "@/api/services";
 import { apiEndpoints } from "@/api/api-endpoints";
@@ -25,23 +27,48 @@ export const getAllServicesApi = async ({
   return response.data.result;
 };
 
-export const deleteServiceApi = async (id: string) => {
+export const deleteServiceApi = async (id: string): Promise<Service> => {
   const response = await httpClient.delete(apiEndpoints.services.delete(id));
 
   return response.data.result;
 };
 
-export const addServiceApi = async (values: AddServiceDto) => {
+export const addServiceApi = async (
+  values: AddServiceDto,
+): Promise<Service> => {
   const body = {
-    title: values.title,
     icon: values.icon,
+    title: values.title,
     description: values.description,
   };
+
   const response = await httpClient.post(apiEndpoints.services.add, body, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+
+  return response.data.result;
+};
+
+export const editServiceApi = async (
+  values: EditServiceDto,
+): Promise<Service> => {
+  const body = {
+    icon: values.icon,
+    title: values.title,
+    description: values.description,
+  };
+
+  const response = await httpClient.put(
+    apiEndpoints.services.edit(values.id),
+    body,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
 
   return response.data.result;
 };

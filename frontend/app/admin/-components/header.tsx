@@ -1,11 +1,19 @@
+"use client";
+
 import { Bell, Search, User } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { routes } from "./sidebar";
 
 export function Header() {
+  const pathname = usePathname();
+
+  const title = routes.find((route) => route.href === pathname)?.text;
+
   return (
     <header className="bg-white px-6 py-4 shadow-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <h1 className="text-2xl font-semibold text-gray-800">Admin Panel</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
         </div>
         <div className="flex items-center space-x-4">
           <div className="relative">

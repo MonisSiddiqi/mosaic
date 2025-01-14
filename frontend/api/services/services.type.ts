@@ -1,6 +1,6 @@
 export type Service = {
   id: string;
-  title: string;
+  name: string;
   description: string;
   icon: string;
   createdAt: string;

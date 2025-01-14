@@ -3,16 +3,49 @@ import { format } from "date-fns";
 
 import { DataTableColumnHeader } from "@/components/table";
 import { Service } from "@/api/services";
-import { ServicesTableRowActions } from "@/app/admin/services/_components/table/services-table-row-actions";
+import { ServicesTableRowActions } from "./services-table-row-actions";
+import { useState } from "react";
+import Image from "next/image";
+import { EyeOffIcon } from "lucide-react";
 
 export const servicesColumns: ColumnDef<Service>[] = [
   {
-    accessorKey: "title",
+    accessorKey: "icon",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" className="ml-2" />
+      <DataTableColumnHeader column={column} title="Icon" />
     ),
     cell: ({ row }) => {
-      return <div className="ml-2">{row.original.title}</div>;
+      const icon = row.original.icon;
+      const [imageError, setImageError] = useState(false);
+
+      return (
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-md transition-shadow duration-300 hover:shadow-lg">
+          {icon && !imageError ? (
+            <Image
+              src={icon}
+              alt="Service Icon"
+              width={40}
+              height={40}
+              className="rounded-full"
+              onError={() => setImageError(true)}
+            />
+          ) : imageError ? (
+            <span className="text-xs">Could not load</span>
+          ) : (
+            <EyeOffIcon size={24} className="text-gray-400" />
+          )}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" className="ml-2" />
+    ),
+    cell: ({ row }) => {
+      return <div className="ml-2">{row.original.name}</div>;
     },
   },
   {
@@ -21,7 +54,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       <DataTableColumnHeader column={column} title="Description" />
     ),
     cell: ({ row }) => {
-      return <div>{row.original.title}</div>;
+      return <div>{row.original.description}</div>;
     },
   },
 

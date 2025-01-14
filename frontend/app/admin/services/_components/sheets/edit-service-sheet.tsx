@@ -7,28 +7,40 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { EditUserForm } from "../forms/edit-user-form";
+import { EditServiceForm } from "../forms/edit-service-form";
 
 type Props = {
   id: string;
-  role: string;
+  title: string;
+  description: string;
   open: boolean;
   setOpen: (value: boolean) => void;
 };
 
-export const EditUserSheet: FC<Props> = ({ id, setOpen, role, open }) => {
+export const EditServiceSheet: FC<Props> = ({
+  id,
+  setOpen,
+  title,
+  description,
+  open,
+}) => {
   const handleClose = (status: boolean) => setOpen(status);
 
   return (
     <Sheet open={open} onOpenChange={() => setOpen(!open)}>
       <SheetContent className="overflow-auto">
         <SheetHeader>
-          <SheetTitle>Edit User</SheetTitle>
+          <SheetTitle>Edit Service</SheetTitle>
           <SheetDescription>
             Make Changes to this User role. Click save when you're done.
           </SheetDescription>
         </SheetHeader>
-        <EditUserForm handleClose={handleClose} id={id} role={role} />
+        <EditServiceForm
+          handleClose={handleClose}
+          id={id}
+          title={title}
+          description={description}
+        />
       </SheetContent>
     </Sheet>
   );

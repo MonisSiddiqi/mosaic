@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { RefreshCcwIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FC } from "react";
 
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -15,9 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
-import { addServiceApi } from "@/api/services";
+
 import { toast } from "@/hooks/use-toast";
+import { editServiceApi } from "@/api/services";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   icon: z.instanceof(File).refine((file) => file.type === "image/svg+xml", {
@@ -28,33 +29,32 @@ const formSchema = z.object({
 });
 
 type Props = {
-  toggleOpen: (value: boolean) => void;
+  id: string;
+  title: string;
+  description: string;
+  handleClose: (value: boolean) => void;
 };
 
-export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      icon: undefined,
-      title: "",
-      description: "",
-    },
-  });
-
+export const EditServiceForm: FC<Props> = ({
+  id,
+  handleClose,
+  title,
+  description,
+}) => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationKey: ["service/add"],
-    mutationFn: addServiceApi,
+  const { mutate, isPending } = useMutation({
+    mutationKey: [`editService`, id],
+    mutationFn: editServiceApi,
     onSuccess: () => {
       toast({
-        className: "bg-green-200 text-green-700",
-        title: "Service Added Successfully",
+        variant: "success",
+        title: "User Updated Successfully",
       });
       queryClient.invalidateQueries({
-        queryKey: ["services"],
+        queryKey: ["users"],
       });
-      toggleOpen(false);
+      handleClose(false);
     },
     onError: (error) => {
       toast({
@@ -65,19 +65,16 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await mutation.mutateAsync(values);
-      toast({
-        variant: "success",
-        title: "Service Added Successfully",
-      });
-    } catch (e) {
-      toast({
-        variant: "destructive",
-        title: e instanceof Error ? e.message : "Failed to Add Service",
-      });
-    }
+    mutate({ id, ...values });
   };
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title,
+      description,
+    },
+  });
 
   return (
     <Form {...form}>
@@ -139,12 +136,8 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
           />
         </div>
         <div className="flex w-full justify-end">
-          <Button
-            disabled={mutation.isPending}
-            type="submit"
-            className="mt-4 px-5 py-2"
-          >
-            {mutation.isPending && (
+          <Button disabled={isPending} type="submit" className="mt-4 px-5 py-2">
+            {isPending && (
               <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
             )}
             Submit
