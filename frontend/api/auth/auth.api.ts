@@ -15,3 +15,8 @@ export const logoutApi = async (): Promise<boolean> => {
   const response = await httpClient.delete(apiEndpoints.auth.logout);
   return response.data.result;
 };
+
+export const checkSessionApi = async (): Promise<boolean> => {
+  const response = await httpClient.post(apiEndpoints.auth.check);
+  return response.data.result;
+};

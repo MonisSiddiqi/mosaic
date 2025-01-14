@@ -19,7 +19,6 @@ import { SkipAuth } from './decorators/skip-auth.decorator';
 import { ApiResponse } from '../common/dto/api-response.dto';
 import { SignInResponse } from './types/sign-in-response.type';
 import { cookieOptions } from '../common/helpers/cookie-options';
-import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';

@@ -16,6 +16,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ServicesController } from './services/service.controller';
 import { StorageModule } from './storage/storage.module';
 import { ServicesModule } from './services/services.module';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { ServicesModule } from './services/services.module';
     PrismaModule,
     StorageModule,
     ServicesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
@@ -60,6 +63,6 @@ export class AppModule {
         { path: '/notification/receive', method: RequestMethod.GET },
         { path: '/notification', method: RequestMethod.GET },
       )
-      .forRoutes(AuthController, ServicesController);
+      .forRoutes(AuthController, ServicesController, UsersController);
   }
 }

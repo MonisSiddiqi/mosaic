@@ -56,11 +56,11 @@ export const editServiceApi = async (
 ): Promise<Service> => {
   const body = {
     icon: values.icon,
-    title: values.title,
+    name: values.title,
     description: values.description,
   };
 
-  const response = await httpClient.put(
+  const response = await httpClient.patch(
     apiEndpoints.services.edit(values.id),
     body,
     {

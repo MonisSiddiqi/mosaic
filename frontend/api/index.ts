@@ -70,7 +70,7 @@ httpClient.interceptors.response.use(
 const logoutAndRedirect = async () => {
   try {
     await logoutApi();
-    window.location.replace("/auth");
+    // window.location.replace("/auth");
   } catch (e) {
     if (e instanceof Error) {
       toast({

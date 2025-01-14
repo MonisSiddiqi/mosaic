@@ -109,12 +109,12 @@ export const Header = () => {
 
         <div className="hidden items-center gap-2 lg:flex">
           <Button asChild variant={"secondary"}>
-            <Link href="/auth" className="text-sm font-medium">
-              Sign Up
+            <Link href="/auth/register" className="text-sm font-medium">
+              Register
             </Link>
           </Button>
           <Button asChild>
-            <Link href="/auth/register" className="text-sm font-medium">
+            <Link href="/auth" className="text-sm font-medium">
               Login
             </Link>
           </Button>

@@ -8,5 +8,9 @@ export const apiEndpoints = {
   auth: {
     login: `/api/v1/auth/login`,
     logout: `/api/v1/auth/logout`,
+    check: `/api/v1/auth/check`,
+  },
+  users: {
+    me: `/api/v1/users/me`,
   },
 };
