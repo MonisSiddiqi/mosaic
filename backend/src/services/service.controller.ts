@@ -57,7 +57,6 @@ export class ServicesController {
 
   @Get()
   @SkipAuth()
-  @UseGuards(RolesGuard)
   findAll(@Query() getServicesDto: GetServicesDto) {
     return this.servicesService.findAll(getServicesDto);
   }

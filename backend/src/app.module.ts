@@ -18,6 +18,9 @@ import { StorageModule } from './storage/storage.module';
 import { ServicesModule } from './services/services.module';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { ProjectsModule } from './projects/projects.module';
+import { AddressesModule } from './addresses/addresses.module';
+import { ProjectsController } from './projects/projects.controller';
 
 @Module({
   imports: [
@@ -41,6 +44,8 @@ import { UsersModule } from './users/users.module';
     StorageModule,
     ServicesModule,
     UsersModule,
+    ProjectsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -63,6 +68,11 @@ export class AppModule {
         { path: '/notification/receive', method: RequestMethod.GET },
         { path: '/notification', method: RequestMethod.GET },
       )
-      .forRoutes(AuthController, ServicesController, UsersController);
+      .forRoutes(
+        AuthController,
+        ServicesController,
+        UsersController,
+        ProjectsController,
+      );
   }
 }

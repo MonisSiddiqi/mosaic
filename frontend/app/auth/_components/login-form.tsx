@@ -19,9 +19,8 @@ import { FC } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/router";
 import { checkSessionApi } from "@/api/auth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -43,6 +42,8 @@ export const LoginForm: FC<Props> = ({ className }) => {
 
   const search = sessionStorage.getItem("redirect");
 
+  const router = useRouter();
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await login(values);
@@ -53,7 +54,7 @@ export const LoginForm: FC<Props> = ({ className }) => {
         title: "Login Successfully",
       });
 
-      redirect(search || "/admin/dashboard");
+      router.push(search || "/admin/dashboard");
     } catch (e: unknown) {
       if (e instanceof Error) {
         toast({

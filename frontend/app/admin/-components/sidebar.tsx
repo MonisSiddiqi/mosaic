@@ -65,11 +65,6 @@ export const routes = [
     icon: <Package className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Subscription Management",
   },
-  {
-    href: "/admin/vendors",
-    icon: <Truck className="h-5 min-h-5 w-5 min-w-5" />,
-    text: "Vendor Management",
-  },
 
   {
     href: "/admin/notifications",

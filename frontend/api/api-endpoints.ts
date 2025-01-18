@@ -12,5 +12,12 @@ export const apiEndpoints = {
   },
   users: {
     me: `/api/v1/users/me`,
+    getAll: `/api/v1/users`,
+  },
+  projects: {
+    getAll: `/api/v1/projects`,
+    add: `/api/v1/projects`,
+    edit: (id: string) => `/api/v1/projects/${id}`,
+    delete: (id: string) => `/api/v1/projects/${id}`,
   },
 };

@@ -13,6 +13,23 @@ export type User = {
   createdAt: string;
 };
 
+export type UserProfile = {
+  id: string;
+  userId: string;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type GetAllUsersApiResponseItem = User & {
+  UserProfile: UserProfile | null;
+};
+
+export type GetAllUsersApiResponse = {
+  total: number;
+  list: GetAllUsersApiResponseItem[];
+};
+
 export type AuthUser = User;
 
 export enum UserRoleEnum {

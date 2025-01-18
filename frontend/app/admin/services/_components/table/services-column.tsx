@@ -19,7 +19,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       const [imageError, setImageError] = useState(false);
 
       return (
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-md transition-shadow duration-300 hover:shadow-lg">
+        <div className="ml-2 mt-2 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 duration-300">
           {icon && !imageError ? (
             <Image
               src={icon}
@@ -54,7 +54,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       <DataTableColumnHeader column={column} title="Description" />
     ),
     cell: ({ row }) => {
-      return <div>{row.original.description}</div>;
+      return <div> {row.original.description}</div>;
     },
   },
 

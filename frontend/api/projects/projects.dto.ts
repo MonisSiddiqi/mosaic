@@ -1,11 +1,6 @@
 import { ColumnFiltersState } from "@tanstack/react-table";
 
-export type LoginDto = {
-  email: string;
-  password: string;
-};
-
-export type GetUsersDto = {
+export type GetProjectsDto = {
   sortField?: string;
   sortValue?: "desc" | "asc";
   filter?: ColumnFiltersState;
