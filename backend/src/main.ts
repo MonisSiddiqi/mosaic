@@ -22,7 +22,10 @@ async function bootstrap() {
 
   app.enableCors({
     credentials: true,
-    origin: ['http://localhost:3000'],
+    origin: [
+      'http://localhost:3000',
+      'https://mosaic-1phb3tmwf-monis-siddiqis-projects.vercel.app',
+    ],
   });
 
   app.setGlobalPrefix('api', {
