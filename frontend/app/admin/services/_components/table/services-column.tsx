@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 import { DataTableColumnHeader } from "@/components/table";
-import { Service } from "@/api/services";
+import { Service } from "@/apis/services";
 import { ServicesTableRowActions } from "./services-table-row-actions";
 import Image from "next/image";
 import { EyeOffIcon } from "lucide-react";

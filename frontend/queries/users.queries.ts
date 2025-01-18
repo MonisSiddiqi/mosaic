@@ -1,5 +1,4 @@
-import { getAllProjectsApi } from "@/api/projects/projects.api";
-import { getAllUsersApi } from "@/api/users";
+import { getAllUsersApi } from "@/apis/users";
 import { useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,

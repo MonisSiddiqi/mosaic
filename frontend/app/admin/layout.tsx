@@ -3,9 +3,9 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sidebar } from "@/app/admin/-components/sidebar";
 import { Header } from "@/app/admin/-components/header";
-import { UserRoleEnum } from "@/api/users";
 import { notFound } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { UserRoleEnum } from "@/apis/users";
 
 export default function RootLayout({
   children,

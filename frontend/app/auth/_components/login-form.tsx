@@ -19,8 +19,8 @@ import { FC } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { checkSessionApi } from "@/api/auth";
 import { useRouter } from "next/navigation";
+import { checkSessionApi } from "@/apis/auth/auth.api";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),

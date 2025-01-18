@@ -1,6 +1,6 @@
-import { apiEndpoints } from "@/api/api-endpoints";
-import httpClient from "@/api";
-import { GetAllUsersApiResponse, GetUsersDto, User } from "@/api/users";
+import { apiEndpoints } from "@/apis/api-endpoints";
+import httpClient from "@/apis";
+import { GetAllUsersApiResponse, GetUsersDto, User } from "@/apis/users";
 
 export const getMyProfileApi = async (): Promise<User> => {
   const response = await httpClient.get(apiEndpoints.users.me);

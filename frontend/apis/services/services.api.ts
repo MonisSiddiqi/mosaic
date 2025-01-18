@@ -4,9 +4,9 @@ import {
   GetAllServicesApiResponse,
   Service,
   ServicesListDto,
-} from "@/api/services";
-import { apiEndpoints } from "@/api/api-endpoints";
-import httpClient from "@/api";
+} from "@/apis/services";
+import { apiEndpoints } from "@/apis/api-endpoints";
+import httpClient from "@/apis";
 
 export const getAllServicesApi = async ({
   page,

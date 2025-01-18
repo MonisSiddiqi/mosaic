@@ -1,4 +1,4 @@
-import { getMyProfileApi } from "@/api/users";
+import { getMyProfileApi } from "@/apis/users";
 import { useMutation } from "@tanstack/react-query";
 
 export const useProfileMutation = () => {

@@ -3,7 +3,7 @@ import { format } from "date-fns";
 
 import { DataTableColumnHeader } from "@/components/table";
 
-import { Project } from "@/api/projects/projects.type";
+import { Project } from "@/apis/projects/projects.type";
 
 export const projectsColumns: ColumnDef<Project>[] = [
   {

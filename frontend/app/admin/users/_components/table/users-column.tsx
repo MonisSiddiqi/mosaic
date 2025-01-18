@@ -2,18 +2,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 import { DataTableColumnHeader } from "@/components/table";
-import { GetAllUsersApiResponseItem } from "@/api/users";
+import { GetAllUsersApiResponseItem } from "@/apis/users";
 import { Badge } from "@/components/ui/badge";
 
 export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Email"
-        className="ml-2"
-      />
+      <DataTableColumnHeader column={column} title="Email" className="ml-2" />
     ),
     cell: ({ row }) => {
       return <div className="ml-2 py-2">{row.original.email}</div>;
@@ -40,19 +36,19 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
 
       if (role === "USER")
         return (
-          <Badge className=" cursor-default bg-green-700 text-white hover:bg-green-700">
+          <Badge className="cursor-default bg-green-700 text-white hover:bg-green-700">
             <p className="mx-auto">User</p>
           </Badge>
         );
       if (role === "VENDOR")
         return (
-          <Badge className=" cursor-default bg-orange-700 text-white hover:bg-orange-700">
+          <Badge className="cursor-default bg-orange-700 text-white hover:bg-orange-700">
             <p className="mx-auto">User</p>
           </Badge>
         );
       if (role === "ADMIN")
         return (
-          <Badge className=" cursor-default bg-orange-700 text-white hover:bg-orange-700">
+          <Badge className="cursor-default bg-orange-700 text-white hover:bg-orange-700">
             <p className="whitespace-nowrap">Admin</p>
           </Badge>
         );

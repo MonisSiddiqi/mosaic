@@ -1,4 +1,4 @@
-import { getAllServicesApi } from "@/api/services";
+import { getAllServicesApi } from "@/apis/services";
 import { useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,

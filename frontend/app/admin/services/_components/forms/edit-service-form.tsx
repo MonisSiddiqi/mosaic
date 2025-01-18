@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { toast } from "@/hooks/use-toast";
-import { editServiceApi } from "@/api/services";
+import { editServiceApi } from "@/apis/services";
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({

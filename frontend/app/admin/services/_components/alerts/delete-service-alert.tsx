@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
-import { deleteServiceApi } from "@/api/services";
+import { deleteServiceApi } from "@/apis/services";
 
 type Props = {
   id: string;

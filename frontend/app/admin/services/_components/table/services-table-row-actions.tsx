@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Service } from "@/api/services";
+import { Service } from "@/apis/services";
 import { DeleteServiceAlert } from "@/app/admin/services/_components/alerts/delete-service-alert";
 import { EditServiceSheet } from "../sheets/edit-service-sheet";
 

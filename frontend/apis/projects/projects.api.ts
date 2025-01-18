@@ -1,5 +1,5 @@
-import { apiEndpoints } from "@/api/api-endpoints";
-import httpClient from "@/api";
+import { apiEndpoints } from "@/apis/api-endpoints";
+import httpClient from "@/apis";
 import { GetProjectsDto } from "./projects.dto";
 import { GetAllProjectsApiResponse } from "./projects.type";
 

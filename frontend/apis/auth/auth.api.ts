@@ -1,6 +1,6 @@
-import httpClient from "@/api";
-import { LoginDto, LoginResponse } from "@/api/auth";
-import { apiEndpoints } from "@/api/api-endpoints";
+import httpClient from "@/apis";
+import { LoginDto, LoginResponse } from "@/apis/auth";
+import { apiEndpoints } from "@/apis/api-endpoints";
 
 export const loginApi = async (values: LoginDto): Promise<LoginResponse> => {
   const response = await httpClient.post(apiEndpoints.auth.login, {
