@@ -5,7 +5,6 @@ import {
   PaginationState,
   SortingState,
 } from "@tanstack/react-table";
-import { useProjectsQuery } from "@/queries/projects.queries";
 import { usersColumns } from "./users-column";
 import { UsersTableToolbar } from "./users-table-toolbar";
 import { useUsersQuery } from "@/queries/users.queries";

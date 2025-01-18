@@ -2,16 +2,12 @@ import Link from "next/link";
 import {
   Home,
   Users,
-  Building,
   Gavel,
   BarChart2,
   Bell,
   Package,
-  Truck,
   Grid,
   Layers,
-  MessageSquare,
-  FileText,
   LogOutIcon,
 } from "lucide-react";
 

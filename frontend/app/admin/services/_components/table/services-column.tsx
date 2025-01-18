@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/table";
 import { Service } from "@/api/services";
 import { ServicesTableRowActions } from "./services-table-row-actions";
-import { useState } from "react";
 import Image from "next/image";
 import { EyeOffIcon } from "lucide-react";
 
@@ -16,21 +15,17 @@ export const servicesColumns: ColumnDef<Service>[] = [
     ),
     cell: ({ row }) => {
       const icon = row.original.icon;
-      const [imageError, setImageError] = useState(false);
 
       return (
         <div className="ml-2 mt-2 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 duration-300">
-          {icon && !imageError ? (
+          {icon ? (
             <Image
               src={icon}
               alt="Service Icon"
               width={40}
               height={40}
               className="rounded-full"
-              onError={() => setImageError(true)}
             />
-          ) : imageError ? (
-            <span className="text-xs">Could not load</span>
           ) : (
             <EyeOffIcon size={24} className="text-gray-400" />
           )}

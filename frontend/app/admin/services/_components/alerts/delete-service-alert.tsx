@@ -38,10 +38,10 @@ export const DeleteServiceAlert: FC<Props> = ({ id, open, setOpen }) => {
         title: "Service Deleted Successfully",
         className: "text-green-800 bg-green-200",
       });
-    } catch (e: any) {
+    } catch (e) {
       toast({
         variant: "destructive",
-        title: e.message,
+        title: e instanceof Error ? e.message : "Could not delete service",
       });
     }
   };

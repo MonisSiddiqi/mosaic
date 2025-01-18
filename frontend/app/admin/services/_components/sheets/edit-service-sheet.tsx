@@ -32,7 +32,7 @@ export const EditServiceSheet: FC<Props> = ({
         <SheetHeader>
           <SheetTitle>Edit Service</SheetTitle>
           <SheetDescription>
-            Make Changes to this User role. Click save when you're done.
+            Make Changes to this User role. Click save when you are done.
           </SheetDescription>
         </SheetHeader>
         <EditServiceForm
