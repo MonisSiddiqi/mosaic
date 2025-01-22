@@ -38,7 +38,7 @@ export const addServiceApi = async (
 ): Promise<Service> => {
   const body = {
     icon: values.icon,
-    title: values.title,
+    name: values.title,
     description: values.description,
   };
 

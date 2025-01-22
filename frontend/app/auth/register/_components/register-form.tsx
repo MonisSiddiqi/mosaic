@@ -21,15 +21,33 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { checkSessionApi } from "@/apis/auth/auth.api";
+import Link from "next/link";
 
-const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(1, { message: "Name is required" }),
+    email: z.string().email({ message: "Please enter a valid email address." }),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 character")
+      .refine(
+        (value) =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+            value ?? "",
+          ),
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password and confirm password does not match.",
+    path: ["confirmPassword"],
+  });
+
 type Props = {
   className?: string;
 };
-export const LoginForm: FC<Props> = ({ className }) => {
+export const RegisterForm: FC<Props> = ({ className }) => {
   const { login } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -74,6 +92,24 @@ export const LoginForm: FC<Props> = ({ className }) => {
         <div className="grid w-full items-center gap-6">
           <FormField
             control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter name"
+                    {...field}
+                    className="h-12 border-gray-400 focus:outline-none"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -98,9 +134,8 @@ export const LoginForm: FC<Props> = ({ className }) => {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Your Password"
-                    autoComplete="password"
                     type="password"
+                    placeholder="Enter Password"
                     className="h-12 border-gray-400 focus:outline-none"
                     {...field}
                   />
@@ -109,19 +144,45 @@ export const LoginForm: FC<Props> = ({ className }) => {
               </FormItem>
             )}
           />
-          <Button
-            disabled={form.formState.isSubmitting}
-            type="submit"
-            className="mt-4 h-12"
-            size={"lg"}
-          >
-            {form.formState.isSubmitting ? (
-              <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <LogInIcon className="mr-2 h-4 w-4" />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Confirm password"
+                    className="h-12 border-gray-400 focus:outline-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-            Log-in
-          </Button>
+          />
+          <div className="grid items-center gap-4">
+            <Button
+              disabled={form.formState.isSubmitting}
+              type="submit"
+              className="mt-4 h-12"
+              size={"lg"}
+            >
+              {form.formState.isSubmitting ? (
+                <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <LogInIcon className="mr-2 h-4 w-4" />
+              )}
+              Register
+            </Button>
+
+            <Button type="button" variant={"link"}>
+              Forgot Password?
+              <Link href="/auth/forgot-password"></Link>
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

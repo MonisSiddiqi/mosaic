@@ -4,6 +4,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
+import { AddServiceSheet } from "../sheets/add-service-sheet";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -36,7 +37,11 @@ export function ServicesTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <div className="flex items-end gap-4">
+
+        <DataTableViewOptions table={table} />
+        <AddServiceSheet />
+      </div>
     </div>
   );
 }

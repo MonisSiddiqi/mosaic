@@ -102,7 +102,7 @@ export function Sidebar() {
                     src="https://avatar.iran.liara.run/public"
                     alt={`@${user?.name}`}
                   />
-                  <AvatarFallback className="font-semibold">JD</AvatarFallback>
+                  <AvatarFallback className="font-semibold">S</AvatarFallback>
                 </Avatar>
               </TooltipTrigger>
               <TooltipContent>
@@ -133,9 +133,7 @@ export function Sidebar() {
 
           <div className="w-full overflow-hidden">
             <p className="text-sm">Welcome</p>{" "}
-            <p className="whitespace-nowrap text-xl font-semibold">
-              {user?.name}
-            </p>
+            <p className="whitespace-nowrap text-xl font-semibold">{"Sam"}</p>
           </div>
         </div>
       </div>

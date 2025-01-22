@@ -1,7 +1,7 @@
-import { Separator } from "@/components/ui/separator";
-import { LoginForm } from "./_components/login-form";
 import { Button } from "@/components/ui/button";
+import { RegisterForm } from "./_components/register-form";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default function AuthPage() {
   return (
@@ -12,20 +12,20 @@ export default function AuthPage() {
             Mosaic <span className="text-base text-blue-500">Georgia</span>{" "}
           </p>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Register yourself with us
           </h2>
         </div>
-        <LoginForm />
-        <Separator className="mt-5" />
+        <RegisterForm />
+        <Separator />
         <div className="flex items-center justify-center">
-          <p>Don't have an account ?</p>
+          <p>Already have an account ?</p>
           <Button
             type="button"
             className="text-brand-primary"
             asChild
             variant={"link"}
           >
-            <Link href="/auth/register">Register</Link>
+            <Link href="/auth/"> Login</Link>
           </Button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -13,10 +14,10 @@ import { ConfigService } from '@nestjs/config';
 import { ApiResponse } from '../common/dto/api-response.dto';
 import { SignInResponse } from './types/sign-in-response.type';
 import { SUCCESS_SIGN_IN_MESSAGE } from './constants/messages';
-import * as nodemailer from 'nodemailer';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) {}
+
+  logger = new Logger(AuthService.name);
 
   async register(registerDto: RegisterDto): Promise<ApiResponse> {
     const { name, email, password } = registerDto;
@@ -48,14 +52,6 @@ export class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     console.log(otp);
-
-    //send otp
-    await this.sendOtpEmail(
-      email,
-      name,
-      otp,
-      'Your OTP for MOSAIC GEORGIA Registration',
-    );
 
     const user = await this.prismaService.user.upsert({
       where: {
@@ -94,6 +90,15 @@ export class AuthService {
         oneTimePassword: await this.createPassword(otp),
       },
     });
+
+    try {
+      await this.mailService.sendRegisterOtpMail(email, name, otp);
+    } catch (err) {
+      this.logger.log(otp);
+      this.logger.error(
+        err instanceof Error ? err.message : 'Could not send otp',
+      );
+    }
 
     return new ApiResponse(null, `OTP Sent successfully to (${user.email})`);
   }
@@ -226,12 +231,18 @@ export class AuthService {
     });
 
     //send mail
-    await this.sendOtpEmail(
-      email,
-      user.UserProfile.name,
-      otp,
-      'Password Reset Request for MOSAIC GEORGIA',
-    );
+    try {
+      await this.mailService.sendForgotPasswordMail(
+        email,
+        user.UserProfile.name,
+        otp,
+      );
+    } catch (err) {
+      this.logger.log(otp);
+      this.logger.error(
+        err instanceof Error ? err.message : 'Could not send otp',
+      );
+    }
 
     return new ApiResponse(
       null,
@@ -335,46 +346,5 @@ export class AuthService {
       access_token: this.jwtService.sign({ sub: id }),
       expires_in: this.configService.get<string>('jwt.expiresIn'),
     };
-  }
-
-  private async sendOtpEmail(
-    email: string,
-    name: string,
-    otp: string,
-    subject: string,
-  ) {
-    const transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('smtp.host'),
-      port: this.configService.get<number>('smtp.port'),
-      secure: true,
-      auth: {
-        user: this.configService.get<string>('smtp.user'),
-        pass: this.configService.get<string>('smtp.password'),
-      },
-      tls: {
-        rejectUnauthorized: false, // Use only in development
-      },
-    });
-
-    const mailOptions = {
-      from: this.configService.get<string>('smtp.user'),
-      to: email,
-      subject: subject,
-      html: `
-        <p>Dear ${name},</p>
-        <p>Your OTP is:</p>
-        <p><strong>${otp}</strong></p>
-        <p>Please do not share this OTP with anyone to ensure the security of your account.</p>
-        <p>If you did not request this, please ignore this message.</p>
-        <p>Thank you for choosing us </p>
-        <p>Best regards,<br />MOSAIC GEORGIA Support Team</p>
-      `,
-    };
-
-    try {
-      await transporter.sendMail(mailOptions);
-    } catch (error) {
-      console.log(error);
-    }
   }
 }

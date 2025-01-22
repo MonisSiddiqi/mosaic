@@ -20,9 +20,10 @@ import { addServiceApi } from "@/apis/services";
 import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  icon: z.instanceof(File).refine((file) => file.type === "image/svg+xml", {
-    message: "Only SVG files are allowed.",
-  }),
+  icon: z.instanceof(File)
+    .refine((file) => file.type === "image/svg+xml", {
+      message: "Only SVG files are allowed.",
+    }).optional(),
   title: z.string().min(2, "Title is required."),
   description: z.string().min(5, "Description is required."),
 });

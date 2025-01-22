@@ -21,6 +21,8 @@ import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { ProjectsController } from './projects/projects.controller';
+import { MailModule } from './mail/mail.module';
+import { MailController } from './mail/mail.controller';
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { ProjectsController } from './projects/projects.controller';
     UsersModule,
     ProjectsModule,
     AddressesModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [
@@ -73,6 +76,7 @@ export class AppModule {
         ServicesController,
         UsersController,
         ProjectsController,
+        MailController,
       );
   }
 }
