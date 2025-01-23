@@ -50,9 +50,7 @@ export class AuthService {
 
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    console.log(otp);
-
+    
     const user = await this.prismaService.user.upsert({
       where: {
         email,
@@ -94,7 +92,7 @@ export class AuthService {
     try {
       await this.mailService.sendRegisterOtpMail(email, name, otp);
     } catch (err) {
-      this.logger.log(otp);
+      this.logger.debug(otp);
       this.logger.error(
         err instanceof Error ? err.message : 'Could not send otp',
       );

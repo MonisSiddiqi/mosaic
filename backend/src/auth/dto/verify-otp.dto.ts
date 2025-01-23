@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+import { OtpType } from '@prisma/client';
+import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
 
 export class VerifyOtpDto {
   @IsNotEmpty()
@@ -7,4 +8,9 @@ export class VerifyOtpDto {
 
   @IsEmail()
   email: string;
+
+  @IsEnum(OtpType, {
+    message: `Invalid otp type must be one of the : ${Object.keys(OtpType).join(',')}`,
+  })
+  type: OtpType;
 }

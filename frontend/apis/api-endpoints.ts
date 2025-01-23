@@ -9,6 +9,8 @@ export const apiEndpoints = {
     login: `/api/v1/auth/login`,
     logout: `/api/v1/auth/logout`,
     check: `/api/v1/auth/check`,
+    register: `/api/v1/auth/register`,
+    verifyOtp: `/api/v1/auth/verify-otp`,
   },
   users: {
     me: `/api/v1/users/me`,

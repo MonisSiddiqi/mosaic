@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+
 import {
   Logger,
   VERSION_NEUTRAL,
@@ -7,7 +8,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { AppModule } from './app.module';

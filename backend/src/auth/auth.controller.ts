@@ -44,7 +44,10 @@ export class AuthController {
   async verifyOtp(
     @Body() verifyOtpDto: VerifyOtpDto,
   ): Promise<ApiResponse<SignInResponse>> {
-    const result = await this.authService.verifyOtp(verifyOtpDto);
+    const result =
+      verifyOtpDto.type === 'REGISTRATION'
+        ? await this.authService.verifyOtp(verifyOtpDto)
+        : await this.authService.verifyForgotPasswordOtp(verifyOtpDto);
 
     response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
 
@@ -102,6 +105,7 @@ export class AuthController {
 
         return new ApiResponse<boolean>(true, 'Session is valid.');
       }
+
       throw new UnauthorizedException();
     } catch (e) {
       return new ApiResponse<boolean>(false, e.message);

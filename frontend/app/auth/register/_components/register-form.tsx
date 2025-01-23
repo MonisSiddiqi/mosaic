@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { checkSessionApi } from "@/apis/auth/auth.api";
 import Link from "next/link";
+import { useRegisterMutation } from "@/queries/auth.queries";
 
 const formSchema = z
   .object({
@@ -58,21 +59,15 @@ export const RegisterForm: FC<Props> = ({ className }) => {
     },
   });
 
-  const search = sessionStorage.getItem("redirect");
-
   const router = useRouter();
+
+  const registerMutation = useRegisterMutation();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await login(values);
-      await checkSessionApi();
+      await registerMutation.mutateAsync(values);
 
-      toast({
-        variant: "success",
-        title: "Login Successfully",
-      });
-
-      router.push(search || "/admin");
+      router.push("/auth/verify-otp");
     } catch (e: unknown) {
       if (e instanceof Error) {
         toast({
