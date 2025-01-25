@@ -21,6 +21,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { checkSessionApi } from "@/apis/auth/auth.api";
+import { OtpType } from "@/apis/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),

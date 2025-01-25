@@ -68,6 +68,7 @@ export class AppModule {
         { path: '/auth/login', method: RequestMethod.POST },
         { path: '/auth/logout', method: RequestMethod.DELETE },
         { path: '/auth/check', method: RequestMethod.POST },
+        { path: '/auth/verify-otp', method: RequestMethod.POST },
         { path: '/notification/receive', method: RequestMethod.GET },
         { path: '/notification', method: RequestMethod.GET },
       )
@@ -77,6 +78,7 @@ export class AppModule {
         UsersController,
         ProjectsController,
         MailController,
+        UsersController,
       );
   }
 }

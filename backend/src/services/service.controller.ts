@@ -13,7 +13,7 @@ import {
   UploadedFile,
   Query,
 } from '@nestjs/common';
-import { UserRoleEnum } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 import { CreateServiceDto } from './dto/create-service.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -30,7 +30,7 @@ export class ServicesController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.ADMIN)
+  @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'icon', maxCount: 1 }], {
       fileFilter: (_, file, cb) => {
@@ -69,7 +69,7 @@ export class ServicesController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.ADMIN)
+  @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'icon', maxCount: 1 }], {
       fileFilter: (_, file, cb) => {
@@ -97,7 +97,7 @@ export class ServicesController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.ADMIN)
+  @Roles(UserRole.ADMIN)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.servicesService.remove(id);
   }

@@ -16,11 +16,11 @@ datasource db {
 model User {
   id String @id @default(uuid()) @db.VarChar(36)
 
-  email           String       @unique
+  email           String   @unique
   password        String
-  isEmailVerified Boolean      @default(false)
-  isActive        Boolean      @default(true)
-  role            UserRoleEnum @default(USER)
+  isEmailVerified Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  role            UserRole @default(USER)
 
   UserProfile UserProfile?
   projects    Project[] // Projects they created
@@ -77,16 +77,16 @@ model Service {
 model Project {
   id String @id @default(uuid()) @db.VarChar(36)
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId    String   @db.VarChar(36)
   Service   Service? @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   serviceId String?
-  Address   Address? @relation(fields: [addressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Address   Address? @relation(fields: [addressId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   addressId String?  @db.VarChar(36)
 
   title       String
   description String
-  status      ProjectStatusEnum @default(IN_PROGRESS)
+  status      ProjectStatus @default(IN_PROGRESS)
 
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
@@ -116,76 +116,21 @@ model SiteMeasurement {
 }
 
 model Address {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  countryId String  @db.VarChar(36)
-  state     State   @relation(fields: [stateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  stateId   String  @db.VarChar(36)
-  city      City    @relation(fields: [cityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  cityId    String  @db.VarChar(36)
-
-  line1      String
-  line2      String?
-  postalCode String
-
+  id     String  @id @default(uuid()) @db.VarChar(36)
   // Relation to User for vendor address
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String? @unique @db.VarChar(36)
 
+  line1      String
+  line2      String?
+  country    String
+  state      String
+  city       String
+  postalCode String
+
   updatedAt DateTime  @updatedAt @db.Timestamptz
   createdAt DateTime  @default(now()) @db.Timestamptz
   Project   Project[]
-
-  @@index([countryId, stateId, cityId])
-}
-
-model Country {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  name String @unique
-  code String @unique
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
-  State   State[]
-  Address Address[]
-}
-
-model State {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  countryId String
-  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  name String
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
-  City    City[]
-  Address Address[]
-
-  @@unique([countryId, name])
-  @@index([countryId])
-}
-
-model City {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  state   State  @relation(fields: [stateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  stateId String @db.VarChar(36)
-
-  name String
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
-  Address Address[]
-
-  @@unique([stateId, name])
-  @@index([stateId])
 }
 
 model Tag {
@@ -221,7 +166,7 @@ model ProjectImage {
   projectId String  @db.VarChar(36)
 
   url  String
-  type ProjectImageEnum
+  type ImageType
 
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
@@ -233,9 +178,9 @@ model Bid {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String  @db.VarChar(36)
 
-  vendor   User          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId String        @db.VarChar(36)
-  status   BidStatusEnum @default(PENDING)
+  vendor   User      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId String    @db.VarChar(36)
+  status   BidStatus @default(PENDING)
 
   proposalMessage    String?
   proposalAttachment String?
@@ -350,12 +295,12 @@ enum OtpType {
   FORGOT_PASSWORD
 }
 
-enum ProjectImageEnum {
+enum ImageType {
   BEFORE
   AFTER
 }
 
-enum MeasurementUnitEnum {
+enum MeasurementUnit {
   METER
   FEET
   YARD
@@ -363,19 +308,19 @@ enum MeasurementUnitEnum {
   SQUARE_FEET
 }
 
-enum ProjectStatusEnum {
+enum ProjectStatus {
   IN_PROGRESS
   AWARDED
   COMPLETED
 }
 
-enum BidStatusEnum {
+enum BidStatus {
   PENDING
   ACCEPTED
   REJECTED
 }
 
-enum UserRoleEnum {
+enum UserRole {
   USER
   VENDOR
   ADMIN

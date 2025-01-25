@@ -1,24 +1,24 @@
-import { registerApi, verifyOtpApi } from "@/apis/auth";
+import { registerApi, verifyOtpApi, VerifyOtpDto } from "@/apis/auth";
 import { getMyProfileApi } from "@/apis/users";
 import { useMutation } from "@tanstack/react-query";
 
 export const useProfileMutation = () => {
   return useMutation({
-    mutationKey: ["user", "getProfile"],
+    mutationKey: ["profile"],
     mutationFn: getMyProfileApi,
   });
 };
 
 export const useRegisterMutation = () => {
   return useMutation({
-    mutationKey: ["auth", "register"],
+    mutationKey: ["register"],
     mutationFn: registerApi,
   });
 };
 
 export const useVerifyOtpMutation = () => {
   return useMutation({
-    mutationKey: ["auth", "verifyOtp"],
+    mutationKey: ["verifyOtp"],
     mutationFn: verifyOtpApi,
   });
 };

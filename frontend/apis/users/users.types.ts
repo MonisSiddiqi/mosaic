@@ -32,8 +32,8 @@ export type GetAllUsersApiResponse = {
 
 export type AuthUser = User;
 
-export enum UserRoleEnum {
-  USER = "USER",
-  VENDOR = "VENDOR",
-  ADMIN = "ADMIN",
+export enum UserRole {
+  USER,
+  VENDOR,
+  ADMIN,
 }

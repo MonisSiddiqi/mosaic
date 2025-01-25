@@ -1,5 +1,5 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { Prisma, User, UserRoleEnum } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { GetUsersDto } from './dto/get-user.dto';
@@ -41,7 +41,7 @@ export class UsersService {
 
     if (roleFilter) {
       userWhereInput.role = {
-        in: (roleFilter.value as UserRoleEnum[]) || undefined,
+        in: (roleFilter.value as UserRole[]) || undefined,
       };
     }
 

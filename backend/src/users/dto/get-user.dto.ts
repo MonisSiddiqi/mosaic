@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
 
-import { UserRoleEnum } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { SortingValue } from 'src/common/enum/sorting-value.enum';
 
 export enum UsersSortingFieldEnum {
@@ -23,10 +23,7 @@ export class GetUsersDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [
-    { id: 'role'; value: UserRoleEnum[] },
-    { id: 'email'; value: string },
-  ];
+  filter: [{ id: 'role'; value: UserRole[] }, { id: 'email'; value: string }];
 
   @IsOptional()
   @IsNumber()

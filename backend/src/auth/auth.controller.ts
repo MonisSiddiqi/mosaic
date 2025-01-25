@@ -9,7 +9,7 @@ import {
   Res,
   Delete,
 } from '@nestjs/common';
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 import { LoginDto } from './dto/login.dto';
@@ -43,13 +43,20 @@ export class AuthController {
   @SkipAuth()
   async verifyOtp(
     @Body() verifyOtpDto: VerifyOtpDto,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<ApiResponse<SignInResponse>> {
     const result =
       verifyOtpDto.type === 'REGISTRATION'
         ? await this.authService.verifyOtp(verifyOtpDto)
         : await this.authService.verifyForgotPasswordOtp(verifyOtpDto);
 
+    console.log('here');
+
+    console.log(result);
+
     response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
+
+    console.log('here 2');
 
     return result;
   }
@@ -73,14 +80,6 @@ export class AuthController {
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<ApiResponse> {
     return this.authService.forgotPassword(forgotPasswordDto);
-  }
-
-  @Post('forgot-password/verify-otp')
-  @SkipAuth()
-  verifyForgotPasswordOtp(
-    @Body() verifyOtpDto: VerifyOtpDto,
-  ): Promise<ApiResponse<SignInResponse>> {
-    return this.authService.verifyForgotPasswordOtp(verifyOtpDto);
   }
 
   @Post('create-password')

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User, UserRoleEnum } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { GetBidsDto } from './dto/get-bids.dto';
@@ -13,7 +13,7 @@ export class BidsService {
 
     const projectWhereInput: Prisma.ProjectWhereInput = {};
 
-    if (authUser.role !== UserRoleEnum.ADMIN) {
+    if (authUser.role !== UserRole.ADMIN) {
       projectWhereInput.userId = authUser.id;
     }
 

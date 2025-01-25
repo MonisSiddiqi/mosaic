@@ -15,9 +15,9 @@ export const DefaultErrorPage: FC<FallbackProps> = ({ error }) => {
           <p className="mt-4 text-center font-medium text-gray-600">
             An error occurred while loading the page. Please try again.
             {error && (
-              <pre className="text-destructive">
+              <span className="text-destructive">
                 {JSON.stringify(error.message, null, 2)}
-              </pre>
+              </span>
             )}
           </p>
         </div>

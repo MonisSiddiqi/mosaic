@@ -1,4 +1,4 @@
-import { PrismaClient, UserRoleEnum } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -8,7 +8,7 @@ async function main() {
     name: 'Sam',
     email: 'sam@mosaic.com',
     password: await createHash('password'),
-    role: UserRoleEnum.ADMIN,
+    role: UserRole.ADMIN,
   };
 
   const prismaAdmin = await prisma.user.upsert({
@@ -36,7 +36,7 @@ async function main() {
     update: {},
     create: {
       email: 'user@mosaic.com',
-      role: UserRoleEnum.USER,
+      role: UserRole.USER,
       password: await createHash('password'),
       isActive: true,
       UserProfile: {
@@ -47,7 +47,7 @@ async function main() {
     },
   });
 
-  console.log('User seeded ', user);
+  console.log('User seeded', user);
 }
 
 main()

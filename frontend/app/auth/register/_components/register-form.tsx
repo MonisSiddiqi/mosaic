@@ -18,11 +18,10 @@ import { Button } from "@/components/ui/button";
 import { FC } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import { checkSessionApi } from "@/apis/auth/auth.api";
-import Link from "next/link";
 import { useRegisterMutation } from "@/queries/auth.queries";
+import { OtpType } from "@/apis/auth";
+import Link from "next/link";
 
 const formSchema = z
   .object({
@@ -49,13 +48,13 @@ type Props = {
   className?: string;
 };
 export const RegisterForm: FC<Props> = ({ className }) => {
-  const { login } = useAuth();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -67,14 +66,19 @@ export const RegisterForm: FC<Props> = ({ className }) => {
     try {
       await registerMutation.mutateAsync(values);
 
-      router.push("/auth/verify-otp");
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        toast({
-          variant: "destructive",
-          title: e.message,
-        });
-      }
+      toast({
+        variant: "success",
+        title: "Otp sent successfully",
+      });
+
+      router.push(
+        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${form.getValues("email")}`,
+      );
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: err instanceof Error ? err.message : "Could not sent otp",
+      });
     }
   };
 

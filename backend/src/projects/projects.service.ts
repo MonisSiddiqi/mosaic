@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { GetProjectsDto } from './dto/get-projects.dto';
-import { Prisma, User, UserRoleEnum } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 
@@ -19,7 +19,7 @@ export class ProjectsService {
 
     const projectWhereInput: Prisma.ProjectWhereInput = {};
 
-    if (authUser.role !== UserRoleEnum.ADMIN) {
+    if (authUser.role !== UserRole.ADMIN) {
       projectWhereInput.userId = authUser.id;
     }
 
