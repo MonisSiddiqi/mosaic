@@ -7,7 +7,7 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  role: UserRoleEnum;
+  role: UserRole;
   isActive: boolean;
   updatedAt: string;
   createdAt: string;
@@ -33,7 +33,7 @@ export type GetAllUsersApiResponse = {
 export type AuthUser = User;
 
 export enum UserRole {
-  USER,
-  VENDOR,
-  ADMIN,
+  USER = "USER",
+  VENDOR = "VENDOR",
+  ADMIN = "ADMIN",
 }

@@ -3,23 +3,33 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sidebar } from "@/app/admin/-components/sidebar";
 import { Header } from "@/app/admin/-components/header";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { UserRoleEnum } from "@/apis/users";
+import { UserRole } from "@/apis/users";
+import { useEffect } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
+  const router = useRouter();
 
-  if (!user) {
-    logout();
-  }
+  console.log("user ", user);
 
-  if (user?.role !== UserRoleEnum.ADMIN) {
-    notFound();
+  // Handle unauthenticated and unauthorized users
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth"); // Redirect to the auth page
+    } else if (user?.role !== UserRole.ADMIN) {
+      notFound(); // Show a 404 page for non-admin users
+    }
+  }, []);
+
+  // Show nothing (or a loading spinner) while the `useEffect` runs
+  if (!isAuthenticated || user?.role !== UserRole.ADMIN) {
+    return null; // Or return a loading component
   }
 
   return (
