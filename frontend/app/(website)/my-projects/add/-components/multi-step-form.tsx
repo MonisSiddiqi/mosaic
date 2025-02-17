@@ -17,8 +17,9 @@ import {
 } from "lucide-react";
 import { ProjectDetails } from "./form-steps/project-details";
 import { Location } from "./form-steps/locations";
-import { SiteMeasurement } from "./form-steps/site-measurement";
-import { Budget } from "./form-steps/budget";
+import { SiteMeasurements } from "./form-steps/site-measurement";
+import { BudgetStep } from "./form-steps/budget";
+import { AddProjectDto } from "@/apis/projects/projects.type";
 
 const steps = [
   { title: "Project Details", icon: Building2Icon },
@@ -29,7 +30,21 @@ const steps = [
 
 export function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<AddProjectDto>({
+    title: "",
+    description: "",
+    city: "",
+    country: "",
+    line1: "",
+    postalCode: "",
+    serviceId: "",
+    state: "",
+    width: "",
+    height: "",
+    length: "",
+    area: "",
+    tags: [],
+  });
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -48,20 +63,45 @@ export function MultiStepForm() {
     console.log("Form submitted:", formData);
   };
 
-  const updateFormData = (stepData: object) => {
-    setFormData({ ...formData, ...stepData });
-  };
-
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <ProjectDetails updateFormData={updateFormData} />;
+        return (
+          <ProjectDetails
+            currentStep={currentStep}
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+            steps={steps}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        );
       case 1:
-        return <Location />;
+        return (
+          <Location
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        );
       case 2:
-        return <SiteMeasurement />;
+        return (
+          <SiteMeasurements
+            formData={formData}
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+            setFormData={setFormData}
+          />
+        );
       case 3:
-        return <Budget />;
+        return (
+          <BudgetStep
+            formData={formData}
+            handlePrevious={handlePrevious}
+            setFormData={setFormData}
+          />
+        );
       default:
         return null;
     }
@@ -96,32 +136,13 @@ export function MultiStepForm() {
         ))}
       </div>
       <Card>
-        <CardHeader>
+        <CardHeader className="border-gray300 border">
           <CardTitle className="flex items-center gap-4">
             <CurrentStepIcon />
             {steps[currentStep].title}
           </CardTitle>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="p-4 md:p-6">{renderStep()}</CardContent>
-          <CardFooter className="flex justify-between">
-            <Button
-              type="button"
-              onClick={handlePrevious}
-              disabled={currentStep === 0}
-              variant="outline"
-            >
-              Previous
-            </Button>
-            {currentStep === steps.length - 1 ? (
-              <Button type="submit">Submit</Button>
-            ) : (
-              <Button disabled type="button" onClick={handleNext}>
-                Next
-              </Button>
-            )}
-          </CardFooter>
-        </form>
+        <CardContent className="p-4 md:p-6">{renderStep()}</CardContent>
       </Card>
     </div>
   );

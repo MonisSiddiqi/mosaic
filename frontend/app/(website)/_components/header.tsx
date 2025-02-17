@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 
 import LogoImage from "@/app/assets/logo.png";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 import {
   Sheet,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { UserProfile } from "./user-profile";
 
 const navigationItems = [
   { name: "Home", href: "/" },
@@ -77,14 +77,7 @@ export const Header = () => {
                 This is the list of nav items
               </SheetDescription>
               <div className="flex justify-center border-b border-gray-300 py-5">
-                <Button asChild variant={"secondary"}>
-                  <Link
-                    href="/"
-                    className="text-sm font-medium hover:text-primary"
-                  >
-                    Login/Signup
-                  </Link>
-                </Button>
+                <UserProfile />
               </div>
             </SheetHeader>
 
@@ -107,18 +100,7 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild variant={"secondary"}>
-            <Link href="/auth/register" className="text-sm font-medium">
-              Register
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/auth" className="text-sm font-medium">
-              Login
-            </Link>
-          </Button>
-        </div>
+        <UserProfile />
       </div>
     </header>
   );

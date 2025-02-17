@@ -20,10 +20,12 @@ import { addServiceApi } from "@/apis/services";
 import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  icon: z.instanceof(File)
+  icon: z
+    .instanceof(File)
     .refine((file) => file.type === "image/svg+xml", {
       message: "Only SVG files are allowed.",
-    }).optional(),
+    })
+    .optional(),
   title: z.string().min(2, "Title is required."),
   description: z.string().min(5, "Description is required."),
 });
@@ -91,11 +93,7 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
               <FormItem>
                 <FormLabel>Icon (SVG)</FormLabel>
                 <FormControl>
-                  <Input
-                    type="file"
-                    accept=".svg"
-                    onChange={(e) => field.onChange(e.target.files?.[0])}
-                  />
+                  <Input type="file" accept=".svg" {...field} />
                 </FormControl>
                 <FormDescription>
                   Upload a .svg icon for the service.

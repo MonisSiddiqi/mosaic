@@ -25,10 +25,13 @@ export class StorageService {
   private readonly s3Client: S3Client;
   private readonly region: string;
   private readonly bucketName: string;
+  private readonly config: S3Config;
 
   constructor(private readonly configService: ConfigService) {
     const config = this.configService.get<S3Config>('s3');
     const nodeEnv = this.configService.get<NodeEnv>('nodeEnv');
+
+    this.config = config;
 
     this.region = config?.region || '';
     this.bucketName = config?.bucketName || '';
@@ -45,13 +48,10 @@ export class StorageService {
           maxSockets: 15000,
         }),
       }),
-      credentials:
-        nodeEnv === 'development'
-          ? {
-              accessKeyId: config?.accessKeyId || '',
-              secretAccessKey: config?.secretAccessKey || '',
-            }
-          : undefined,
+      credentials: {
+        accessKeyId: config?.accessKeyId || '',
+        secretAccessKey: config?.secretAccessKey || '',
+      },
     });
   }
 

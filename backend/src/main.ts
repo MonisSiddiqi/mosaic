@@ -41,7 +41,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const cookieSigningKey = configService.get<string>('cookie.signingKey');
-
   app.use(cookieParser(cookieSigningKey));
 
   app.useGlobalFilters(new AllExceptionsFilter());

@@ -1,21 +1,92 @@
+import { Preference } from '@prisma/client';
+import { Transform } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
+
 export class CreateProjectDto {
+  @IsNotEmpty()
+  @IsString()
   title: string;
 
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
+  @IsNotEmpty()
+  @IsString()
   serviceId: string;
 
-  countryId: string;
+  @IsOptional()
+  @IsEnum(Preference)
+  preference?: Preference;
 
-  stateId: string;
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  tags: string[];
 
-  cityId: string;
+  //Address
 
+  @IsNotEmpty()
+  @IsString()
   line1: string;
 
-  line2: string;
+  @IsOptional()
+  @IsString()
+  line2?: string;
 
+  @IsNotEmpty()
+  @IsString()
+  country: string;
+
+  @IsNotEmpty()
+  @IsString()
+  state: string;
+
+  @IsNotEmpty()
+  @IsString()
+  city: string;
+
+  @IsNotEmpty()
+  @IsString()
   postalCode: string;
 
-  projectTag: string[];
+  //site measurements
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value), {
+    toClassOnly: true,
+  })
+  length?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value), {
+    toClassOnly: true,
+  })
+  width?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value), {
+    toClassOnly: true,
+  })
+  height?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value), {
+    toClassOnly: true,
+  })
+  area?: number;
 }

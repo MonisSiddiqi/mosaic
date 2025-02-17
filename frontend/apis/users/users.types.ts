@@ -6,17 +6,18 @@ export type LoginResponse = {
 export type User = {
   id: string;
   email: string;
-  name: string;
   role: UserRole;
   isActive: boolean;
   updatedAt: string;
   createdAt: string;
+  UserProfile: UserProfile;
 };
 
 export type UserProfile = {
   id: string;
   userId: string;
   name: string;
+  image: string | null;
   updatedAt: string;
   createdAt: string;
 };

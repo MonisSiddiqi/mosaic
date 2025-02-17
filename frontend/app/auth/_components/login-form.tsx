@@ -21,6 +21,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { checkSessionApi } from "@/apis/auth/auth.api";
+import { UserRole } from "@/apis/users";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -30,7 +31,7 @@ type Props = {
   className?: string;
 };
 export const LoginForm: FC<Props> = ({ className }) => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +55,13 @@ export const LoginForm: FC<Props> = ({ className }) => {
         title: "Login Successfully",
       });
 
-      router.push(search || "/admin");
+      console.log(user?.role, UserRole.ADMIN);
+
+      if (user?.role === UserRole.ADMIN) {
+        router.push(search || "/admin");
+      } else {
+        router.push(search || "/");
+      }
     } catch (e: unknown) {
       if (e instanceof Error) {
         toast({

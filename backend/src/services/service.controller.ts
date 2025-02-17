@@ -12,6 +12,7 @@ import {
   BadRequestException,
   UploadedFile,
   Query,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 
@@ -90,7 +91,7 @@ export class ServicesController {
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
-    @UploadedFile() icon: Express.Multer.File,
+    @UploadedFiles() icon: Express.Multer.File,
   ) {
     return this.servicesService.update(id, updateServiceDto, icon);
   }

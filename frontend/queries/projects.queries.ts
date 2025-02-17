@@ -1,5 +1,5 @@
-import { getAllProjectsApi } from "@/apis/projects/projects.api";
-import { useQuery } from "@tanstack/react-query";
+import { addProjectApi, getAllProjectsApi } from "@/apis/projects/projects.api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
   PaginationState,
@@ -38,5 +38,12 @@ export const useProjectsQuery = ({
         filter: filter,
       });
     },
+  });
+};
+
+export const useAddProjectMutation = () => {
+  return useMutation({
+    mutationKey: ["addProject"],
+    mutationFn: addProjectApi,
   });
 };

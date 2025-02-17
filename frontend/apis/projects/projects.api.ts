@@ -1,7 +1,11 @@
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
 import { GetProjectsDto } from "./projects.dto";
-import { GetAllProjectsApiResponse } from "./projects.type";
+import {
+  AddProjectDto,
+  GetAllProjectsApiResponse,
+  Project,
+} from "./projects.type";
 
 export const getAllProjectsApi = async ({
   page,
@@ -19,5 +23,12 @@ export const getAllProjectsApi = async ({
       sortValue,
     },
   });
+  return response.data.result;
+};
+
+export const addProjectApi = async (
+  values: AddProjectDto,
+): Promise<Project> => {
+  const response = await httpClient.post(apiEndpoints.projects.add, values);
   return response.data.result;
 };
