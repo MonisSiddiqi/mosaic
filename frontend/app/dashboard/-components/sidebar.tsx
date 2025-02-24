@@ -20,50 +20,50 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { SidebarLink } from "@/app/admin/-components/sidebar-link";
+import { SidebarLink } from "@/app/dashboard/-components/sidebar-link";
 
 import { Button } from "@/components/ui/button";
 
 export const routes = [
   {
-    href: "/admin",
+    href: "/dashboard",
     icon: <Home className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Dashboard",
   },
   {
-    href: "/admin/services",
+    href: "/dashboard/services",
     icon: <Layers className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Services",
   },
   {
-    href: "/admin/projects",
+    href: "/dashboard/projects",
     icon: <Grid className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Projects",
   },
   {
-    href: "/admin/users",
+    href: "/dashboard/users",
     icon: <Users className="h-5 min-h-5 w-5 min-w-5" />,
     text: "User Management",
   },
   {
-    href: "/admin/bids",
+    href: "/dashboard/bids",
     icon: <Gavel className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Bidding Management",
   },
   {
-    href: "/admin/reports",
+    href: "/dashboard/reports",
     icon: <BarChart2 className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Reporting & Analytics",
   },
 
   {
-    href: "/admin/subscriptions",
+    href: "/dashboard/subscriptions",
     icon: <Package className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Subscription Management",
   },
 
   {
-    href: "/admin/notifications",
+    href: "/dashboard/notifications",
     icon: <Bell className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Notifications",
   },
@@ -79,7 +79,7 @@ export function Sidebar() {
       <div>
         {" "}
         <Link
-          href="/admin"
+          href="/dashboard"
           className="flex items-center space-x-2 border-b border-gray-500 px-4 py-4"
         >
           <Package className="h-8 w-8" />

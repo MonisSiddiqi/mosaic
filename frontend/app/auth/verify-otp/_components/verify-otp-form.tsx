@@ -75,7 +75,7 @@ export const VerifyOtpForm: FC<Props> = ({ type, email }) => {
       });
 
       if (user.role === UserRole.ADMIN) {
-        router.push("/admin");
+        router.push("/dashboard");
       } else if (user.role === UserRole.VENDOR) {
         router.push("/vendor");
       } else {

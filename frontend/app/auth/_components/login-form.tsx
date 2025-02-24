@@ -58,7 +58,7 @@ export const LoginForm: FC<Props> = ({ className }) => {
       console.log(user?.role, UserRole.ADMIN);
 
       if (user?.role === UserRole.ADMIN) {
-        router.push(search || "/admin");
+        router.push(search || "/dashboard");
       } else {
         router.push(search || "/");
       }

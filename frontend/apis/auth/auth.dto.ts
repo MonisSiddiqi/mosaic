@@ -1,3 +1,5 @@
+import { OtpType } from "./auth.type";
+
 export type LoginDto = {
   email: string;
   password: string;
@@ -14,8 +16,3 @@ export type VerifyOtpDto = {
   otp: string;
   type: OtpType;
 };
-
-export enum OtpType {
-  REGISTRATION = "REGISTRATION",
-  FORGOT_PASSWORD = "FORGOT_PASSWORD",
-}

@@ -4,6 +4,6 @@ export type LoginResponse = {
 };
 
 export enum OtpType {
-  REGISTRATION,
-  FORGOT_PASSWORD,
+  REGISTRATION = "REGISTRATION",
+  FORGOT_PASSWORD = "FORGOT_PASSWORD",
 }

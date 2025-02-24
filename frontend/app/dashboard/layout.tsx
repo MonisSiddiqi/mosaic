@@ -1,8 +1,8 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sidebar } from "@/app/admin/-components/sidebar";
-import { Header } from "@/app/admin/-components/header";
+import { Sidebar } from "@/app/dashboard/-components/sidebar";
+import { Header } from "@/app/dashboard/-components/header";
 import { notFound, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";

@@ -14,6 +14,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { getFileUrl, getInitials } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { LogOutIcon, UserCircle } from "lucide-react";
+import { UserRole } from "@/apis/users";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function UserProfile() {
   const { user, logout } = useAuth();
@@ -32,6 +35,14 @@ export function UserProfile() {
       });
     }
   };
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && user.role !== UserRole.USER) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
   return user ? (
     <DropdownMenu>

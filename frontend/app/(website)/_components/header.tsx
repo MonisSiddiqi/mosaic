@@ -100,7 +100,9 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <UserProfile />
+        <div className="hidden lg:flex">
+          <UserProfile />
+        </div>
       </div>
     </header>
   );
