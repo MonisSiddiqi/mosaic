@@ -1,7 +1,7 @@
 "use client";
 
 import { checkSessionApi, loginApi, LoginDto, logoutApi } from "@/apis/auth";
-import { AuthUser, getMyProfileApi } from "@/apis/users";
+import { getMyProfileApi, ProfileApiResponse } from "@/apis/users";
 import { GlobalPending } from "@/components/global-pending";
 import { useProfileMutation } from "@/queries/auth.queries";
 
@@ -19,14 +19,14 @@ export interface AuthContext {
   isAuthenticated: boolean;
   login: (loginDto: LoginDto) => Promise<void>;
   logout: () => Promise<void>;
-  user: AuthUser | null;
-  setUser: Dispatch<SetStateAction<AuthUser | null>>;
+  user: ProfileApiResponse | null;
+  setUser: Dispatch<SetStateAction<ProfileApiResponse | null>>;
 }
 
 export const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<ProfileApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const isAuthenticated = !!user;

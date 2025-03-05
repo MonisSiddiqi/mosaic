@@ -1,8 +1,13 @@
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
-import { GetAllUsersApiResponse, GetUsersDto, User } from "@/apis/users";
+import {
+  GetAllUsersApiResponse,
+  GetUsersDto,
+  ProfileApiResponse,
+  User,
+} from "@/apis/users";
 
-export const getMyProfileApi = async (): Promise<User> => {
+export const getMyProfileApi = async (): Promise<ProfileApiResponse> => {
   const response = await httpClient.get(apiEndpoints.users.me);
   return response.data.result;
 };

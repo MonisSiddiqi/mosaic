@@ -30,7 +30,7 @@ model User {
   vendorTags     VendorTag[]
   vendorServices VendorService[]
   submittedBids  Bid[]
-  vendorAddress  Address?
+  Address        Address?
 
   updatedAt     DateTime        @updatedAt @db.Timestamptz
   createdAt     DateTime        @default(now()) @db.Timestamptz

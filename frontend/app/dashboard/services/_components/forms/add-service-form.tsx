@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { RefreshCcwIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FC, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -15,9 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
-import { addServiceApi } from "@/apis/services";
 import { toast } from "@/hooks/use-toast";
+import { useAddServiceMutation } from "@/queries/services.queries";
 
 const formSchema = z.object({
   icon: z
@@ -35,6 +35,8 @@ type Props = {
 };
 
 export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
+  const [svgPreview, setSvgPreview] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,28 +46,7 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
     },
   });
 
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationKey: ["service/add"],
-    mutationFn: addServiceApi,
-    onSuccess: () => {
-      toast({
-        className: "bg-green-200 text-green-700",
-        title: "Service Added Successfully",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["services"],
-      });
-      toggleOpen(false);
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: error.message,
-      });
-    },
-  });
+  const mutation = useAddServiceMutation();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -74,6 +55,8 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
         variant: "success",
         title: "Service Added Successfully",
       });
+
+      toggleOpen(false);
     } catch (e) {
       toast({
         variant: "destructive",
@@ -86,57 +69,95 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="mt-4 grid w-full gap-4">
+          {/* SVG Icon Upload & Preview */}
           <FormField
             control={form.control}
             name="icon"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Icon (SVG)</FormLabel>
+                <FormLabel>Service Icon (SVG Format)</FormLabel>
                 <FormControl>
-                  <Input type="file" accept=".svg" {...field} />
+                  <Input
+                    type="file"
+                    accept=".svg"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = (event) => {
+                          setSvgPreview(event.target?.result as string);
+                        };
+                      }
+                      field.onChange(file);
+                    }}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Upload a .svg icon for the service.
+                  Upload an SVG file to represent the service. A preview will be
+                  displayed below.
                 </FormDescription>
                 <FormMessage />
+                {svgPreview && (
+                  <div className="mt-3">
+                    <p className="text-sm font-semibold">SVG Preview:</p>
+                    <div className="mt-2 flex justify-center rounded-lg border bg-gray-50 p-2">
+                      <img
+                        src={svgPreview}
+                        alt="SVG Preview"
+                        className="h-16 w-16"
+                      />
+                    </div>
+                  </div>
+                )}
               </FormItem>
             )}
           />
 
+          {/* Title Input */}
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Service Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} />
+                  <Input
+                    placeholder="Enter a short and clear title"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Provide a short and descriptive title.
+                  Title that clearly describes the service.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* Description Input */}
           <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Service Description</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter description" {...field} />
+                  <Input
+                    placeholder="Provide a detailed description"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Give a detailed description of the service.
+                  Explain the service in a concise and informative manner.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
+        {/* Submit Button */}
         <div className="flex w-full justify-end">
           <Button
             disabled={mutation.isPending}

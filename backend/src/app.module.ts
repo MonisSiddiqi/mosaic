@@ -38,12 +38,12 @@ import { MailController } from './mail/mail.controller';
         abortEarly: true,
       },
     }),
+    StorageModule,
     ServeStaticModule.forRoot({
       exclude: ['/api/(.*)', '/storage/(.*)', '/log-out'],
     }),
     AuthModule,
     PrismaModule,
-    StorageModule,
     ServicesModule,
     UsersModule,
     ProjectsModule,

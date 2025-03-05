@@ -5,6 +5,7 @@ import {
   GetObjectCommandOutput,
   PutObjectCommand,
   DeleteObjectCommand,
+  ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
@@ -19,6 +20,9 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { NodeEnv, S3Config } from '../config/config.type';
 import { StorageFolderEnum } from './storage-folder.enum';
+import { extname } from 'node:path';
+
+import mime from 'mime';
 
 @Injectable()
 export class StorageService {
@@ -52,7 +56,44 @@ export class StorageService {
         accessKeyId: config?.accessKeyId || '',
         secretAccessKey: config?.secretAccessKey || '',
       },
+      // endpoint: 'https://s3.amazonaws.com',
+      forcePathStyle: true, // ✅ Use virtual-hosted-style URLs (recommended)
     });
+
+    // this.warmUpS3Connection();
+  }
+
+  public async uploadFile(
+    file: Express.Multer.File,
+    folder: StorageFolderEnum,
+  ) {
+    const key = `${folder}/${uuidv4()}${extname(file.originalname)}`;
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+      Body: file.buffer,
+      ContentType: mime.getType(key),
+    });
+
+    await this.s3Client.send(command);
+
+    return key;
+  }
+
+  public async uploadSvgFile(file: Buffer, folder: StorageFolderEnum) {
+    const key = `${folder}/${uuidv4()}.svg`;
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+      Body: file,
+      ContentType: 'image/svg+xml',
+    });
+
+    await this.s3Client.send(command);
+
+    return key;
   }
 
   public async uploadImageFile(file: Buffer, folder: StorageFolderEnum) {
@@ -135,5 +176,15 @@ export class StorageService {
       Key: key,
     });
     await this.s3Client.send(command);
+  }
+  private async warmUpS3Connection() {
+    try {
+      await this.s3Client.send(
+        new ListObjectsCommand({ Bucket: this.bucketName }),
+      );
+      console.log('✅ AWS S3 Connection Warmed Up');
+    } catch (err) {
+      console.error('❌ AWS S3 Warm-Up Failed', err);
+    }
   }
 }

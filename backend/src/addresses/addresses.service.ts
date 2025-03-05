@@ -1,26 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { CreateAddressDto } from './dto/create-address.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
+import { ApiResponse } from 'src/common/dto/api-response.dto';
 
 @Injectable()
 export class AddressesService {
-  create(createAddressDto: CreateAddressDto) {
-    return 'This action adds a new address';
-  }
+  constructor(private readonly prismaService: PrismaService) {}
+  async create(createAddressDto: CreateAddressDto, authUser: User) {
+    const { line1, line2, city, state, country, postalCode } = createAddressDto;
 
-  findAll() {
-    return `This action returns all addresses`;
-  }
+    const address = await this.prismaService.address.upsert({
+      where: {
+        userId: authUser.id,
+      },
+      update: {
+        line1,
+        line2,
+        city,
+        state,
+        country,
+        postalCode,
+      },
+      create: {
+        line1,
+        line2,
+        city,
+        state,
+        country,
+        postalCode,
+        userId: authUser.id,
+      },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
-  }
-
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+    return new ApiResponse(address, 'Address added successfully');
   }
 }

@@ -11,27 +11,32 @@ export const servicesColumns: ColumnDef<Service>[] = [
   {
     accessorKey: "icon",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Icon" />
+      <DataTableColumnHeader column={column} title="Icon" className="ml-2" />
     ),
     cell: ({ row }) => {
-      const icon = row.original.icon;
+      const icon = row.original.iconUrl;
+
+      console.log(icon);
 
       return (
-        <div className="ml-2 mt-2 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 duration-300">
+        <div className="ml-2 mt-2">
           {icon ? (
             <Image
               src={icon}
-              alt="Service Icon"
-              width={40}
-              height={40}
-              className="rounded-full"
+              alt={`@${row.original.name}`}
+              width={44}
+              height={44}
+              className="overflow-hidden"
             />
           ) : (
-            <EyeOffIcon size={24} className="text-gray-400" />
+            <div className="flex h-11 w-11 items-center justify-center bg-gray-100">
+              <EyeOffIcon size={24} className="text-gray-400" />
+            </div>
           )}
         </div>
       );
     },
+    enableSorting: false,
   },
 
   {

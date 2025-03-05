@@ -19,9 +19,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // Prevent duplicate responses
     if (response.headersSent) {
-      this.logger.warn(
-        `Headers already sent for ${request.url}. Skipping error handling.`,
-      );
       return;
     }
 

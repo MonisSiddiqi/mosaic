@@ -6,31 +6,24 @@ import { Header } from "@/app/dashboard/-components/header";
 import { notFound, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  console.log("user ", user);
-
-  // Handle unauthenticated and unauthorized users
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/auth"); // Redirect to the auth page
-    } else if (user?.role !== UserRole.ADMIN) {
-      notFound(); // Show a 404 page for non-admin users
+      router.push("/auth");
+    }
+    if (user?.role === UserRole.USER) {
+      notFound();
     }
   }, []);
-
-  // Show nothing (or a loading spinner) while the `useEffect` runs
-  if (!isAuthenticated || user?.role !== UserRole.ADMIN) {
-    return null; // Or return a loading component
-  }
 
   return (
     <div className="flex h-screen w-screen bg-gray-100">

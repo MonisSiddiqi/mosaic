@@ -37,12 +37,17 @@ export class ServicesService {
     };
 
     if (icon) {
-      const iconUrl = await this.storageService.uploadImageFile(
-        icon.buffer,
-        StorageFolderEnum.SERVICES,
-      );
-
-      serviceCreateInput.iconUrl = iconUrl;
+      console.log('hello here');
+      try {
+        const iconUrl = await this.storageService.uploadSvgFile(
+          icon.buffer,
+          StorageFolderEnum.SERVICES,
+        );
+        serviceCreateInput.iconUrl = iconUrl;
+      } catch (e) {
+        console.log(e);
+        throw new UnprocessableEntityException(e.message);
+      }
     }
 
     const service = await this.prismaService.service.create({
@@ -74,14 +79,20 @@ export class ServicesService {
       },
     });
 
+    const list = await Promise.all(
+      services.map(async (item) => ({
+        ...item,
+        iconUrl: item.iconUrl
+          ? await this.storageService.getSignedFileUrl(item.iconUrl)
+          : null,
+      })),
+    );
+
     const total = await this.prismaService.service.count({
       where: serviceWhereInput,
     });
 
-    return new ApiResponse(
-      { total, list: services },
-      'Services fetched successfully',
-    );
+    return new ApiResponse({ total, list }, 'Services fetched successfully');
   }
 
   /* find one */

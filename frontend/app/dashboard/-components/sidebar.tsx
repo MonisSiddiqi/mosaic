@@ -4,25 +4,14 @@ import {
   Users,
   Gavel,
   BarChart2,
-  Bell,
   Package,
   Grid,
   Layers,
-  LogOutIcon,
+  UserIcon,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
 import { SidebarLink } from "@/app/dashboard/-components/sidebar-link";
-
-import { Button } from "@/components/ui/button";
+import { BottomSidebar } from "./bottom-sidebar";
 
 export const routes = [
   {
@@ -63,9 +52,9 @@ export const routes = [
   },
 
   {
-    href: "/dashboard/notifications",
-    icon: <Bell className="h-5 min-h-5 w-5 min-w-5" />,
-    text: "Notifications",
+    href: "/dashboard/profile",
+    icon: <UserIcon className="h-5 min-h-5 w-5 min-w-5" />,
+    text: "My Profile",
   },
 ];
 
@@ -93,49 +82,7 @@ export function Sidebar() {
         </nav>
       </div>
       <div className="w-full">
-        <div className="relative flex h-32 w-full items-end rounded bg-gray-700 p-3 shadow">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Avatar className="absolute -top-7 left-5 size-14 cursor-pointer rounded text-lg text-gray-800">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/public"
-                    alt={`@${user?.name}`}
-                  />
-                  <AvatarFallback className="font-semibold">S</AvatarFallback>
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Go to Profile</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger
-                asChild
-                className="absolute right-3 top-3 cursor-pointer"
-              >
-                <Button
-                  size={"icon"}
-                  variant={"secondary"}
-                  className="size-10 bg-white hover:bg-red-100 hover:text-red-800"
-                >
-                  <LogOutIcon className="size-5 min-h-5 min-w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Logout</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <div className="w-full overflow-hidden">
-            <p className="text-sm">Welcome</p>{" "}
-            <p className="whitespace-nowrap text-xl font-semibold">{"Sam"}</p>
-          </div>
-        </div>
+        <BottomSidebar />
       </div>
     </div>
   );

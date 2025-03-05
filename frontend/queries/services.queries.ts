@@ -1,5 +1,5 @@
-import { getAllServicesApi } from "@/apis/services";
-import { useQuery } from "@tanstack/react-query";
+import { addServiceApi, getAllServicesApi } from "@/apis/services";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
   PaginationState,
@@ -38,5 +38,12 @@ export const useServicesQuery = ({
         filter: filter,
       });
     },
+  });
+};
+
+export const useAddServiceMutation = () => {
+  return useMutation({
+    mutationKey: ["services"],
+    mutationFn: addServiceApi,
   });
 };

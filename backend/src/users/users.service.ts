@@ -1,8 +1,15 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { GetUsersDto } from './dto/get-user.dto';
+import { EditProfileDto } from './dto/edit-profile.dto';
+import { StorageService } from 'src/storage/storage.service';
+import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +23,12 @@ export class UsersService {
     updatedAt: true,
     UserProfile: true,
   };
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
+
+  logger = new Logger(UsersService.name);
 
   async findAll(getUsersDto: GetUsersDto, authUser: User) {
     const { filter, sortField, sortValue, page = 1, limit = 10 } = getUsersDto;
@@ -82,8 +94,94 @@ export class UsersService {
       where: {
         id: authUser.id,
       },
-      select: this.userSelect,
+      include: {
+        UserProfile: true,
+        Address: true,
+      },
+      omit: {
+        password: true,
+      },
     });
-    return new ApiResponse(user);
+    return new ApiResponse({
+      ...user,
+      UserProfile: {
+        ...user.UserProfile,
+        image: await this.storageService.getSignedFileUrl(
+          user.UserProfile.image,
+        ),
+      },
+    });
+  }
+
+  async editProfile(
+    editProfileDto: EditProfileDto,
+    file: Express.Multer.File,
+    authUser: User,
+  ) {
+    const { name } = editProfileDto;
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: authUser.id,
+      },
+      include: {
+        UserProfile: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnprocessableEntityException('User not found');
+    }
+
+    let image;
+
+    if (file) {
+      this.logger.debug('Uploading profile image to s3 bucket...');
+      image = await this.storageService.uploadFile(
+        file,
+        StorageFolderEnum.USERS,
+      );
+      this.logger.debug('Successfully uploaded profile image to s3 bucket');
+
+      // Delete old image from s3 bucket
+      if (user.UserProfile?.image) {
+        this.logger.debug('Deleting old profile image from s3 bucket...');
+        await this.storageService.deleteFile(user.UserProfile.image);
+        this.logger.debug(
+          'Successfully deleted old profile image from s3 bucket',
+        );
+      }
+    }
+
+    const updatedUser = await this.prismaService.user.update({
+      where: {
+        id: authUser.id,
+      },
+      data: {
+        UserProfile: {
+          connectOrCreate: {
+            create: {
+              name,
+              ...(image ? { image } : {}),
+            },
+            where: {
+              userId: authUser.id,
+            },
+          },
+          update: {
+            name,
+            ...(image ? { image } : {}),
+          },
+        },
+      },
+      include: {
+        UserProfile: true,
+      },
+      omit: {
+        password: true,
+      },
+    });
+
+    return new ApiResponse(updatedUser, 'User profile updated successfully');
   }
 }

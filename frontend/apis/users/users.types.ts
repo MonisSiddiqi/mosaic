@@ -22,6 +22,24 @@ export type UserProfile = {
   createdAt: string;
 };
 
+export type Address = {
+  id: string;
+  userId: string;
+  line1: string;
+  line2: string;
+  country: string;
+  state: string;
+  city: string;
+  postalCode: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type ProfileApiResponse = User & {
+  UserProfile: UserProfile | null;
+  Address: Address | null;
+};
+
 export type GetAllUsersApiResponseItem = User & {
   UserProfile: UserProfile | null;
 };
