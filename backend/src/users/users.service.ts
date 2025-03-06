@@ -126,6 +126,7 @@ export class UsersService {
       },
       include: {
         UserProfile: true,
+        Address: true,
       },
     });
 
@@ -176,12 +177,28 @@ export class UsersService {
       },
       include: {
         UserProfile: true,
+        Address: true,
       },
       omit: {
         password: true,
       },
     });
 
-    return new ApiResponse(updatedUser, 'User profile updated successfully');
+    return new ApiResponse(
+      {
+        ...updatedUser,
+        UserProfile: {
+          ...updatedUser.UserProfile,
+          ...(updatedUser.UserProfile.image
+            ? {
+                image: await this.storageService.getSignedFileUrl(
+                  updatedUser.UserProfile.image,
+                ),
+              }
+            : {}),
+        },
+      },
+      'User profile updated successfully',
+    );
   }
 }

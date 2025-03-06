@@ -1,5 +1,5 @@
-import { getAllUsersApi } from "@/apis/users";
-import { useQuery } from "@tanstack/react-query";
+import { editProfileApi, getAllUsersApi, getMyProfileApi } from "@/apis/users";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
   PaginationState,
@@ -40,3 +40,9 @@ export const useUsersQuery = ({
     },
   });
 };
+
+export const useEditProfileMutation = () =>
+  useMutation({
+    mutationKey: ["editProfile"],
+    mutationFn: editProfileApi,
+  });

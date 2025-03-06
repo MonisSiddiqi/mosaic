@@ -12,3 +12,8 @@ export type GetUsersDto = {
   page?: number;
   limit?: number;
 };
+
+export type EditProfileDto = {
+  file?: File;
+  name: string;
+};

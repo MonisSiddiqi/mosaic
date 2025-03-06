@@ -47,6 +47,7 @@ export const BottomSidebar = () => {
                 <AvatarImage
                   src={user?.UserProfile.image as string}
                   alt={`@${user?.UserProfile?.name}`}
+                  className="rounded-full object-cover"
                 />
                 <AvatarFallback className="font-semibold">
                   {getInitials(user?.UserProfile?.name || "")}

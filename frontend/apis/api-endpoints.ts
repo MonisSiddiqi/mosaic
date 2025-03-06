@@ -14,6 +14,7 @@ export const apiEndpoints = {
   },
   users: {
     me: `/api/v1/users/me`,
+    editProfile: `/api/v1/users/me`,
     getAll: `/api/v1/users`,
   },
   projects: {

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { getInitials } from "@/lib/utils";
+import { EditProfileSheet } from "./sheets/edit-profile-sheet";
 
 export const ProfileOverview = () => {
   const { user } = useAuth();
@@ -33,6 +34,8 @@ export const ProfileOverview = () => {
             </Badge>
           </div>
         </div>
+
+        <EditProfileSheet />
       </div>
     </div>
   );

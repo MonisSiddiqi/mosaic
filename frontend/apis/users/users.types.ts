@@ -56,3 +56,5 @@ export enum UserRole {
   VENDOR = "VENDOR",
   ADMIN = "ADMIN",
 }
+
+export type EditProfileApiResponse = ProfileApiResponse;
