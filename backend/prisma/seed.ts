@@ -1,9 +1,21 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { tagsData } from './data';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // tagsData.map(
+  //   async (tag) =>
+  //     await prisma.tag.upsert({
+  //       where: { name: tag },
+  //       update: {},
+  //       create: { name: tag },
+  //     }),
+  // );
+
+  // return;
+
   const admin = {
     name: 'Sam',
     email: 'sam@mosaic.com',

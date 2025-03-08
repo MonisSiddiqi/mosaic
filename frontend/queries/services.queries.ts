@@ -1,4 +1,8 @@
-import { addServiceApi, getAllServicesApi } from "@/apis/services";
+import {
+  addServiceApi,
+  addVendorServiceApi,
+  getAllServicesApi,
+} from "@/apis/services";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
@@ -45,5 +49,12 @@ export const useAddServiceMutation = () => {
   return useMutation({
     mutationKey: ["services"],
     mutationFn: addServiceApi,
+  });
+};
+
+export const useAddVendorServiceMutation = () => {
+  return useMutation({
+    mutationKey: ["addVendorService"],
+    mutationFn: addVendorServiceApi,
   });
 };

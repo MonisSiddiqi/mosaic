@@ -7,6 +7,7 @@ export enum ServicesSortingFieldEnum {
   DESCRIPTION = 'description',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
+  VENDOR = 'vendor',
 }
 
 export class GetServicesDto {

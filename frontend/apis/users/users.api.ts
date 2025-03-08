@@ -1,6 +1,8 @@
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
 import {
+  Address,
+  CreateAddressDto,
   EditProfileApiResponse,
   EditProfileDto,
   GetAllUsersApiResponse,
@@ -45,5 +47,15 @@ export const editProfileApi = async (
     { headers: { "Content-Type": "multipart/form-data" } },
   );
 
+  return response.data.result;
+};
+
+export const createAddressApi = async (
+  createAddressDto: CreateAddressDto,
+): Promise<Address> => {
+  const response = await httpClient.post(
+    apiEndpoints.users.createAddress,
+    createAddressDto,
+  );
   return response.data.result;
 };

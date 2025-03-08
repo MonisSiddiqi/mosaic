@@ -251,6 +251,9 @@ model VendorTag {
   tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId  String @db.VarChar(36)
 
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
   @@id([userId, tagId])
   @@index([userId])
   @@index([tagId])
@@ -261,6 +264,9 @@ model VendorService {
   userId    String  @db.VarChar(36)
   service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceId String  @db.VarChar(36)
+
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
 
   @@id([userId, serviceId])
   @@index([userId])

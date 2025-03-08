@@ -52,10 +52,10 @@ export const EditServiceForm: FC<Props> = ({
     onSuccess: () => {
       toast({
         variant: "success",
-        title: "User Updated Successfully",
+        title: "Service Updated Successfully",
       });
       queryClient.invalidateQueries({
-        queryKey: ["users"],
+        queryKey: ["services"],
       });
       handleClose(false);
     },

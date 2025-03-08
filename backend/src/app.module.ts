@@ -23,6 +23,9 @@ import { AddressesModule } from './addresses/addresses.module';
 import { ProjectsController } from './projects/projects.controller';
 import { MailModule } from './mail/mail.module';
 import { MailController } from './mail/mail.controller';
+import { AddressesController } from './addresses/addresses.controller';
+import { TagsController } from './tags/tags.controller';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -49,6 +52,7 @@ import { MailController } from './mail/mail.controller';
     ProjectsModule,
     AddressesModule,
     MailModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -79,6 +83,8 @@ export class AppModule {
         ProjectsController,
         MailController,
         UsersController,
+        AddressesController,
+        TagsController,
       );
   }
 }

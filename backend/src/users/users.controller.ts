@@ -16,7 +16,6 @@ import { UsersService } from './users.service';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User, UserRole } from '@prisma/client';
 import { GetUsersDto } from './dto/get-user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { EditProfileDto } from './dto/edit-profile.dto';

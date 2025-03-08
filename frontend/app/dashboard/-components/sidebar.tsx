@@ -8,6 +8,7 @@ import {
   Grid,
   Layers,
   UserIcon,
+  TagIcon,
 } from "lucide-react";
 
 import { SidebarLink } from "@/app/dashboard/-components/sidebar-link";
@@ -23,6 +24,11 @@ export const routes = [
     href: "/dashboard/services",
     icon: <Layers className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Services",
+  },
+  {
+    href: "/dashboard/tags",
+    icon: <TagIcon className="h-5 min-h-5 w-5 min-w-5" />,
+    text: "Tags",
   },
   {
     href: "/dashboard/projects",

@@ -1,4 +1,9 @@
-import { editProfileApi, getAllUsersApi, getMyProfileApi } from "@/apis/users";
+import {
+  createAddressApi,
+  editProfileApi,
+  getAllUsersApi,
+  getMyProfileApi,
+} from "@/apis/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
@@ -46,3 +51,10 @@ export const useEditProfileMutation = () =>
     mutationKey: ["editProfile"],
     mutationFn: editProfileApi,
   });
+
+export const useCreateAddressMutation = () => {
+  return useMutation({
+    mutationKey: ["createAddress"],
+    mutationFn: createAddressApi,
+  });
+};

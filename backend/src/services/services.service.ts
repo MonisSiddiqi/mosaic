@@ -4,7 +4,7 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiResponse } from '../common/dto/api-response.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 import { GetServicesDto } from './dto/get-services.dto';
@@ -57,12 +57,22 @@ export class ServicesService {
     return new ApiResponse(service, 'Service Added Successfully');
   }
 
-  async findAll(getServicesDto: GetServicesDto) {
+  async findAll(getServicesDto: GetServicesDto, authUser?: User) {
     const { filter, limit, page, sortField, sortValue } = getServicesDto;
 
     const serviceWhereInput: Prisma.ServiceWhereInput = {};
 
     const textFilter = filter?.find((item) => item.id === 'name');
+
+    const orderBy: Prisma.ServiceOrderByWithRelationInput = {};
+
+    if (sortField === 'vendor') {
+      orderBy.VendorService = {
+        _count: sortValue,
+      };
+    } else {
+      orderBy[sortField] = sortValue;
+    }
 
     if (textFilter) {
       serviceWhereInput.name = {
@@ -73,10 +83,15 @@ export class ServicesService {
 
     const services = await this.prismaService.service.findMany({
       where: serviceWhereInput,
-      ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
-      orderBy: {
-        [sortField]: sortValue,
+      include: {
+        VendorService: {
+          where: {
+            userId: authUser?.id,
+          },
+        },
       },
+      ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
+      orderBy,
     });
 
     const list = await Promise.all(
@@ -173,5 +188,49 @@ export class ServicesService {
     });
 
     return new ApiResponse(service, 'Service Deleted Successfully');
+  }
+
+  async addVendorService(id: string, authUser: User) {
+    const service = await this.prismaService.service.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        VendorService: true,
+      },
+    });
+
+    if (!service) {
+      throw new UnprocessableEntityException('Service not found');
+    }
+
+    const isAlreadyAdded = service.VendorService.some(
+      (item) => item.userId === authUser.id,
+    );
+
+    if (isAlreadyAdded) {
+      await this.prismaService.vendorService.delete({
+        where: {
+          userId_serviceId: {
+            userId: authUser.id,
+            serviceId: id,
+          },
+        },
+      });
+
+      return new ApiResponse(
+        service,
+        'Service removed from vendor successfully',
+      );
+    }
+
+    await this.prismaService.vendorService.create({
+      data: {
+        userId: authUser.id,
+        serviceId: id,
+      },
+    });
+
+    return new ApiResponse(service, 'Service added to vendor successfully');
   }
 }

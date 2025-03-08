@@ -16,7 +16,7 @@ import {
   ParseFilePipe,
   FileTypeValidator,
 } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 
 import { CreateServiceDto } from './dto/create-service.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -29,6 +29,8 @@ import { GetServicesDto } from './dto/get-services.dto';
 import { SkipAuth } from 'src/auth/decorators/skip-auth.decorator';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ServicesService } from './services.service';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { AddVendorServiceDto } from './dto/add-vendor-service.dto';
 
 @Controller('services')
 export class ServicesController {
@@ -53,10 +55,23 @@ export class ServicesController {
     return this.servicesService.create(icon, createServiceDto);
   }
 
+  @Post('vendor')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.VENDOR)
+  addVendorService(
+    @Body() addVendorServiceDto: AddVendorServiceDto,
+    @GetUser() authUser: User,
+  ) {
+    return this.servicesService.addVendorService(
+      addVendorServiceDto.serviceId,
+      authUser,
+    );
+  }
+
   @Get()
   @SkipAuth()
-  findAll(@Query() getServicesDto: GetServicesDto) {
-    return this.servicesService.findAll(getServicesDto);
+  findAll(@Query() getServicesDto: GetServicesDto, @GetUser() authUser: User) {
+    return this.servicesService.findAll(getServicesDto, authUser);
   }
 
   @Get(':id')

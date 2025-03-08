@@ -4,6 +4,14 @@ export const apiEndpoints = {
     delete: (id: string) => `/api/services/${id}`,
     add: `/api/v1/services`,
     edit: (id: string) => `/api/services/${id}`,
+    addVendorService: `/api/v1/services/vendor`,
+  },
+  tags: {
+    getAll: `/api/v1/tags`,
+    delete: (id: string) => `/api/tags/${id}`,
+    add: `/api/v1/tags`,
+    edit: (id: string) => `/api/tags/${id}`,
+    addVendorTag: `/api/v1/tags/vendor`,
   },
   auth: {
     login: `/api/v1/auth/login`,
@@ -16,6 +24,7 @@ export const apiEndpoints = {
     me: `/api/v1/users/me`,
     editProfile: `/api/v1/users/me`,
     getAll: `/api/v1/users`,
+    createAddress: `/api/v1/addresses`,
   },
   projects: {
     getAll: `/api/v1/projects`,

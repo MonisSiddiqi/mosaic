@@ -1,5 +1,6 @@
 import {
   AddServiceDto,
+  AddVendorServiceApiResponse,
   EditServiceDto,
   GetAllServicesApiResponse,
   Service,
@@ -68,6 +69,17 @@ export const editServiceApi = async (
         "Content-Type": "multipart/form-data",
       },
     },
+  );
+
+  return response.data.result;
+};
+
+export const addVendorServiceApi = async (
+  id: string,
+): Promise<AddVendorServiceApiResponse> => {
+  const response = await httpClient.post(
+    apiEndpoints.services.addVendorService,
+    { serviceId: id },
   );
 
   return response.data.result;

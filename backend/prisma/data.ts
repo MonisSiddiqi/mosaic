@@ -100,3 +100,26 @@ const servicesData = [
     iconUrl: null,
   },
 ];
+
+export const tagsData = [
+  'Home Improvement',
+  'Renovation',
+  'Construction',
+  'Plumbing',
+  'Electrical Work',
+  'Interior Design',
+  'Landscaping',
+  'Painting',
+  'Roofing',
+  'Carpentry',
+  'Flooring',
+  'HVAC',
+  'Masonry',
+  'Handyman Services',
+  'General Contracting',
+  'Remodeling',
+  'Furniture Assembly',
+  'Cleaning Services',
+  'Waterproofing',
+  'Smart Home Installation',
+];

@@ -17,3 +17,12 @@ export type EditProfileDto = {
   file?: File;
   name: string;
 };
+
+export type CreateAddressDto = {
+  line1: string;
+  line2?: string;
+  country: string;
+  state: string;
+  city: string;
+  postalCode: string;
+};
