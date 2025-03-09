@@ -1,15 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider"; // ShadCN Slider
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { z } from "zod";
 import { AddProjectDto } from "@/apis/projects/projects.type";
 import { toast } from "@/hooks/use-toast";
@@ -36,6 +30,8 @@ export const BudgetStep: FC<Props> = ({
   formData,
   setFormData,
 }) => {
+  const [selectedValue, setSelectedValue] = useState<number>(1);
+
   const form = useForm<z.infer<typeof budgetSchema>>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
@@ -49,7 +45,8 @@ export const BudgetStep: FC<Props> = ({
   const onSubmit = async (values: z.infer<typeof budgetSchema>) => {
     setFormData((prev) => ({
       ...prev,
-      budgetPreference: values.budgetPreference,
+      budgetPreference:
+        selectedValue < 6 ? Preference.LOW_PRICE : Preference.HIGH_QUALITY,
     }));
 
     try {
@@ -69,27 +66,43 @@ export const BudgetStep: FC<Props> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="mt-4 grid w-full gap-4 md:grid-cols-2">
+      <div className="mt-4 grid w-full gap-4">
         <div>
-          <Label className="mb-4 text-sm font-medium">
-            Budget Preference (Optional)
-          </Label>
-          <Select
-            onValueChange={(value) =>
-              form.setValue("budgetPreference", value as Preference)
-            }
-            defaultValue={form.getValues("budgetPreference")}
-          >
-            <SelectTrigger className="mt-2">
-              <SelectValue placeholder="Select a preference (optional)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={Preference.HIGH_QUALITY}>
-                High Quality
-              </SelectItem>
-              <SelectItem value={Preference.LOW_PRICE}>Low Price</SelectItem>
-            </SelectContent>
-          </Select>
+          <Label className="text-sm font-medium">Budget</Label>
+
+          {/* Slider */}
+          <Slider
+            defaultValue={[selectedValue]}
+            min={1}
+            max={10}
+            step={1}
+            onValueChange={(value) => {
+              const preference = value[0] as number;
+              setSelectedValue(preference);
+              form.setValue(
+                "budgetPreference",
+                preference < 6 ? Preference.LOW_PRICE : Preference.HIGH_QUALITY,
+              );
+            }}
+            className="mt-2 w-full"
+          />
+
+          {/* Slider Labels */}
+          <div className="mt-4 flex justify-between text-xs font-medium text-gray-600">
+            <span>💰 Budget-Friendly</span>
+            <span>🚀 High Quality</span>
+          </div>
+
+          {/* Selected Value Display */}
+          <p className="mt-3 text-center text-sm font-medium text-gray-700">
+            Selected Value:{" "}
+            <span className="text-blue-600">{selectedValue}</span>
+          </p>
+
+          {/* Budget Category Indicator */}
+          <p className="mt-1 text-center text-sm font-medium">
+            {selectedValue <= 5 ? "📉 Budget-Friendly" : "🚀 High Quality"}
+          </p>
         </div>
       </div>
 

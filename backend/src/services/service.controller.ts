@@ -50,7 +50,6 @@ export class ServicesController {
     )
     icon: Express.Multer.File,
   ) {
-    console.log(icon);
 
     return this.servicesService.create(icon, createServiceDto);
   }
@@ -83,27 +82,17 @@ export class ServicesController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: 'icon', maxCount: 1 }], {
-      fileFilter: (_, file, cb) => {
-        if (file.fieldname === 'icon') {
-          if (!(file.mimetype === 'image/svg+xml')) {
-            return cb(
-              new BadRequestException(
-                'Invalid icon, only SVG files are allowed!',
-              ),
-              false,
-            );
-          }
-        }
-        cb(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('icon'))
+
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
-    @UploadedFiles() icon: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [new FileTypeValidator({ fileType: 'image/svg' })],
+      }),
+    ) icon: Express.Multer.File,
   ) {
     return this.servicesService.update(id, updateServiceDto, icon);
   }

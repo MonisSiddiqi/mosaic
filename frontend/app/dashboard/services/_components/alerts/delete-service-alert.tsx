@@ -47,7 +47,7 @@ export const DeleteServiceAlert: FC<Props> = ({ id, open, setOpen }) => {
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={() => setOpen(!open)}>
+    <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -57,7 +57,12 @@ export const DeleteServiceAlert: FC<Props> = ({ id, open, setOpen }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            disabled={mutation.isPending}
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             disabled={mutation.isPending}
             onClick={deleteService}

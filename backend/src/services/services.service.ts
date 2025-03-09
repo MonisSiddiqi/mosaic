@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -11,6 +15,7 @@ import { GetServicesDto } from './dto/get-services.dto';
 
 @Injectable()
 export class ServicesService {
+  logger = new Logger(ServicesService.name);
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -179,6 +184,14 @@ export class ServicesService {
 
     if (!service) {
       throw new UnprocessableEntityException(`Service not found`);
+    }
+
+    if (service.iconUrl) {
+      try {
+        await this.storageService.deleteFile(service.iconUrl);
+      } catch (err) {
+        this.logger.error(err);
+      }
     }
 
     await this.prismaService.service.delete({

@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import MultipleSelector from "@/components/ui/multiple-selector";
-import { string, z } from "zod";
+import { z } from "zod";
 
 import {
   Form,
@@ -35,105 +35,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Dispatch, FC, SetStateAction } from "react";
 import { AddProjectDto } from "@/apis/projects/projects.type";
-
-interface ProjectDetailsProps {
-  updateFormData: (data: object) => void;
-}
+import { useTagsQuery } from "@/queries/tags.queries";
+import { useServicesQuery } from "@/queries/services.queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const optionSchema = z.object({
   label: z.string(),
   value: z.string(),
   disable: z.boolean().optional(),
 });
-
-const services = [
-  {
-    name: "Plumbing",
-    icon: PlumbingIcon,
-    href: "/services/plumbing",
-    description:
-      "Professional plumbing services for repairs, installations, and maintenance.",
-  },
-  {
-    name: "Electrical",
-    icon: ElectricianIcon,
-    href: "/services/electrical",
-    description:
-      "Expert electrical solutions, from wiring to appliance installations.",
-  },
-  {
-    name: "Fencing",
-    icon: FencingIcon,
-    href: "/services/fencing",
-    description:
-      "Durable and stylish fencing solutions for privacy and security.",
-  },
-  {
-    name: "Painting",
-    icon: PaintingIcon,
-    href: "/services/painting",
-    description:
-      "High-quality painting services for interior and exterior spaces.",
-  },
-  {
-    name: "Heating & Cooling",
-    icon: AcIcon,
-    href: "/services/hvac",
-    description:
-      "Comprehensive heating and cooling services to maintain indoor comfort.",
-  },
-  {
-    name: "Cleaning",
-    icon: CleaningIcon,
-    href: "/services/cleaning",
-    description:
-      "Reliable cleaning services to keep your spaces spotless and fresh.",
-  },
-  {
-    name: "Tree Service",
-    icon: TreeIcon,
-    href: "/services/tree-service",
-    description:
-      "Tree trimming, removal, and maintenance services for healthy landscapes.",
-  },
-  {
-    name: "Roofing",
-    icon: RoofingIcon,
-    href: "/services/roofing",
-    description:
-      "Roofing repair, installation, and inspection services for your home or business.",
-  },
-  {
-    name: "Pest Control",
-    icon: PestIcon,
-    href: "/services/pest-control",
-    description:
-      "Effective pest control solutions to protect your property and health.",
-  },
-];
-
-const tags = [
-  { label: "Bathroom Remodel", value: "Bathroom Remodel" },
-  { label: "Roofing", value: "Roofing" },
-  { label: "Driveways", value: "Driveways" },
-  { label: "Tree Service", value: "Tree Service" },
-  { label: "Cleaning Service", value: "Cleaning Service" },
-  { label: "Fencing", value: "Fencing" },
-  { label: "Painting", value: "Painting" },
-  { label: "Handyman", value: "Handyman" },
-  { label: "Plumbing", value: "Plumbing" },
-  { label: "Electrical", value: "Electrical" },
-  { label: "Kitchen Remodel", value: "Kitchen Remodel" },
-  { label: "Gutter Cleaning", value: "Gutter Cleaning" },
-  { label: "Pest Control", value: "Pest Control" },
-  { label: "Window Repair", value: "Window Repair" },
-  { label: "Heating & Cooling", value: "Heating & Cooling" },
-  { label: "Holiday Lighting", value: "Holiday Lighting" },
-  { label: "Carpentry", value: "Carpentry" },
-  { label: "Flooring", value: "Flooring" },
-  { label: "Landscaping", value: "Landscaping" },
-  { label: "Garage Door Repair", value: "Garage Door Repair" },
-];
 
 const formSchema = z.object({
   title: z.string().min(1, "Name is required."),
@@ -184,6 +94,13 @@ export const ProjectDetails: FC<Props> = ({
 
     handleNext();
   };
+
+  const { data: services, isLoading: isServicesLoading } = useServicesQuery({
+    pagination: { pageIndex: -1, pageSize: 100 },
+  });
+  const { data: tags, isLoading: isTagsLoading } = useTagsQuery({
+    pagination: { pageIndex: -1, pageSize: 100 },
+  });
 
   return (
     <Form {...form}>
@@ -240,8 +157,8 @@ export const ProjectDetails: FC<Props> = ({
                     </FormControl>
 
                     <SelectContent>
-                      {services.map((service) => (
-                        <SelectItem key={service.name} value={service.name}>
+                      {services?.list.map((service) => (
+                        <SelectItem key={service.name} value={service.id}>
                           {service.name}
                         </SelectItem>
                       ))}
@@ -256,33 +173,36 @@ export const ProjectDetails: FC<Props> = ({
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select Tags</FormLabel>
-                  <FormMessage />
-                  <MultipleSelector
-                    className="flex max-w-full items-center"
-                    value={field.value}
-                    onChange={field.onChange}
-                    defaultOptions={services.map((item) => ({
-                      label: item.name,
-                      value: item.name,
-                      disable: false,
-                    }))}
-                    placeholder="Select..."
-                    emptyIndicator={
-                      <p className="text-center text-gray-600">
-                        No Category found.
-                      </p>
-                    }
-                  />
-                </FormItem>
-              )}
-            />
+            {isTagsLoading ? (
+              <Skeleton />
+            ) : (
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Tags</FormLabel>
+                    <FormMessage />
+                    <MultipleSelector
+                      className="flex max-w-full items-center"
+                      value={field.value}
+                      onChange={field.onChange}
+                      defaultOptions={tags?.list.map((item) => ({
+                        label: item.name,
+                        value: item.id,
+                        disable: false,
+                      }))}
+                      placeholder="Select..."
+                      emptyIndicator={
+                        <p className="text-center text-gray-600">
+                          No Tag found.
+                        </p>
+                      }
+                    />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="flex w-full justify-between">
               <Button type="button" variant="outline" disabled>

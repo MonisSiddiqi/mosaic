@@ -10,16 +10,18 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { z } from "zod";
 import { AddProjectDto } from "@/apis/projects/projects.type";
+import { PlusIcon, XIcon } from "lucide-react";
 
-// Define schema where all fields are optional
+// Define schema with optional file input
 const measurementsSchema = z.object({
   length: z.string().optional(),
   width: z.string().optional(),
   height: z.string().optional(),
   area: z.string().optional(),
+  files: z.array(z.instanceof(File)).optional(),
 });
 
 type Props = {
@@ -35,6 +37,10 @@ export const SiteMeasurements: FC<Props> = ({
   formData,
   setFormData,
 }) => {
+  const [filePreviews, setFilePreviews] = useState<
+    { file: File; url: string }[]
+  >([]);
+
   const form = useForm<z.infer<typeof measurementsSchema>>({
     resolver: zodResolver(measurementsSchema),
     defaultValues: {
@@ -42,8 +48,28 @@ export const SiteMeasurements: FC<Props> = ({
       width: formData?.width || "",
       height: formData?.height || "",
       area: formData?.area || "",
+      files: [],
     },
   });
+
+  const handleFileChange = (files: FileList | null) => {
+    if (!files) return;
+    const fileArray = Array.from(files);
+
+    const newPreviews = fileArray.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setFilePreviews((prev) => [...prev, ...newPreviews]);
+    form.setValue("files", [...(form.getValues("files") || []), ...fileArray]);
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setFilePreviews((prev) => prev.filter((_, i) => i !== index));
+    const updatedFiles =
+      form.getValues("files")?.filter((_, i) => i !== index) || [];
+    form.setValue("files", updatedFiles);
+  };
 
   const onSubmit = async (values: z.infer<typeof measurementsSchema>) => {
     setFormData((prev) => ({
@@ -52,8 +78,8 @@ export const SiteMeasurements: FC<Props> = ({
       width: values.width,
       height: values.height,
       area: values.area,
+      files: values.files,
     }));
-
     handleNext();
   };
 
@@ -67,7 +93,7 @@ export const SiteMeasurements: FC<Props> = ({
               name="length"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Length</FormLabel>
+                  <FormLabel>Length (Meter)</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter length (optional)" {...field} />
                   </FormControl>
@@ -81,7 +107,7 @@ export const SiteMeasurements: FC<Props> = ({
               name="width"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Width</FormLabel>
+                  <FormLabel>Width (Meter)</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter width (optional)" {...field} />
                   </FormControl>
@@ -95,9 +121,9 @@ export const SiteMeasurements: FC<Props> = ({
               name="height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Height</FormLabel>
+                  <FormLabel>Width (Meter)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter height (optional)" {...field} />
+                    <Input placeholder="Enter width (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,9 +135,9 @@ export const SiteMeasurements: FC<Props> = ({
               name="area"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Area</FormLabel>
+                  <FormLabel>Area (Meter square)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter area (optional)" {...field} />
+                    <Input placeholder="Enter Area (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,11 +145,65 @@ export const SiteMeasurements: FC<Props> = ({
             />
           </div>
 
+          {/* File Upload */}
+          <FormField
+            control={form.control}
+            name="files"
+            render={() => (
+              <FormItem>
+                <FormLabel>Upload Files</FormLabel>
+                <Input
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  onChange={(e) => handleFileChange(e.target.files)}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <div className="mt-3 flex gap-3">
+                  {filePreviews.map(({ file, url }, index) => (
+                    <div
+                      key={index}
+                      className="relative flex h-40 w-40 items-center justify-center overflow-hidden rounded-lg border"
+                    >
+                      {file.type.startsWith("image/") ? (
+                        <img
+                          src={url}
+                          alt="Preview"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <video
+                          src={url}
+                          controls
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white"
+                        onClick={() => handleRemoveFile(index)}
+                      >
+                        <XIcon size={12} />
+                      </button>
+                    </div>
+                  ))}
+                  <label
+                    htmlFor="file-upload"
+                    className="flex h-40 w-40 cursor-pointer items-center justify-center rounded-lg border"
+                  >
+                    <PlusIcon size={24} className="text-gray-500" />
+                  </label>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="mt-4 flex w-full justify-between">
             <Button type="button" variant="outline" onClick={handlePrevious}>
               Previous
             </Button>
-
             <Button type="submit">Next</Button>
           </div>
         </div>

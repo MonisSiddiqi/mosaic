@@ -44,6 +44,7 @@ export function MultiStepForm() {
     length: "",
     area: "",
     tags: [],
+    files: [],
   });
 
   const handleNext = () => {
@@ -116,7 +117,7 @@ export function MultiStepForm() {
           <div key={step.title} className="flex items-center gap-4 md:flex-col">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                index === currentStep
+                currentStep >= index
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
@@ -125,7 +126,7 @@ export function MultiStepForm() {
             </div>
             <span
               className={`text-sm md:mt-2 ${
-                index === currentStep
+                currentStep >= index
                   ? "font-semibold text-blue-600"
                   : "text-gray-500"
               }`}

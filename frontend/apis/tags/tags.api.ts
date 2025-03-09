@@ -25,6 +25,7 @@ export const getAllTagsApi = async ({
       sortValue,
     },
   });
+
   return response.data.result;
 };
 

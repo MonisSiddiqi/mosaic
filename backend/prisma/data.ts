@@ -1,4 +1,4 @@
-const servicesData = [
+const servicesData2 = [
   {
     name: 'Plumbing',
     description: 'All plumbing related services',
@@ -122,4 +122,80 @@ export const tagsData = [
   'Cleaning Services',
   'Waterproofing',
   'Smart Home Installation',
+];
+
+// import PlumbingIcon from "@/app/assets/plumbing-icon.svg";
+// import ElectricianIcon from "@/app/assets/electrician-icon.svg";
+// import FencingIcon from "@/app/assets/fencing-icon.svg";
+// import PaintingIcon from "@/app/assets/painting-icon.svg";
+// import AcIcon from "@/app/assets/ac-icon.svg";
+// import CleaningIcon from "@/app/assets/cleaning-icon.svg";
+// import TreeIcon from "@/app/assets/tree-icon.svg";
+// import RoofingIcon from "@/app/assets/roofing-icon.png";
+// import PestIcon from "@/app/assets/pest-icon.svg";
+
+export const servicesData = [
+  {
+    name: 'Plumbing',
+
+    href: '/my-projects/add',
+    description:
+      'Professional plumbing services for repairs, installations, and maintenance.',
+  },
+  {
+    name: 'Electrical',
+
+    href: '/my-projects/add',
+    description:
+      'Expert electrical solutions, from wiring to appliance installations.',
+  },
+  {
+    name: 'Fencing',
+
+    href: '/my-projects/add',
+    description:
+      'Durable and stylish fencing solutions for privacy and security.',
+  },
+  {
+    name: 'Painting',
+
+    href: '/my-projects/add',
+    description:
+      'High-quality painting services for interior and exterior spaces.',
+  },
+  {
+    name: 'Heating & Cooling',
+
+    href: '/my-projects/add',
+    description:
+      'Comprehensive heating and cooling services to maintain indoor comfort.',
+  },
+  {
+    name: 'Cleaning',
+
+    href: '/my-projects/add',
+    description:
+      'Reliable cleaning services to keep your spaces spotless and fresh.',
+  },
+  {
+    name: 'Tree Service',
+
+    href: '/my-projects/add',
+    description:
+      'Tree trimming, removal, and maintenance services for healthy landscapes.',
+  },
+  {
+    name: 'Roofing',
+
+    href: '/my-projects/add',
+    description:
+      'Roofing repair, installation, and inspection services for your home or business.',
+  },
+  {
+    name: 'Pest Control',
+
+    href: '/my-projects/add',
+    description:
+      'Effective pest control solutions to protect your property and health.',
+  },
 ];

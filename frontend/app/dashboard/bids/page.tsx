@@ -1,13 +1,20 @@
-"use client";
+import { BidList } from "./_components/bid-list";
+import { BidStats } from "./_components/bid-status";
+import { PageHeader } from "./_components/bids-page-header";
 
-import { notFound } from "next/navigation";
-import { ProjectsTable } from "./_components/table/projects-table";
-
-export default function ProjectsPage() {
-  notFound();
+export default function VendorBidsPage() {
   return (
-    <div className="flex flex-col gap-4 rounded bg-white p-5 py-6">
-      <ProjectsTable />
+    <div className="container mx-auto space-y-6 bg-white p-4">
+      <PageHeader
+        title="Manage Bids"
+        description="View and manage all your project bids in one place"
+      />
+
+      <BidStats />
+
+      <div className="rounded-lg border bg-white">
+        <BidList />
+      </div>
     </div>
   );
 }

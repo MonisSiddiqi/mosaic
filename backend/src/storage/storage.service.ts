@@ -8,7 +8,7 @@ import {
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { writeFile } from 'fs-extra';
 import tmp from 'tmp-promise';
 import { readFileSync } from 'fs';
@@ -30,6 +30,8 @@ export class StorageService {
   private readonly region: string;
   private readonly bucketName: string;
   private readonly config: S3Config;
+
+  logger = new Logger(StorageService.name);
 
   constructor(private readonly configService: ConfigService) {
     const config = this.configService.get<S3Config>('s3');
@@ -69,6 +71,8 @@ export class StorageService {
   ) {
     const key = `${folder}/${uuidv4()}${extname(file.originalname)}`;
 
+    this.logger.debug(`Uploading file ${key}`);
+
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
@@ -77,6 +81,8 @@ export class StorageService {
     });
 
     await this.s3Client.send(command);
+
+    this.logger.debug(`Uploaded file ${key}`);
 
     return key;
   }
@@ -171,11 +177,13 @@ export class StorageService {
   }
 
   async deleteFile(key: string): Promise<void> {
+    this.logger.debug(`Deleting ${key}`);
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: key,
     });
     await this.s3Client.send(command);
+    this.logger.debug(`Successfully deleted ${key}`);
   }
   private async warmUpS3Connection() {
     try {

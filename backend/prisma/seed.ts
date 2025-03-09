@@ -1,20 +1,16 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { tagsData } from './data';
+import { servicesData, tagsData } from './data';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // tagsData.map(
-  //   async (tag) =>
-  //     await prisma.tag.upsert({
-  //       where: { name: tag },
-  //       update: {},
-  //       create: { name: tag },
-  //     }),
-  // );
+  for (const service of servicesData)
+    await prisma.service.createMany({
+      data: { name: service.name, description: service.description },
+    });
 
-  // return;
+  return;
 
   const admin = {
     name: 'Sam',

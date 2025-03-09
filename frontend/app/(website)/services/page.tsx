@@ -93,7 +93,6 @@ export default function Service() {
           all your needs. From outdoor transformations to indoor perfection, we
           have got you covered.
         </p>
-
         <div className="mb-6 h-fit w-full rounded border-8 border-white p-2 pb-5 shadow lg:w-fit lg:p-5">
           <div className="flex w-full gap-4 lg:w-fit">
             <div className="relative w-full lg:w-fit">
@@ -109,7 +108,6 @@ export default function Service() {
             <Button>Search</Button>
           </div>
         </div>
-
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => (
             <ServiceCard

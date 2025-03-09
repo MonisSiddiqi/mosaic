@@ -25,6 +25,7 @@ export const getAllServicesApi = async ({
       sortValue,
     },
   });
+
   return response.data.result;
 };
 

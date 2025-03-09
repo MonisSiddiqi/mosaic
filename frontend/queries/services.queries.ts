@@ -15,9 +15,9 @@ export const useServicesQuery = ({
   pagination,
   filter,
 }: {
-  sorting: SortingState;
-  pagination: PaginationState;
-  filter: ColumnFiltersState;
+  sorting?: SortingState;
+  pagination?: PaginationState;
+  filter?: ColumnFiltersState;
 }) => {
   return useQuery({
     queryKey: ["services", { sorting, pagination, filter }],

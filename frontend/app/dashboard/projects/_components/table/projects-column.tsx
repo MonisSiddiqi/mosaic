@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/table";
 
 import { Project } from "@/apis/projects/projects.type";
+import { ProjectsTableRowActions } from "./projects-table-row-actions";
 
 export const projectsColumns: ColumnDef<Project>[] = [
   {
@@ -41,4 +42,12 @@ export const projectsColumns: ColumnDef<Project>[] = [
       </div>
     ),
   },
+
+   {
+        id: "actions",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => <ProjectsTableRowActions row={row} />,
+      },
 ];

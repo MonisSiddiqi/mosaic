@@ -48,70 +48,70 @@ export class ProjectsService {
       projectCreateInput.preference = preference;
     }
 
-    // if (serviceId) {
-    //   const serviceExists = await this.prismaService.service.findUnique({
-    //     where: { id: serviceId },
-    //   });
+    if (serviceId) {
+      const serviceExists = await this.prismaService.service.findUnique({
+        where: { id: serviceId },
+      });
 
-    //   if (!serviceExists) {
-    //     // throw new UnprocessableEntityException(`Service not found`);
-    //     projectCreateInput.Service = { connect: { id: serviceId } };
-    //   }
+      if (serviceExists) {
+        // throw new UnprocessableEntityException(`Service not found`);
+        projectCreateInput.Service = { connect: { id: serviceId } };
+      }
 
-    //   // projectCreateInput.Service = { connect: { id: serviceId } };
-    // }
+      // projectCreateInput.Service = { connect: { id: serviceId } };
+    }
 
-    // if (tags && tags.length > 0) {
-    //   const existingTags = await this.prismaService.tag.findMany({
-    //     where: { id: { in: tags } },
-    //     select: { id: true },
-    //   });
+    if (tags && tags.length > 0) {
+      const existingTags = await this.prismaService.tag.findMany({
+        where: { id: { in: tags } },
+        select: { id: true },
+      });
 
-    //   const existingTagIds = existingTags.map((tag) => tag.id);
-    //   const nonExistingTags = tags.filter(
-    //     (tag) => !existingTagIds.includes(tag),
-    //   );
+      const existingTagIds = existingTags.map((tag) => tag.id);
+      const nonExistingTags = tags.filter(
+        (tag) => !existingTagIds.includes(tag),
+      );
 
-    //   if (nonExistingTags.length > 0) {
-    //     throw new UnprocessableEntityException(
-    //       `Tags not found: ${nonExistingTags.join(', ')}`,
-    //     );
-    //   }
+      if (nonExistingTags.length > 0) {
+        throw new UnprocessableEntityException(
+          `Tags not found: ${nonExistingTags.join(', ')}`,
+        );
+      }
 
-    //   if (existingTagIds.length > 0) {
-    //     projectCreateInput.ProjectTag = {
-    //       createMany: {
-    //         data: existingTagIds.map((tagId) => ({ tagId })),
-    //       },
-    //     };
-    //   }
-    // }
+      if (existingTagIds.length > 0) {
+        projectCreateInput.ProjectTag = {
+          createMany: {
+            data: existingTagIds.map((tagId) => ({ tagId })),
+          },
+        };
+      }
+    }
 
-    // projectCreateInput.Address = {
-    //   create: {
-    //     line1,
-    //     ...(line2 ? { line2 } : {}),
-    //     country,
-    //     state,
-    //     city,
-    //     postalCode,
-    //   },
-    // };
+    projectCreateInput.Address = {
+      create: {
+        line1,
+        ...(line2 ? { line2 } : {}),
+        country,
+        state,
+        city,
+        postalCode,
+      },
+    };
 
-    // projectCreateInput.SiteMeasurement = {
-    //   create: {
-    //     length,
-    //     width,
-    //     height,
-    //     area,
-    //   },
-    // };
+    projectCreateInput.SiteMeasurement = {
+      create: {
+        length,
+        width,
+        height,
+        area,
+      },
+    };
 
     const filesUrls = await Promise.all(
       files.map(async (file) => {
         try {
-          return await this.storageService.uploadImageFile(
-            file.buffer,
+          return await this.storageService.uploadFile(
+            file,
             StorageFolderEnum.PROJECTS,
           );
         } catch (error) {
@@ -123,13 +123,13 @@ export class ProjectsService {
       }),
     );
 
-    // const validFileUrls = filesUrls.filter((url) => url !== null);
+    const validFileUrls = filesUrls.filter((url) => url !== null);
 
-    // projectCreateInput.ProjectImage = {
-    //   createMany: {
-    //     data: validFileUrls.map((url) => ({ url, type: 'BEFORE' })),
-    //   },
-    // };
+    projectCreateInput.ProjectImage = {
+      createMany: {
+        data: validFileUrls.map((url) => ({ url, type: 'BEFORE' })),
+      },
+    };
 
     const project = await this.prismaService.project.create({
       data: projectCreateInput,
@@ -143,8 +143,10 @@ export class ProjectsService {
 
     const projectWhereInput: Prisma.ProjectWhereInput = {};
 
-    if (authUser.role !== UserRole.ADMIN) {
-      projectWhereInput.userId = authUser.id;
+    if (authUser.role === UserRole.VENDOR) {
+      projectWhereInput.Bid = { some: { vendorId: authUser.id } };
+    } else if (authUser.role === UserRole.USER) {
+      projectWhereInput.user = { id: authUser.id };
     }
 
     const textFilter = filter?.find((item) => item.id === 'title');

@@ -8,8 +8,8 @@ import { BidsService } from './bids.service';
 export class BidsController {
   constructor(private readonly bidsService: BidsService) {}
 
-  @Get()
-  findAll(@Query() getBidsDto: GetBidsDto, @GetUser() authUser: User) {
-    return this.bidsService.findAll(getBidsDto, authUser);
+  @Get('me')
+  findAll(@GetUser() authUser: User) {
+    return this.bidsService.findAll(authUser);
   }
 }

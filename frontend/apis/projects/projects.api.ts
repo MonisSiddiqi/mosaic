@@ -29,6 +29,10 @@ export const getAllProjectsApi = async ({
 export const addProjectApi = async (
   values: AddProjectDto,
 ): Promise<Project> => {
-  const response = await httpClient.post(apiEndpoints.projects.add, values);
+  const response = await httpClient.post(apiEndpoints.projects.add, values, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data.result;
 };

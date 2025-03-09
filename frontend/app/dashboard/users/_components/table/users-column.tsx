@@ -42,8 +42,8 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
         );
       if (role === "VENDOR")
         return (
-          <Badge className="cursor-default bg-orange-700 text-white hover:bg-orange-700">
-            <p className="mx-auto">User</p>
+          <Badge className="cursor-default bg-blue-700 text-white hover:bg-blue-700">
+            <p className="mx-auto">Vendor</p>
           </Badge>
         );
       if (role === "ADMIN")

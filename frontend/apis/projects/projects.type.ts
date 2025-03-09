@@ -43,4 +43,6 @@ export type AddProjectDto = {
   width?: string;
   height?: string;
   area?: string;
+
+  files?: File[];
 };

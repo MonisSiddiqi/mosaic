@@ -19,14 +19,14 @@ export const servicesColumns: ColumnDef<Service>[] = [
       console.log(icon);
 
       return (
-        <div className="ml-2 mt-2">
+        <div className="ml-2 mt-2 ">
           {icon ? (
             <Image
               src={icon}
               alt={`@${row.original.name}`}
-              width={44}
-              height={44}
-              className="overflow-hidden"
+              width={64}
+              height={64}
+              className="overflow-hidden object-cover"
             />
           ) : (
             <div className="flex h-11 w-11 items-center justify-center bg-gray-100">

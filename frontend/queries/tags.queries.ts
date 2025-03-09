@@ -11,9 +11,9 @@ export const useTagsQuery = ({
   pagination,
   filter,
 }: {
-  sorting: SortingState;
-  pagination: PaginationState;
-  filter: ColumnFiltersState;
+  sorting?: SortingState;
+  pagination?: PaginationState;
+  filter?: ColumnFiltersState;
 }) => {
   return useQuery({
     queryKey: ["tags", { sorting, pagination, filter }],
