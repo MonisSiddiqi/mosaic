@@ -19,7 +19,7 @@ export class GetTagsDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [{ id: 'name'; value: string }];
+  filter: [{ id: 'name'; value: string }, { id: 'serviceId'; value: string }];
 
   @IsOptional()
   @IsNumber()

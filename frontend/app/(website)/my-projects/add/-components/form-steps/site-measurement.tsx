@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -10,33 +11,33 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
-import { AddProjectDto } from "@/apis/projects/projects.type";
 import { PlusIcon, XIcon } from "lucide-react";
+import { useAddProject } from "@/hooks/use-add-project";
+import { Unit } from "@/apis/projects/projects.type";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
-// Define schema with optional file input
 const measurementsSchema = z.object({
+  unit: z.enum([Unit.FEET, Unit.METER, Unit.YARD]),
   length: z.string().optional(),
   width: z.string().optional(),
   height: z.string().optional(),
   area: z.string().optional(),
   files: z.array(z.instanceof(File)).optional(),
+  siteDescription: z.string().optional(),
 });
 
-type Props = {
-  handlePrevious: () => void;
-  handleNext: () => void;
-  formData: AddProjectDto;
-  setFormData: Dispatch<SetStateAction<AddProjectDto>>;
-};
+export const SiteMeasurements = () => {
+  const { formData, handlePrev, handleNext, setFormData } = useAddProject();
 
-export const SiteMeasurements: FC<Props> = ({
-  handlePrevious,
-  handleNext,
-  formData,
-  setFormData,
-}) => {
   const [filePreviews, setFilePreviews] = useState<
     { file: File; url: string }[]
   >([]);
@@ -44,10 +45,12 @@ export const SiteMeasurements: FC<Props> = ({
   const form = useForm<z.infer<typeof measurementsSchema>>({
     resolver: zodResolver(measurementsSchema),
     defaultValues: {
+      unit: formData.unit || Unit.METER,
       length: formData?.length || "",
       width: formData?.width || "",
       height: formData?.height || "",
       area: formData?.area || "",
+      siteDescription: formData?.siteDescription || "",
       files: [],
     },
   });
@@ -79,21 +82,60 @@ export const SiteMeasurements: FC<Props> = ({
       height: values.height,
       area: values.area,
       files: values.files,
+      siteDescription: values.siteDescription,
     }));
     handleNext();
   };
+
+  const unit = form
+    .watch("unit")
+    ?.toLowerCase()
+    .replace(/^./, (char) => char.toUpperCase());
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="mt-4 grid w-full gap-4">
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-7 md:grid-cols-2">
+            <div className="col-span-2 grid grid-cols-2 gap-7">
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Measurement Unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select measurement unit" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(Unit).map((item, index) => (
+                          <SelectItem key={index} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select the unit in which you have measured your site
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="length"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Length (Meter)</FormLabel>
+                  <FormLabel>Length ({unit})</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter length (optional)" {...field} />
                   </FormControl>
@@ -107,7 +149,7 @@ export const SiteMeasurements: FC<Props> = ({
               name="width"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Width (Meter)</FormLabel>
+                  <FormLabel>Width ({unit})</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter width (optional)" {...field} />
                   </FormControl>
@@ -121,7 +163,7 @@ export const SiteMeasurements: FC<Props> = ({
               name="height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Width (Meter)</FormLabel>
+                  <FormLabel>Width ({unit})</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter width (optional)" {...field} />
                   </FormControl>
@@ -135,9 +177,27 @@ export const SiteMeasurements: FC<Props> = ({
               name="area"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Area (Meter square)</FormLabel>
+                  <FormLabel>Area (Square {unit})</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter Area (optional)" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="siteDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us more about your site (optional)"
+                      {...field}
+                      className="h-32"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -201,7 +261,7 @@ export const SiteMeasurements: FC<Props> = ({
           />
 
           <div className="mt-4 flex w-full justify-between">
-            <Button type="button" variant="outline" onClick={handlePrevious}>
+            <Button type="button" variant="outline" onClick={handlePrev}>
               Previous
             </Button>
             <Button type="submit">Next</Button>

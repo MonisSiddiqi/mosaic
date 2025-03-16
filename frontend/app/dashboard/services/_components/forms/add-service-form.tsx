@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useAddServiceMutation } from "@/queries/services.queries";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   icon: z
@@ -143,7 +144,8 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
               <FormItem>
                 <FormLabel>Service Description</FormLabel>
                 <FormControl>
-                  <Input
+                  <Textarea
+                    className="h-32"
                     placeholder="Provide a detailed description"
                     {...field}
                   />

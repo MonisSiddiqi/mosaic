@@ -71,7 +71,7 @@ export class StorageService {
   ) {
     const key = `${folder}/${uuidv4()}${extname(file.originalname)}`;
 
-    this.logger.debug(`Uploading file ${key}`);
+    this.logger.log(`Uploading file ${key}`);
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,

@@ -26,7 +26,7 @@ export class GetServicesDto {
   @IsNumber()
   @Min(0)
   @Transform(({ value }) => +value)
-  page: number = 1;
+  page: number = 0;
 
   @IsOptional()
   @IsNumber()

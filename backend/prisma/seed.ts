@@ -1,17 +1,9 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { servicesData, tagsData } from './data';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  for (const service of servicesData)
-    await prisma.service.createMany({
-      data: { name: service.name, description: service.description },
-    });
-
-  return;
-
   const admin = {
     name: 'Sam',
     email: 'sam@mosaic.com',

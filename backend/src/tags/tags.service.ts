@@ -12,7 +12,7 @@ export class TagsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createTagDto: CreateTagDto) {
-    const { name } = createTagDto;
+    const { name, serviceId } = createTagDto;
 
     const isExist = await this.prismaService.tag.findUnique({
       where: {
@@ -26,8 +26,21 @@ export class TagsService {
       );
     }
 
+    const service = await this.prismaService.service.findUnique({
+      where: {
+        id: serviceId,
+      },
+    });
+
+    if (!service) {
+      throw new UnprocessableEntityException('Service not found.');
+    }
+
     const tagCreateInput: Prisma.TagCreateInput = {
       name,
+      service: {
+        connect: { id: serviceId },
+      },
     };
 
     const tag = await this.prismaService.tag.create({
@@ -43,6 +56,26 @@ export class TagsService {
     const tagWhereInput: Prisma.TagWhereInput = {};
 
     const textFilter = filter?.find((item) => item.id === 'name');
+    const serviceId = filter?.find((item) => item.id === 'serviceId');
+
+    if (textFilter) {
+      tagWhereInput.name = {
+        contains: textFilter.value,
+        mode: 'insensitive',
+      };
+    }
+
+    if (serviceId) {
+      const service = await this.prismaService.service.findUnique({
+        where: {
+          id: serviceId?.value,
+        },
+      });
+      if (!service) {
+        throw new UnprocessableEntityException('Service not found');
+      }
+      tagWhereInput.serviceId = service.id;
+    }
 
     const orderBy: Prisma.TagOrderByWithRelationInput = {};
 
@@ -52,13 +85,6 @@ export class TagsService {
       };
     } else {
       orderBy[sortField] = sortValue;
-    }
-
-    if (textFilter) {
-      tagWhereInput.name = {
-        contains: textFilter.value,
-        mode: 'insensitive',
-      };
     }
 
     const tags = await this.prismaService.tag.findMany({

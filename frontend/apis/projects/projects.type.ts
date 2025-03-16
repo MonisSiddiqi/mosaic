@@ -20,17 +20,13 @@ export enum ProjectStatusEnum {
   COMPLETED = "COMPLETED",
 }
 
-export enum Preference {
-  HIGH_QUALITY = "HIGH_QUALITY",
-  LOW_PRICE = "LOW_PRICE",
-}
-
 export type AddProjectDto = {
   title: string;
   description: string;
   serviceId: string;
-  preference?: Preference;
-  tags?: string[];
+  budgetPreference: number;
+  preferenceMessage?: string;
+  tags: string[];
 
   line1: string;
   line2?: string;
@@ -43,6 +39,14 @@ export type AddProjectDto = {
   width?: string;
   height?: string;
   area?: string;
+  siteDescription?: string;
 
-  files?: File[];
+  files: File[];
+  sampleFiles: File[];
 };
+
+export enum Unit {
+  METER = "METER",
+  FEET = "FEET",
+  YARD = "YARD",
+}

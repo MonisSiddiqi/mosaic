@@ -12,10 +12,6 @@ export const VendorTagsPage = () => {
   const [search, setSearch] = useState("");
 
   const { data: tags, isLoading } = useTagsQuery({
-    pagination: {
-      pageIndex: -1,
-      pageSize: 0,
-    },
     sorting: [{ id: "vendor", desc: true }],
     filter: [{ id: "name", value: search }],
   });

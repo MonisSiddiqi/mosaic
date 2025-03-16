@@ -13,11 +13,9 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, FC, SetStateAction } from "react";
 import { z } from "zod";
-import { AddProjectDto } from "@/apis/projects/projects.type";
+import { useAddProject } from "@/hooks/use-add-project";
 
-// Define schema for location data validation using Zod
 const locationSchema = z.object({
   line1: z.string().min(1, "Line 1 is required."),
   line2: z.string().optional(),
@@ -27,19 +25,9 @@ const locationSchema = z.object({
   postalCode: z.string().min(1, "Postal code is required."),
 });
 
-type Props = {
-  handlePrevious: () => void;
-  handleNext: () => void;
-  formData: AddProjectDto;
-  setFormData: Dispatch<SetStateAction<AddProjectDto>>;
-};
+export const Location = ({}) => {
+  const { formData, setFormData, handleNext, handlePrev } = useAddProject();
 
-export const Location: FC<Props> = ({
-  handleNext,
-  formData,
-  setFormData,
-  handlePrevious,
-}) => {
   const form = useForm<z.infer<typeof locationSchema>>({
     resolver: zodResolver(locationSchema),
     defaultValues: {
@@ -70,7 +58,7 @@ export const Location: FC<Props> = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="mt-4 grid w-full gap-4">
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-7 md:grid-cols-2">
             <FormField
               control={form.control}
               name="line1"
@@ -157,7 +145,7 @@ export const Location: FC<Props> = ({
           </div>
 
           <div className="mt-4 flex w-full justify-between">
-            <Button type="button" variant="outline" onClick={handlePrevious}>
+            <Button type="button" variant="outline" onClick={handlePrev}>
               Previous
             </Button>
 

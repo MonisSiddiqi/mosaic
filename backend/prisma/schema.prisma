@@ -14,41 +14,33 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  email           String   @unique
+  id              String          @id @default(uuid()) @db.VarChar(36)
+  email           String          @unique
   password        String
-  isEmailVerified Boolean  @default(false)
-  isActive        Boolean  @default(true)
-  role            UserRole @default(USER)
-
-  UserProfile UserProfile?
-  projects    Project[] // Projects they created
-  reviews     Review[] // Reviews they've received
-
-  // Vendor-specific fields
-  vendorTags     VendorTag[]
-  vendorServices VendorService[]
-  submittedBids  Bid[]
-  Address        Address?
-
-  updatedAt     DateTime        @updatedAt @db.Timestamptz
-  createdAt     DateTime        @default(now()) @db.Timestamptz
-  ProjectUpdate ProjectUpdate[]
-  Testimonial   Testimonial[]
-  Otp           Otp?
-  LoginHistory  LoginHistory[]
+  isEmailVerified Boolean         @default(false)
+  isActive        Boolean         @default(true)
+  role            UserRole        @default(USER)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz
+  createdAt       DateTime        @default(now()) @db.Timestamptz
+  UserProfile     UserProfile?
+  projects        Project[]
+  reviews         Review[]
+  vendorTags      VendorTag[]
+  vendorServices  VendorService[]
+  Address         Address?
+  Testimonial     Testimonial[]
+  Otp             Otp?
+  LoginHistory    LoginHistory[]
+  Bid             Bid[]
+  ProjectUpdate   ProjectUpdate[]
 }
 
 model UserProfile {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique @db.VarChar(36)
-
-  name  String
-  image String?
-
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String   @unique @db.VarChar(36)
+  name      String
+  image     String?
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 }
@@ -63,98 +55,99 @@ model LoginHistory {
 }
 
 model Service {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  iconUrl     String?
-  name        String  @unique
-  description String
-
+  id            String          @id @default(uuid()) @db.VarChar(36)
+  iconUrl       String?
+  name          String          @unique
+  description   String
   updatedAt     DateTime        @updatedAt @db.Timestamptz
   createdAt     DateTime        @default(now()) @db.Timestamptz
   Project       Project[]
   VendorService VendorService[]
+  Tag           Tag[]
 }
 
 model Project {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId    String   @db.VarChar(36)
-  Service   Service? @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  serviceId String?
-  Address   Address? @relation(fields: [addressId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  addressId String?  @db.VarChar(36)
-
-  title       String
-  description String
-  status      ProjectStatus @default(IN_PROGRESS)
-  preference  Preference?
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
-  SiteMeasurement SiteMeasurement?
-  ProjectTag      ProjectTag[]
-  Review          Review[]
-  ProjectImage    ProjectImage[]
-  Bid             Bid[]
-  ProjectUpdate   ProjectUpdate[]
+  id                String           @id @default(uuid()) @db.VarChar(36)
+  user              User             @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId            String           @db.VarChar(36)
+  Service           Service?         @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  serviceId         String?
+  Address           Address?         @relation(fields: [addressId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  addressId         String?          @db.VarChar(36)
+  title             String
+  description       String
+  status            ProjectStatus    @default(IN_PROGRESS)
+  budgetPreference  Int              @default(5) // from 0 to 10 higher value means high quality lower value means affordable 5 means no preference
+  preferenceMessage String?
+  updatedAt         DateTime         @updatedAt @db.Timestamptz
+  createdAt         DateTime         @default(now()) @db.Timestamptz
+  SiteMeasurement   SiteMeasurement?
+  ProjectTag        ProjectTag[]
+  Review            Review[]
+  Bid               Bid[]
+  ProjectUpdate     ProjectUpdate[]
+  ProjectFile       ProjectFile[]
+  SampleFile        SampleFile[]
 
   @@index([userId])
 }
 
 model SiteMeasurement {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId   String   @unique @db.VarChar(36)
+  length      Decimal? @db.Decimal(10, 2)
+  width       Decimal? @db.Decimal(10, 2)
+  height      Decimal? @db.Decimal(10, 2)
+  area        Decimal? @db.Decimal(10, 2)
+  description String?
+  unit        Unit     @default(METER)
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+  createdAt   DateTime @default(now()) @db.Timestamptz
+}
 
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String  @unique @db.VarChar(36)
-
-  length Decimal? @db.Decimal(10, 2)
-  width  Decimal? @db.Decimal(10, 2)
-  height Decimal? @db.Decimal(10, 2)
-  area   Decimal? @db.Decimal(10, 2)
-  unit   String   @default("METER")
-
+model SampleFile {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String   @db.VarChar(36)
+  url       String
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 }
 
 model Address {
-  id     String  @id @default(uuid()) @db.VarChar(36)
-  // Relation to User for vendor address
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @unique @db.VarChar(36)
-
+  id         String    @id @default(uuid()) @db.VarChar(36)
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?   @unique @db.VarChar(36)
   line1      String
   line2      String?
   country    String
   state      String
   city       String
   postalCode String
-
-  updatedAt DateTime  @updatedAt @db.Timestamptz
-  createdAt DateTime  @default(now()) @db.Timestamptz
-  Project   Project[]
+  updatedAt  DateTime  @updatedAt @db.Timestamptz
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+  Project    Project[]
 }
 
 model Tag {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  name String @unique
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
+  id        String       @id @default(uuid()) @db.VarChar(36)
+  service   Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  serviceId String       @db.VarChar(36)
+  name      String       @unique
+  updatedAt DateTime     @updatedAt @db.Timestamptz
+  createdAt DateTime     @default(now()) @db.Timestamptz
   projects  ProjectTag[]
   VendorTag VendorTag[]
+
+  @@index([serviceId])
 }
 
 model ProjectTag {
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String  @db.VarChar(36)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tagId     String  @db.VarChar(36)
-
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String   @db.VarChar(36)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tagId     String   @db.VarChar(36)
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 
@@ -163,94 +156,73 @@ model ProjectTag {
   @@index([tagId])
 }
 
-model ProjectImage {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String  @db.VarChar(36)
-
-  url  String
-  type ImageType
-
+model ProjectFile {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String   @db.VarChar(36)
+  url       String
+  type      FileType
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 }
 
 model Bid {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String  @db.VarChar(36)
-
-  vendor   User      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId String    @db.VarChar(36)
-  status   BidStatus @default(PENDING)
-
-  proposalMessage    String?
-  proposalAttachment String?
-
-  updatedAt     DateTime        @updatedAt @db.Timestamptz
-  createdAt     DateTime        @default(now()) @db.Timestamptz
-  BidAttachment BidAttachment[]
-}
-
-model BidAttachment {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  bid   Bid    @relation(fields: [bidId], references: [id], onDelete: Cascade)
-  bidId String @db.VarChar(36)
-
-  url         String
-  name        String
-  description String?
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
-
-  @@index([bidId])
+  id                   String    @id @default(uuid()) @db.VarChar(36)
+  project              Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId            String    @db.VarChar(36)
+  vendor               User      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId             String    @db.VarChar(36)
+  vendorStatus         BidStatus @default(PENDING)
+  userStatus           BidStatus @default(PENDING)
+  vendorMessage        String?
+  vendorAttachmentName String?
+  vendorAttachmentUrl  String?
+  updatedAt            DateTime  @updatedAt @db.Timestamptz
+  createdAt            DateTime  @default(now()) @db.Timestamptz
 }
 
 model ProjectUpdate {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id                String              @id @default(uuid()) @db.VarChar(36)
+  project           Project             @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId         String              @db.VarChar(36)
+  Vendor            User?               @relation(fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vendorId          String?             @db.VarChar(36)
+  comment           String
+  updatedAt         DateTime            @updatedAt @db.Timestamptz
+  createdAt         DateTime            @default(now()) @db.Timestamptz
+  ProjectUpdateFile ProjectUpdateFile[]
+}
 
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String  @db.VarChar(36)
+model ProjectUpdateFile {
+  ProjectUpdate   ProjectUpdate @relation(fields: [projectUpdateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectUpdateId String        @db.VarChar(36)
+  type            FileType
+  fileUrl         String
 
-  Vendor   User?   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId String? @db.VarChar(36)
-
-  comment String
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
+  @@id([projectUpdateId])
 }
 
 model Review {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String  @db.VarChar(36)
-
-  vendor   User   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId String @db.VarChar(36)
-
-  rating      Int // 1-5 stars
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String   @db.VarChar(36)
+  vendor      User     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId    String   @db.VarChar(36)
+  rating      Int
   comment     String?
-  isPublished Boolean @default(true)
-
-  updatedAt DateTime @updatedAt @db.Timestamptz
-  createdAt DateTime @default(now()) @db.Timestamptz
+  isPublished Boolean  @default(true)
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+  createdAt   DateTime @default(now()) @db.Timestamptz
 
   @@index([projectId])
   @@index([vendorId])
 }
 
 model VendorTag {
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.VarChar(36)
-  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  tagId  String @db.VarChar(36)
-
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.VarChar(36)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     String   @db.VarChar(36)
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 
@@ -260,11 +232,10 @@ model VendorTag {
 }
 
 model VendorService {
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String  @db.VarChar(36)
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  serviceId String  @db.VarChar(36)
-
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.VarChar(36)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String   @db.VarChar(36)
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
 
@@ -274,17 +245,14 @@ model VendorService {
 }
 
 model Testimonial {
-  id String @id @default(uuid()) @db.VarChar(36)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.VarChar(36)
-
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @db.VarChar(36)
   rating      Int
   title       String
   description String
-
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
 
   @@index([userId])
 }
@@ -305,17 +273,9 @@ enum OtpType {
   FORGOT_PASSWORD
 }
 
-enum ImageType {
+enum FileType {
   BEFORE
   AFTER
-}
-
-enum MeasurementUnit {
-  METER
-  FEET
-  YARD
-  SQUARE_METER
-  SQUARE_FEET
 }
 
 enum ProjectStatus {
@@ -336,7 +296,8 @@ enum UserRole {
   ADMIN
 }
 
-enum Preference {
-  HIGH_QUALITY
-  LOW_PRICE
+enum Unit {
+  METER
+  FEET
+  YARD
 }

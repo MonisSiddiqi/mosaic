@@ -1,27 +1,45 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { getInitials } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ServiceCardProps = {
-  icon: string;
+  id?: string;
+  iconUrl: string | null;
   title: string;
   description: string;
-  href: string;
 };
 
 export function ServiceCard({
-  icon,
+  id,
+  iconUrl,
   title,
   description,
-  href,
 }: ServiceCardProps) {
   return (
-    <Link href={href}>
+    <Link href={`/my-projects/add?service=${id}`}>
       <Card className="group overflow-hidden transition-shadow hover:shadow-md">
         <CardHeader>
-          <div className="h-16 w-16 overflow-hidden">
-            <Image src={icon} alt={title} width={64} height={64} />{" "}
-          </div>
+          {/* <div className="h-16 w-16 overflow-hidden">
+            {iconUrl ? (
+              <Image src={iconUrl} alt={title} width={64} height={64} />
+            ) : (
+              <div className="flex size-16 items-center justify-center rounded bg-muted text-lg font-semibold text-gray-700">
+                {getInitials(title)}
+              </div>
+            )}
+          </div> */}
+          <Avatar className="size-16 rounded">
+            <AvatarImage
+              className="size-16 object-contain"
+              src={iconUrl as string}
+              alt={`@${title}`}
+            />
+            <AvatarFallback className="rounded text-lg font-semibold text-gray-700">
+              {getInitials(title)}
+            </AvatarFallback>
+          </Avatar>
         </CardHeader>
 
         <CardContent>

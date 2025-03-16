@@ -89,7 +89,7 @@ export const LoginForm: FC<Props> = ({ className }) => {
                   <Input
                     placeholder="Your email address"
                     autoComplete="email"
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                     {...field}
                   />
                 </FormControl>
@@ -108,7 +108,7 @@ export const LoginForm: FC<Props> = ({ className }) => {
                     placeholder="Your Password"
                     autoComplete="password"
                     type="password"
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                     {...field}
                   />
                 </FormControl>
@@ -119,7 +119,7 @@ export const LoginForm: FC<Props> = ({ className }) => {
           <Button
             disabled={form.formState.isSubmitting}
             type="submit"
-            className="mt-4 h-12"
+            className="mt-4"
             size={"lg"}
           >
             {form.formState.isSubmitting ? (

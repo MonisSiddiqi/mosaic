@@ -1,4 +1,4 @@
-import { Preference } from '@prisma/client';
+import { Unit } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -24,11 +24,19 @@ export class CreateProjectDto {
   @IsString()
   serviceId: string;
 
-  @IsOptional()
-  @IsEnum(Preference)
-  preference?: Preference;
+  @IsNumber()
+  @Transform(({ value }) => +value)
+  @Min(0)
+  budgetPreference?: number = 5;
 
   @IsOptional()
+  @IsString()
+  preferenceMessage?: string;
+
+  @IsOptional()
+  @IsString()
+  siteDescription?: string;
+
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
@@ -89,4 +97,8 @@ export class CreateProjectDto {
     toClassOnly: true,
   })
   area?: number;
+
+  @IsOptional()
+  @IsEnum(Unit)
+  unit: Unit = Unit.METER;
 }

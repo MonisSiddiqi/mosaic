@@ -24,7 +24,10 @@ export const TagsTable = () => {
 
   const { data, error, isLoading } = useTagsQuery({
     filter,
-    pagination,
+    pagination: {
+      pageIndex: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    },
     sorting,
   });
 

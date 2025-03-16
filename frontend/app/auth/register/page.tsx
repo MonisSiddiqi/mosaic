@@ -9,10 +9,10 @@ export default function AuthPage() {
       <div className="flex w-full max-w-md flex-col gap-7">
         <div>
           <p className="text-4xl font-bold">
-            Mosaic <span className="text-base text-blue-500">Georgia</span>{" "}
+            Crafty <span className="text-base text-blue-500">Future</span>{" "}
           </p>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Register yourself with us
+          <h2 className="mt-6 text-xl font-extrabold text-gray-900">
+            Register yourself as User
           </h2>
         </div>
         <RegisterForm />

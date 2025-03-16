@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCcwIcon, LogInIcon } from "lucide-react";
+import { RefreshCcwIcon, LogInIcon, ExternalLinkIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -99,7 +99,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                   <Input
                     placeholder="Enter name"
                     {...field}
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                   />
                 </FormControl>
                 <FormMessage />
@@ -117,7 +117,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                   <Input
                     placeholder="Your email address"
                     autoComplete="email"
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                     {...field}
                   />
                 </FormControl>
@@ -135,7 +135,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                   <Input
                     type="password"
                     placeholder="Enter Password"
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                     {...field}
                   />
                 </FormControl>
@@ -154,7 +154,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                   <Input
                     type="password"
                     placeholder="Confirm password"
-                    className="h-12 border-gray-400 focus:outline-none"
+                    className="border-gray-400 focus:outline-none"
                     {...field}
                   />
                 </FormControl>
@@ -166,7 +166,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
             <Button
               disabled={form.formState.isSubmitting}
               type="submit"
-              className="mt-4 h-12"
+              className="mt-4"
               size={"lg"}
             >
               {form.formState.isSubmitting ? (
@@ -174,12 +174,24 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               ) : (
                 <LogInIcon className="mr-2 h-4 w-4" />
               )}
-              Register
+              Register as User
+            </Button>
+
+            <Button
+              type="button"
+              className="mt-4 bg-brand-gold hover:bg-brand-gold/90"
+              asChild
+              size={"lg"}
+            >
+              <Link href={"/auth/register/vendor"}>
+                {" "}
+                <ExternalLinkIcon className="mr-2 h-4 w-4" />
+                Register as Vendor{" "}
+              </Link>
             </Button>
 
             <Button type="button" variant={"link"}>
-              Forgot Password?
-              <Link href="/auth/forgot-password"></Link>
+              <Link href="/auth/forgot-password">Forgot Password?</Link>
             </Button>
           </div>
         </div>

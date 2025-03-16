@@ -19,11 +19,12 @@ export class ProjectsService {
     createProjectDto: CreateProjectDto,
     authUser: User,
     files: Express.Multer.File[],
+    sampleFiles: Express.Multer.File[],
   ) {
     const {
       title,
       description,
-      preference,
+      budgetPreference,
       serviceId,
       tags,
       line1,
@@ -36,103 +37,94 @@ export class ProjectsService {
       length,
       width,
       area,
+      siteDescription,
+      preferenceMessage,
+      unit,
     } = createProjectDto;
 
     const projectCreateInput: Prisma.ProjectCreateInput = {
       title,
       description,
       user: { connect: { id: authUser.id } },
+      Address: {
+        create: {
+          line1,
+          ...(line2 ? { line2 } : {}),
+          country,
+          state,
+          city,
+          postalCode,
+        },
+      },
+      SiteMeasurement: {
+        create: {
+          length,
+          width,
+          height,
+          area,
+          description: siteDescription,
+          unit,
+        },
+      },
+      budgetPreference,
+      preferenceMessage,
     };
 
-    if (preference) {
-      projectCreateInput.preference = preference;
+    const serviceExists = await this.prismaService.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    //validating service
+    if (!serviceExists) {
+      throw new UnprocessableEntityException(`Service not found`);
     }
+    projectCreateInput.Service = { connect: { id: serviceId } };
 
-    if (serviceId) {
-      const serviceExists = await this.prismaService.service.findUnique({
-        where: { id: serviceId },
-      });
-
-      if (serviceExists) {
-        // throw new UnprocessableEntityException(`Service not found`);
-        projectCreateInput.Service = { connect: { id: serviceId } };
-      }
-
-      // projectCreateInput.Service = { connect: { id: serviceId } };
-    }
-
-    if (tags && tags.length > 0) {
-      const existingTags = await this.prismaService.tag.findMany({
-        where: { id: { in: tags } },
-        select: { id: true },
-      });
-
-      const existingTagIds = existingTags.map((tag) => tag.id);
-      const nonExistingTags = tags.filter(
-        (tag) => !existingTagIds.includes(tag),
-      );
-
-      if (nonExistingTags.length > 0) {
-        throw new UnprocessableEntityException(
-          `Tags not found: ${nonExistingTags.join(', ')}`,
-        );
-      }
-
-      if (existingTagIds.length > 0) {
-        projectCreateInput.ProjectTag = {
-          createMany: {
-            data: existingTagIds.map((tagId) => ({ tagId })),
+    // validating tags
+    await Promise.all(
+      tags.map(async (tagId) => {
+        const isExist = await this.prismaService.tag.findUnique({
+          where: {
+            id: tagId,
           },
-        };
-      }
-    }
-
-    projectCreateInput.Address = {
-      create: {
-        line1,
-        ...(line2 ? { line2 } : {}),
-        country,
-        state,
-        city,
-        postalCode,
-      },
-    };
-
-    projectCreateInput.SiteMeasurement = {
-      create: {
-        length,
-        width,
-        height,
-        area,
-      },
-    };
-
-    const filesUrls = await Promise.all(
-      files.map(async (file) => {
-        try {
-          return await this.storageService.uploadFile(
-            file,
-            StorageFolderEnum.PROJECTS,
-          );
-        } catch (error) {
-          console.log(
-            `Failed to upload file: ${file.originalname}, Error: ${error.message}`,
-          );
-          return null;
+        });
+        if (!isExist) {
+          throw new UnprocessableEntityException(`Tag not found`);
         }
       }),
     );
 
-    const validFileUrls = filesUrls.filter((url) => url !== null);
+    const filesUrls = await Promise.all(
+      files.map((file) =>
+        this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
+      ),
+    );
 
-    projectCreateInput.ProjectImage = {
+    projectCreateInput.ProjectFile = {
       createMany: {
-        data: validFileUrls.map((url) => ({ url, type: 'BEFORE' })),
+        data: filesUrls.map((url) => ({ url, type: 'BEFORE' })),
+      },
+    };
+
+    const sampleFilesUrls = await Promise.all(
+      sampleFiles.map((file) =>
+        this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
+      ),
+    );
+
+    projectCreateInput.SampleFile = {
+      createMany: {
+        data: sampleFilesUrls.map((url) => ({ url })),
       },
     };
 
     const project = await this.prismaService.project.create({
       data: projectCreateInput,
+    });
+
+    //adding tags
+    await this.prismaService.projectTag.createMany({
+      data: tags.map((item) => ({ tagId: item, projectId: project.id })),
     });
 
     return new ApiResponse(project);

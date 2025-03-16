@@ -10,15 +10,13 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 
-export const useServicesQuery = ({
-  sorting,
-  pagination,
-  filter,
-}: {
+export const useServicesQuery = (getServicesDto?: {
   sorting?: SortingState;
   pagination?: PaginationState;
   filter?: ColumnFiltersState;
 }) => {
+  const { sorting, pagination, filter } = getServicesDto ?? {};
+
   return useQuery({
     queryKey: ["services", { sorting, pagination, filter }],
     queryFn: ({ queryKey }) => {
@@ -37,8 +35,8 @@ export const useServicesQuery = ({
       return getAllServicesApi({
         sortField: field?.id,
         sortValue: field?.desc ? "desc" : "asc",
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+        page: pagination?.pageIndex,
+        limit: pagination?.pageSize,
         filter: filter,
       });
     },

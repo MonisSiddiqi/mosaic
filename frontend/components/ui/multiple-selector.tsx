@@ -336,7 +336,10 @@ const MultipleSelector = React.forwardRef<
 
       if (creatable) {
         return (value: string, search: string) => {
-          return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1;
+          const option = arrayOptions?.find((opt) => opt.value === value);
+          return option?.label.toLowerCase().includes(search.toLowerCase())
+            ? 1
+            : -1;
         };
       }
       // Using default filter in `cmdk`. We don't have to provide it.
@@ -456,7 +459,7 @@ const MultipleSelector = React.forwardRef<
                           return (
                             <CommandItem
                               key={option.value}
-                              value={option.value}
+                              value={option.label}
                               disabled={option.disable}
                               onMouseDown={(e) => {
                                 e.preventDefault();

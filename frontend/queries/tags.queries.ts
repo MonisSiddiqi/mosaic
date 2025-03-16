@@ -6,15 +6,13 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 
-export const useTagsQuery = ({
-  sorting,
-  pagination,
-  filter,
-}: {
+export const useTagsQuery = (getTagsDto?: {
   sorting?: SortingState;
   pagination?: PaginationState;
   filter?: ColumnFiltersState;
 }) => {
+  const { sorting, pagination, filter } = getTagsDto ?? {};
+
   return useQuery({
     queryKey: ["tags", { sorting, pagination, filter }],
     queryFn: ({ queryKey }) => {
@@ -33,8 +31,8 @@ export const useTagsQuery = ({
       return getAllTagsApi({
         sortField: field?.id,
         sortValue: field?.desc ? "desc" : "asc",
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+        page: pagination?.pageIndex,
+        limit: pagination?.pageSize,
         filter: filter,
       });
     },

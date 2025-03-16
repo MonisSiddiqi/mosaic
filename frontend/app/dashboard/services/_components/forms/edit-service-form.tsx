@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { editServiceApi } from "@/apis/services";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   icon: z
@@ -128,7 +129,11 @@ export const EditServiceForm: FC<Props> = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter description" {...field} />
+                  <Textarea
+                    className="h-32"
+                    placeholder="Enter description"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
                   Give a detailed description of the service.

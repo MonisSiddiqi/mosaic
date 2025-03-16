@@ -22,10 +22,7 @@ import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User, UserRole } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import {
-  AnyFilesInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('projects')
 export class ProjectsController {
@@ -34,14 +31,30 @@ export class ProjectsController {
   @Post()
   @Roles(UserRole.USER)
   @UseGuards(RolesGuard)
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'files', maxCount: 20 },
+      { name: 'sampleFiles', maxCount: 10 },
+    ]),
+  )
   create(
     @Body() createProjectDto: CreateProjectDto,
     @GetUser() authUser: User,
     @UploadedFiles()
-    files: Express.Multer.File[],
+    files: { files: Express.Multer.File[]; sampleFiles: Express.Multer.File[] },
   ) {
-    return this.projectsService.create(createProjectDto, authUser, files);
+    if (!files?.files?.length) {
+      throw new UnprocessableEntityException(
+        'At least one project image or video is required',
+      );
+    }
+
+    return this.projectsService.create(
+      createProjectDto,
+      authUser,
+      files.files,
+      files.sampleFiles,
+    );
   }
 
   @Get()

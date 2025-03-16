@@ -20,89 +20,23 @@ import { Location } from "./form-steps/locations";
 import { SiteMeasurements } from "./form-steps/site-measurement";
 import { BudgetStep } from "./form-steps/budget";
 import { AddProjectDto } from "@/apis/projects/projects.type";
-
-const steps = [
-  { title: "Project Details", icon: Building2Icon },
-  { title: "Location", icon: MapPinIcon },
-  { title: "Site Measurement", icon: RulerIcon },
-  { title: "Budget", icon: DollarSignIcon },
-];
+import { useAddProject } from "@/hooks/use-add-project";
+import { steps } from "@/context/add-project-context";
+import { Progress } from "@/components/ui/progress";
 
 export function MultiStepForm() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<AddProjectDto>({
-    title: "",
-    description: "",
-    city: "",
-    country: "",
-    line1: "",
-    postalCode: "",
-    serviceId: "",
-    state: "",
-    width: "",
-    height: "",
-    length: "",
-    area: "",
-    tags: [],
-    files: [],
-  });
-
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-  };
+  const { currentStep } = useAddProject();
 
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <ProjectDetails
-            currentStep={currentStep}
-            handleNext={handleNext}
-            handlePrevious={handlePrevious}
-            steps={steps}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        );
+        return <ProjectDetails />;
       case 1:
-        return (
-          <Location
-            handleNext={handleNext}
-            handlePrevious={handlePrevious}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        );
+        return <Location />;
       case 2:
-        return (
-          <SiteMeasurements
-            formData={formData}
-            handleNext={handleNext}
-            handlePrevious={handlePrevious}
-            setFormData={setFormData}
-          />
-        );
+        return <SiteMeasurements />;
       case 3:
-        return (
-          <BudgetStep
-            formData={formData}
-            handlePrevious={handlePrevious}
-            setFormData={setFormData}
-          />
-        );
+        return <BudgetStep />;
       default:
         return null;
     }
@@ -110,15 +44,28 @@ export function MultiStepForm() {
 
   const CurrentStepIcon = steps[currentStep].icon;
 
+  const getProgress = () => {
+    let step = 0;
+    if (currentStep === step) {
+      return 5;
+    } else if (currentStep === step + 1) {
+      return 35;
+    } else if (currentStep === step + 2) {
+      return 70;
+    } else {
+      return 98;
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl md:p-4">
-      <div className="mb-8 flex flex-col items-start gap-6 md:flex-row md:justify-between">
+      <div className="mb-7 flex flex-col items-start gap-6 md:flex-row md:justify-between">
         {steps.map((step, index) => (
           <div key={step.title} className="flex items-center gap-4 md:flex-col">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${
                 currentStep >= index
-                  ? "bg-blue-600 text-white"
+                  ? "bg-brand-primary text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -127,7 +74,7 @@ export function MultiStepForm() {
             <span
               className={`text-sm md:mt-2 ${
                 currentStep >= index
-                  ? "font-semibold text-blue-600"
+                  ? "font-semibold text-brand-primary"
                   : "text-gray-500"
               }`}
             >
@@ -136,8 +83,11 @@ export function MultiStepForm() {
           </div>
         ))}
       </div>
+
+      <Progress value={getProgress()} className="mb-7" />
+
       <Card>
-        <CardHeader className="border-gray300 border">
+        <CardHeader className="border-b border-gray-100">
           <CardTitle className="flex items-center gap-4">
             <CurrentStepIcon />
             {steps[currentStep].title}
