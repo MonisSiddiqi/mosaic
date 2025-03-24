@@ -1,11 +1,11 @@
 import PageHeader from "../_components/page-header";
-import { ContactForm } from "./-components/contact-form";
+import { ContactForm } from "./_components/contact-form";
 
 export default function ContactPage() {
   return (
-    <>
-      <PageHeader title="Contact Us" />
+    <div className="w-full bg-background-secondary">
+      <PageHeader title="My Projects" />
       <ContactForm />
-    </>
+    </div>
   );
 }

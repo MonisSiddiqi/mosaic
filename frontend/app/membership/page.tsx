@@ -1,4 +1,10 @@
-import { Check, HelpCircle, X } from "lucide-react";
+import {
+  Check,
+  CheckCheckIcon,
+  CheckCircle2Icon,
+  HelpCircle,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,90 +23,144 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function MembershipPage() {
-  const plans = [
-    {
-      id: "basic",
-      name: "Basic",
-      description: "Essential features for individuals",
-      price: {
-        monthly: 4.99,
-        yearly: 50.99,
-      },
-      features: [
-        { name: "Can add up to 5 services", included: true },
-        { name: "Bids will be given from your home district", included: true },
-        { name: "Profile listing in the vendor directory", included: true },
-        { name: "Email notifications for relevant projects", included: false },
-        { name: "Customer reviews and ratings on profile", included: false },
-        { name: "Direct messaging with clients", included: false },
-      ],
-      popular: false,
-      cta: "Get Started",
-    },
-    {
-      id: "pro",
-      name: "Pro",
-      description: "Perfect for enthusiasts and professionals",
-      price: {
-        monthly: 10.99,
-        yearly: 110.99,
-      },
-      features: [
-        { name: "Can add up to 12 services", included: true },
-        { name: "Bids will be given from your state", included: true },
-        {
-          name: "Priority profile listing in the vendor directory",
-          included: true,
-        },
-        {
-          name: "Email & SMS notifications for relevant projects",
-          included: true,
-        },
-        { name: "Customer reviews and ratings on profile", included: true },
-        { name: "Direct messaging with clients", included: false },
-      ],
-      popular: true,
-      cta: "Go Pro",
-    },
-    {
-      id: "premium",
-      name: "Premium",
-      description: "Ultimate experience with all features",
-      price: {
-        monthly: 19.99,
-        yearly: 203.99,
-      },
-      features: [
-        { name: "Unlimited services can be added", included: true },
-        {
-          name: "Bids will be given from all over the country",
-          included: true,
-        },
-        {
-          name: "Featured profile listing with higher visibility",
-          included: true,
-        },
-        {
-          name: "Instant email & SMS notifications for relevant projects",
-          included: true,
-        },
-        { name: "In-depth analytics and bid success insights", included: true },
-        { name: "Direct messaging with clients", included: true },
-      ],
-      popular: false,
-      cta: "Go Premium",
-    },
-  ];
+const tier1Services = [
+  "Handyman",
+  "Grass Service",
+  "Painting",
+  "Drywall",
+  "Windows",
+  "Garage Doors",
+  "Drop Ceiling",
+  "Epoxy Flooring",
+  "Tree Service",
+  "Signs",
+  "Waterproofing",
+  "Gutter Cleaning",
+];
 
+const tier2Services = [
+  "Plumbing",
+  "Electrical",
+  "HVAC",
+  "Roofing",
+  "Masonry",
+  "Concrete",
+  "Flooring",
+  "Finish Carpentry",
+  "Excavation",
+  "Irrigation System",
+  "Insulation",
+  "Demolition",
+  "Tile Install",
+  "Fireplace Services",
+  "Exterior Carpentry",
+  "Staging Services",
+];
+
+const tier3Services = [
+  "Remodeling",
+  "General Contractors",
+  "Engineering Services",
+  "Property Management",
+  "Custom Work",
+  "Commercial Construction",
+  "Septic & Well Services",
+  "Fire Suppression",
+  "Utility Services",
+  "Underground Tap",
+  "Full Demolition",
+  "Large-Scale Foundation Work",
+  "Asphalt & Driveway Work",
+  "Materials Supplier",
+  "Dumpster Service",
+  "Signs & Large Installations",
+];
+
+const plans = [
+  {
+    id: "tier1",
+    name: "Essential Trades",
+    description: "Perfect for low earning jobs like handyman or painting",
+    price: {
+      monthly: 50,
+      yearly: 500,
+    },
+    features: [
+      ...tier1Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+      ...tier2Services.map((service) => ({
+        name: service,
+        included: false,
+      })),
+      ...tier3Services.map((service) => ({
+        name: service,
+        included: false,
+      })),
+    ],
+    popular: false,
+    cta: "Join Essential",
+  },
+  {
+    id: "tier2",
+    name: "Skilled Trades",
+    description:
+      "Includes all services in Essential Trades + specialized trades",
+    price: {
+      monthly: 80,
+      yearly: 800,
+    },
+    features: [
+      ...tier1Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+      ...tier2Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+      ...tier3Services.map((service) => ({
+        name: service,
+        included: false,
+      })),
+    ],
+    popular: true,
+    cta: "Join Skilled",
+  },
+  {
+    id: "tier3",
+    name: "High-Value Trades",
+    description:
+      "Includes all services in Skilled Trades + premium large-scale services",
+    price: {
+      monthly: 99,
+      yearly: 999,
+    },
+    features: [
+      ...tier1Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+      ...tier2Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+      ...tier3Services.map((service) => ({
+        name: service,
+        included: true,
+      })),
+    ],
+
+    popular: false,
+    cta: "Join Premium",
+  },
+];
+
+export default function MembershipPage() {
   // Dummy FAQs
   const faqs = [
     {
@@ -152,7 +212,7 @@ export default function MembershipPage() {
                 variant="secondary"
                 className="ml-2 bg-primary/20 text-primary"
               >
-                Save 15%
+                Save 2 Months
               </Badge>
             </TabsTrigger>
           </TabsList>
@@ -184,27 +244,48 @@ export default function MembershipPage() {
                     <span className="ml-1 text-muted-foreground">/month</span>
                   </div>
                   <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        {feature.included ? (
+                    {plan.id === "tier1" &&
+                      tier1Services.map((feature, index) => (
+                        <li key={index} className="flex items-center">
                           <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
-                        ) : (
-                          <X className="mr-2 h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                        )}
-                        <span
-                          className={
-                            feature.included ? "" : "text-muted-foreground"
-                          }
-                        >
-                          {feature.name}
-                        </span>
-                      </li>
-                    ))}
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+
+                    {plan.id === "tier2" && (
+                      <>
+                        <li className="flex items-center">
+                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
+                          All Essential Trades Service Included
+                        </li>
+                        {tier2Services.map((feature, index) => (
+                          <li key={index} className="flex items-center">
+                            <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </>
+                    )}
+
+                    {plan.id === "tier3" && (
+                      <>
+                        <li className="flex items-center">
+                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
+                          All Skilled Trades Service Included
+                        </li>
+                        {tier3Services.map((feature, index) => (
+                          <li key={index} className="flex items-center">
+                            <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </>
+                    )}
                   </ul>
                 </CardContent>
                 <CardFooter>
                   <Button
-                    className={`w-full ${plan.popular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "premium" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
+                    className={`w-full ${plan.popular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
                     {plan.cta}
                   </Button>
@@ -240,27 +321,48 @@ export default function MembershipPage() {
                     <span className="ml-1 text-muted-foreground">/year</span>
                   </div>
                   <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        {feature.included ? (
+                    {plan.id === "tier1" &&
+                      tier1Services.map((feature, index) => (
+                        <li key={index} className="flex items-center">
                           <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
-                        ) : (
-                          <X className="mr-2 h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                        )}
-                        <span
-                          className={
-                            feature.included ? "" : "text-muted-foreground"
-                          }
-                        >
-                          {feature.name}
-                        </span>
-                      </li>
-                    ))}
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+
+                    {plan.id === "tier2" && (
+                      <>
+                        <li className="flex items-center">
+                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
+                          All Essential Trades Service Included
+                        </li>
+                        {tier2Services.map((feature, index) => (
+                          <li key={index} className="flex items-center">
+                            <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </>
+                    )}
+
+                    {plan.id === "tier3" && (
+                      <>
+                        <li className="flex items-center">
+                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
+                          All Skilled Trades Service Included
+                        </li>
+                        {tier3Services.map((feature, index) => (
+                          <li key={index} className="flex items-center">
+                            <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </>
+                    )}
                   </ul>
                 </CardContent>
                 <CardFooter>
                   <Button
-                    className={`w-full ${plan.popular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "premium" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
+                    className={`w-full ${plan.popular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
                     {plan.cta}
                   </Button>
@@ -271,61 +373,60 @@ export default function MembershipPage() {
         </TabsContent>
       </Tabs>
 
-      <div className="mb-20">
-        <h2 className="mb-10 text-center text-3xl font-bold">
-          Compare Membership Features
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="w-1/3 px-6 py-4 text-left">Features</th>
-                {plans.map((plan, index) => (
-                  <th
-                    key={plan.id}
-                    className={`px-6 py-4 text-center ${index === 1 ? "bg-primary/5" : ""}`}
-                  >
-                    {plan.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {plans[0].features.map((feature, featureIndex) => (
-                <tr key={feature.name} className="border-b">
-                  <td className="px-6 py-4 font-medium">
-                    <div className="flex items-center">
-                      {feature.name}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <HelpCircle className="ml-2 h-4 w-4 text-muted-foreground" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-[200px]">
-                              {feature.name} feature details
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </td>
-                  {plans.map((plan, planIndex) => (
-                    <td
+      <div className="container mx-auto px-4 py-12">
+        <div className="mb-16 text-center">
+          <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
+            Membership Tiers Based on Your Trade
+          </h1>
+          <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+            Choose the right plan for your trade category and unlock unmatched
+            visibility and job leads.
+          </p>
+        </div>
+
+        <div className="mb-20">
+          <h2 className="mb-10 text-center text-3xl font-bold">
+            Compare Membership Services
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b">
+                  <th className="w-1/3 px-6 py-4 text-left">Service</th>
+                  {plans.map((plan, index) => (
+                    <th
                       key={plan.id}
-                      className={`px-6 py-4 text-center ${planIndex === 1 ? "bg-primary/5" : ""}`}
+                      className={`px-6 py-4 text-center ${index === 1 ? "bg-primary/5" : ""}`}
                     >
-                      {plan.features[featureIndex].included ? (
-                        <Check className="mx-auto h-5 w-5 text-primary" />
-                      ) : (
-                        <X className="mx-auto h-5 w-5 text-muted-foreground" />
-                      )}
-                    </td>
+                      {plan.name}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {[...tier1Services, ...tier2Services, ...tier3Services].map(
+                  (service) => (
+                    <tr key={service} className="border-b">
+                      <td className="px-6 py-4 font-medium">{service}</td>
+                      {plans.map((plan, planIndex) => (
+                        <td
+                          key={plan.id}
+                          className={`px-6 py-4 text-center ${planIndex === 1 ? "bg-primary/5" : ""}`}
+                        >
+                          {plan.features.find((f) => f.name === service)
+                            ?.included ? (
+                            <Check className="mx-auto h-5 w-5 text-primary" />
+                          ) : (
+                            <X className="mx-auto h-5 w-5 text-muted-foreground" />
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

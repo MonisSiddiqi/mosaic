@@ -16,16 +16,6 @@ export const getAllServicesApi = async ({
   sortField,
   sortValue,
 }: ServicesListDto): Promise<GetAllServicesApiResponse> => {
-  console.log("params");
-
-  console.log({
-    page,
-    filter,
-    limit,
-    sortField,
-    sortValue,
-  });
-
   const response = await httpClient.get(apiEndpoints.services.getAll, {
     params: {
       page,

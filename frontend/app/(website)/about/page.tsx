@@ -1,11 +1,10 @@
-import PageHeader from "../_components/page-header";
-import { AboutSection } from "./-components/about-us";
+import { PageContainer } from "../_components/page-container";
+import { AboutSection } from "./_components/about-us";
 
 export default function Page() {
   return (
-    <main className="w-full">
-      <PageHeader title="About Us" />
+    <PageContainer name="About Us">
       <AboutSection />
-    </main>
+    </PageContainer>
   );
 }

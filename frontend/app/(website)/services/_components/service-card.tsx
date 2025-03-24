@@ -21,15 +21,6 @@ export function ServiceCard({
     <Link href={`/my-projects/add?service=${id}`}>
       <Card className="group overflow-hidden transition-shadow hover:shadow-md">
         <CardHeader>
-          {/* <div className="h-16 w-16 overflow-hidden">
-            {iconUrl ? (
-              <Image src={iconUrl} alt={title} width={64} height={64} />
-            ) : (
-              <div className="flex size-16 items-center justify-center rounded bg-muted text-lg font-semibold text-gray-700">
-                {getInitials(title)}
-              </div>
-            )}
-          </div> */}
           <Avatar className="size-16 rounded">
             <AvatarImage
               className="size-16 object-contain"
