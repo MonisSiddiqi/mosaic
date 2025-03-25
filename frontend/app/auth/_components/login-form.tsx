@@ -19,7 +19,7 @@ import { FC } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { checkSessionApi } from "@/apis/auth/auth.api";
 import { UserRole } from "@/apis/users";
 
@@ -32,6 +32,11 @@ type Props = {
 };
 export const LoginForm: FC<Props> = ({ className }) => {
   const { login, user } = useAuth();
+  const searchParams = useSearchParams();
+
+  const redirect = searchParams.get("redirect");
+
+  console.log(redirect);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,8 +45,6 @@ export const LoginForm: FC<Props> = ({ className }) => {
       password: "",
     },
   });
-
-  const search = sessionStorage.getItem("redirect");
 
   const router = useRouter();
 
@@ -58,9 +61,9 @@ export const LoginForm: FC<Props> = ({ className }) => {
       console.log(user?.role, UserRole.ADMIN);
 
       if (user?.role === UserRole.ADMIN) {
-        router.push(search || "/dashboard");
+        router.push(redirect || "/dashboard");
       } else {
-        router.push(search || "/");
+        router.push(redirect || "/");
       }
     } catch (e: unknown) {
       if (e instanceof Error) {

@@ -142,6 +142,15 @@ export class ProjectsService {
     }
 
     const textFilter = filter?.find((item) => item.id === 'title');
+    const userFilter = filter?.find((item) => item.id === 'users');
+
+    if (userFilter) {
+      projectWhereInput.user = {
+        id: {
+          in: userFilter.value,
+        },
+      };
+    }
 
     if (textFilter) {
       projectWhereInput.title = {

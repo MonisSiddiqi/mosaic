@@ -19,7 +19,7 @@ export class GetProjectsDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [{ id: 'title'; value: string }];
+  filter: [{ id: 'title'; value: string }, { id: 'users'; value: string[] }];
 
   @IsOptional()
   @IsNumber()

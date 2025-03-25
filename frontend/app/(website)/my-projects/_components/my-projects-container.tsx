@@ -1,12 +1,21 @@
-import { PageHeaderDescription } from "../../_components/page-header-description";
+"use client";
+
+import { useAuth } from "@/hooks/use-auth";
 import { ProjectsGrid } from "./my-project-grid";
 import { ProjectsHeader } from "./my-project-header";
+import { redirect } from "next/navigation";
 
 export const MyProjectsContainer = () => {
-  return (
-    <>
-      <ProjectsHeader />
-      <ProjectsGrid />
-    </>
-  );
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <>
+        <ProjectsHeader />
+        <ProjectsGrid />
+      </>
+    );
+  } else {
+    redirect("/auth?redirect=/my-projects");
+  }
 };

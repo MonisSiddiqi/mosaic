@@ -6,15 +6,13 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 
-export const useProjectsQuery = ({
-  sorting,
-  pagination,
-  filter,
-}: {
+export const useProjectsQuery = (getProjectDto?: {
   sorting: SortingState;
   pagination: PaginationState;
   filter: ColumnFiltersState;
 }) => {
+  const { sorting, pagination, filter } = getProjectDto || {};
+
   return useQuery({
     queryKey: ["projects", { sorting, pagination, filter }],
     queryFn: ({ queryKey }) => {
@@ -33,8 +31,8 @@ export const useProjectsQuery = ({
       return getAllProjectsApi({
         sortField: field?.id,
         sortValue: field?.desc ? "desc" : "asc",
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+        page: pagination?.pageIndex,
+        limit: pagination?.pageSize,
         filter: filter,
       });
     },
