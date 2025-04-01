@@ -1,4 +1,8 @@
-import { addProjectApi, getAllProjectsApi } from "@/apis/projects/projects.api";
+import {
+  addProjectApi,
+  getAllProjectsApi,
+  getProjectApi,
+} from "@/apis/projects/projects.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
@@ -7,9 +11,9 @@ import {
 } from "@tanstack/react-table";
 
 export const useProjectsQuery = (getProjectDto?: {
-  sorting: SortingState;
-  pagination: PaginationState;
-  filter: ColumnFiltersState;
+  sorting?: SortingState;
+  pagination?: PaginationState;
+  filter?: ColumnFiltersState;
 }) => {
   const { sorting, pagination, filter } = getProjectDto || {};
 
@@ -43,5 +47,13 @@ export const useAddProjectMutation = () => {
   return useMutation({
     mutationKey: ["addProject"],
     mutationFn: addProjectApi,
+  });
+};
+
+export const useProjectQuery = (id: string) => {
+  console.log(id);
+  return useQuery({
+    queryKey: ["project", id],
+    queryFn: () => getProjectApi(id),
   });
 };

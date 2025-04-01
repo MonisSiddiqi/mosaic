@@ -27,6 +27,7 @@ export const apiEndpoints = {
     createAddress: `/api/v1/addresses`,
   },
   projects: {
+    get: (id: string) => `/api/v1/projects/${id}`,
     getAll: `/api/v1/projects`,
     add: `/api/v1/projects`,
     edit: (id: string) => `/api/v1/projects/${id}`,

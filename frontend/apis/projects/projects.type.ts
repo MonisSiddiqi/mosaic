@@ -1,3 +1,6 @@
+import { Tag } from "../tags";
+import { Address } from "../users";
+
 export type Project = {
   id: string;
   userId: string;
@@ -6,12 +9,28 @@ export type Project = {
   title: string;
   description: string;
   status: ProjectStatusEnum;
+  budgetPreference: number;
+  preferenceMessage: string | null;
   updatedAt: string;
   createdAt: string;
 };
+
+export type GetAllProjectApiResponseItem = Project & {
+  ProjectFile: ProjectFile[];
+};
+
 export type GetAllProjectsApiResponse = {
   total: number;
-  list: Project[];
+  list: GetAllProjectApiResponseItem[];
+};
+
+export type ProjectFile = {
+  id: string;
+  projectId: string;
+  url: string;
+  type: FileType;
+  updatedAt: string;
+  createdAt: string;
 };
 
 export enum ProjectStatusEnum {
@@ -20,33 +39,42 @@ export enum ProjectStatusEnum {
   COMPLETED = "COMPLETED",
 }
 
-export type AddProjectDto = {
-  title: string;
-  description: string;
-  serviceId: string;
-  budgetPreference: number;
-  preferenceMessage?: string;
-  tags: string[];
-
-  line1: string;
-  line2?: string;
-  country: string;
-  state: string;
-  city: string;
-  postalCode: string;
-
-  length?: string;
-  width?: string;
-  height?: string;
-  area?: string;
-  siteDescription?: string;
-
-  files: File[];
-  sampleFiles: File[];
-};
+export enum FileType {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+}
 
 export enum Unit {
   METER = "METER",
   FEET = "FEET",
   YARD = "YARD",
 }
+
+export type SiteMeasurement = {
+  id: string;
+  projectId: string;
+  length: number | null;
+  width: number | null;
+  height: number | null;
+  area: number | null;
+  description: string | null;
+  unit: Unit;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type GetProjectApiResponse = Project & {
+  ProjectFile: ProjectFile[];
+  SampleFile: ProjectFile[];
+  SiteMeasurement: SiteMeasurement;
+  Address: Address;
+  ProjectTag: {
+    projectId: string;
+    tagId: string;
+    updatedAt: string;
+    createdAt: string;
+    tag: Tag;
+  }[];
+  ProjectUpdate: [];
+  Bid: [];
+};

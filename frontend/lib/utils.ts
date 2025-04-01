@@ -24,22 +24,27 @@ export function getInitials(name: string) {
   return initials.toUpperCase();
 }
 
-export function getStatusConfig(status: ProjectStatusEnum) {
+export const getStatusConfig = (status: ProjectStatusEnum) => {
   switch (status) {
     case ProjectStatusEnum.IN_PROGRESS:
       return {
         label: "Searching Vendor",
-        className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
-      };
-    case ProjectStatusEnum.COMPLETED:
-      return {
-        label: "In Progress",
         className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
       };
     case ProjectStatusEnum.AWARDED:
+      return {
+        label: "In Progress",
+        className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
+      };
+    case ProjectStatusEnum.COMPLETED:
       return {
         label: "Completed",
         className: "bg-green-100 text-green-800 hover:bg-green-100",
       };
   }
-}
+};
+
+export const isImageUrl = (url: string) =>
+  /\.(jpeg|jpg|png|webp|gif)(\?|$)/i.test(url);
+export const isVideoUrl = (url: string) =>
+  /\.(mp4|webm|mov|avi)(\?|$)/i.test(url);

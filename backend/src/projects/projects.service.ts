@@ -1,3 +1,4 @@
+import { url } from 'inspector';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -94,29 +95,33 @@ export class ProjectsService {
       }),
     );
 
-    const filesUrls = await Promise.all(
-      files.map((file) =>
-        this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
-      ),
-    );
+    if (files && files.length > 0) {
+      const filesUrls = await Promise.all(
+        files.map((file) =>
+          this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
+        ),
+      );
 
-    projectCreateInput.ProjectFile = {
-      createMany: {
-        data: filesUrls.map((url) => ({ url, type: 'BEFORE' })),
-      },
-    };
+      projectCreateInput.ProjectFile = {
+        createMany: {
+          data: filesUrls.map((url) => ({ url, type: 'BEFORE' })),
+        },
+      };
+    }
 
-    const sampleFilesUrls = await Promise.all(
-      sampleFiles.map((file) =>
-        this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
-      ),
-    );
+    if (sampleFiles && sampleFiles.length > 0) {
+      const sampleFilesUrls = await Promise.all(
+        sampleFiles.map((file) =>
+          this.storageService.uploadFile(file, StorageFolderEnum.PROJECTS),
+        ),
+      );
 
-    projectCreateInput.SampleFile = {
-      createMany: {
-        data: sampleFilesUrls.map((url) => ({ url })),
-      },
-    };
+      projectCreateInput.SampleFile = {
+        createMany: {
+          data: sampleFilesUrls.map((url) => ({ url })),
+        },
+      };
+    }
 
     const project = await this.prismaService.project.create({
       data: projectCreateInput,
@@ -161,6 +166,7 @@ export class ProjectsService {
 
     const projects = await this.prismaService.project.findMany({
       where: projectWhereInput,
+      include: { ProjectFile: true },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy: {
         [sortField]: sortValue,
@@ -171,14 +177,63 @@ export class ProjectsService {
       where: projectWhereInput,
     });
 
-    return new ApiResponse(
-      { total, list: projects },
-      'Projects fetched successfully',
+    const list = await Promise.all(
+      projects.map(async (project) => ({
+        ...project,
+        ProjectFile: await Promise.all(
+          project.ProjectFile.map(async (projectFile) => ({
+            ...projectFile,
+            url: await this.storageService.getSignedFileUrl(projectFile.url),
+          })),
+        ),
+      })),
     );
+
+    return new ApiResponse({ total, list }, 'Projects fetched successfully');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: string) {
+    const projectInclude: Prisma.ProjectInclude = {
+      ProjectFile: true,
+      SampleFile: true,
+      SiteMeasurement: true,
+      Address: true,
+      ProjectTag: { include: { tag: true } },
+      ProjectUpdate: true,
+      Bid: true,
+    };
+
+    const project = await this.prismaService.project.findUnique({
+      where: {
+        id,
+      },
+      include: projectInclude,
+    });
+
+    if (!project) {
+      throw new UnprocessableEntityException('Project not found');
+    }
+
+    const projectWithSignedUrl = {
+      ...project,
+      ProjectFile: await Promise.all(
+        project.ProjectFile.map(async (item) => ({
+          ...item,
+          url: await this.storageService.getSignedFileUrl(item.url),
+        })),
+      ),
+      SampleFile: await Promise.all(
+        project.ProjectFile.map(async (item) => ({
+          ...item,
+          url: await this.storageService.getSignedFileUrl(item.url),
+        })),
+      ),
+    };
+
+    return new ApiResponse(
+      projectWithSignedUrl,
+      'Project fetched successfully',
+    );
   }
 
   update(id: number, updateProjectDto: UpdateProjectDto) {

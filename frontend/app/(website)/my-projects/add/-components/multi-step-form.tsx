@@ -19,7 +19,6 @@ import { ProjectDetails } from "./form-steps/project-details";
 import { Location } from "./form-steps/locations";
 import { SiteMeasurements } from "./form-steps/site-measurement";
 import { BudgetStep } from "./form-steps/budget";
-import { AddProjectDto } from "@/apis/projects/projects.type";
 import { useAddProject } from "@/hooks/use-add-project";
 import { steps } from "@/context/add-project-context";
 import { Progress } from "@/components/ui/progress";

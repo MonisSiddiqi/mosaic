@@ -1,3 +1,3 @@
-export * from "@/apis/services/services.api";
-export * from "@/apis/services/services.dto";
-export * from "@/apis/services/services.type";
+export * from "@/apis/projects/projects.api";
+export * from "@/apis/projects/projects.dto";
+export * from "@/apis/projects/projects.type";

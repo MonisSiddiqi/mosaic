@@ -11,8 +11,6 @@ import {
   UseInterceptors,
   UnprocessableEntityException,
   UploadedFiles,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -23,6 +21,7 @@ import { User, UserRole } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiResponse } from 'src/common/dto/api-response.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -64,7 +63,9 @@ export class ProjectsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+    console.log('request received : ', id);
+
+    return this.projectsService.findOne(id);
   }
 
   @Patch(':id')

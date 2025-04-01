@@ -1,11 +1,12 @@
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
-import { GetProjectsDto } from "./projects.dto";
 import {
+  GetProjectsDto,
   AddProjectDto,
   GetAllProjectsApiResponse,
   Project,
-} from "./projects.type";
+  GetProjectApiResponse,
+} from "@/apis/projects";
 
 export const getAllProjectsApi = async ({
   page,
@@ -31,19 +32,16 @@ export const addProjectApi = async (
 ): Promise<Project> => {
   const formData = new FormData();
 
-  // Append all text fields
   Object.entries(values).forEach(([key, value]) => {
     if (value && typeof value !== "object") {
       formData.append(key, value as string);
     }
   });
 
-  // ✅ Append tags[] correctly
   if (values.tags && values.tags.length > 0) {
     values.tags.forEach((tag) => formData.append("tags[]", tag));
   }
 
-  // Append files
   if (values.files && values.files.length > 0) {
     values.files.forEach((file) => formData.append("files", file));
   }
@@ -57,6 +55,14 @@ export const addProjectApi = async (
       "Content-Type": "multipart/form-data",
     },
   });
+
+  return response.data.result;
+};
+
+export const getProjectApi = async (
+  id: string,
+): Promise<GetProjectApiResponse> => {
+  const response = await httpClient.get(apiEndpoints.projects.get(id));
 
   return response.data.result;
 };

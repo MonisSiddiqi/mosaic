@@ -43,12 +43,8 @@ const formSchema = z
     state: z.string().min(1, "State is required."),
     city: z.string().min(1, "City is required."),
     postalCode: z.string().min(1, "Postal code is required."),
-    tags: z.array(optionSchema).refine((data) => data.length > 0, {
-      message: "Tags are required.",
-    }),
-    services: z.array(optionSchema).refine((data) => data.length > 0, {
-      message: "Tags are required.",
-    }),
+    tags: z.array(optionSchema).optional(),
+    services: z.array(optionSchema).optional(),
     password: z
       .string()
       .min(8, "Password must be at least 8 character")
@@ -277,7 +273,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
             />
           </div>
 
-          <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
+          {/* <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
             <div className="md:col-span-2">
               <p>Services & Tags</p>
             </div>
@@ -340,7 +336,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
 
           <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
             <Button
