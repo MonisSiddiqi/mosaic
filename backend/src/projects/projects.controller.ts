@@ -63,8 +63,6 @@ export class ProjectsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    console.log('request received : ', id);
-
     return this.projectsService.findOne(id);
   }
 

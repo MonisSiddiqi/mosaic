@@ -48,6 +48,7 @@ export const ShowFile = ({ url }: { url: string }) => {
           src={url}
           preload="metadata"
           muted
+          controls
           playsInline
           onError={() => {
             setIsError(true);

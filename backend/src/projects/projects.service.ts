@@ -201,6 +201,7 @@ export class ProjectsService {
       ProjectTag: { include: { tag: true } },
       ProjectUpdate: true,
       Bid: true,
+      Service: true,
     };
 
     const project = await this.prismaService.project.findUnique({

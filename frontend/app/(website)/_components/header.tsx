@@ -50,20 +50,25 @@ export const Header = () => {
         </Link>
 
         <nav className="hidden items-center gap-4 lg:flex">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "border-b-2 border-transparent px-2 py-2 font-medium transition-colors hover:text-primary",
-                pathname === item.href
-                  ? "border-brand-gold text-primary"
-                  : "text-muted-foreground",
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navigationItems.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "border-b-2 border-transparent px-2 py-2 font-medium transition-colors hover:text-primary",
+                  isActive
+                    ? "border-brand-gold text-primary"
+                    : "text-muted-foreground",
+                )}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </nav>
 
         <Sheet open={open} onOpenChange={(val) => setOpen(val)}>

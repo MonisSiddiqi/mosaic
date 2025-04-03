@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { getStatusConfig, isImageUrl, isVideoUrl } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2Icon } from "lucide-react";
+import { LoaderComponent } from "@/components/loader-component";
 
 export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
   id,
@@ -32,13 +32,13 @@ export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
   console.log(statusConfig);
 
   return (
-    <Link href={`/my-projects/${id}`}>
-      <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+    <Link href={`/my-projects/${id}`} className="w-full">
+      <Card className="w-full overflow-hidden transition-shadow hover:shadow-lg">
         <CardHeader>
-          <div className="relative flex h-[240px] items-center justify-center overflow-hidden rounded bg-gray-100 text-gray-500">
+          <div className="relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded bg-gray-100 text-gray-500">
             {!isLoaded && firstFile && (
               <Skeleton className="flex size-full items-center justify-center">
-                <Loader2Icon className="animate-spin" />
+                <LoaderComponent showText={false} />
               </Skeleton>
             )}
 
@@ -57,7 +57,7 @@ export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
                   />
                 )}
 
-                {isVideo && (
+                {isLoaded && isVideo && (
                   <video
                     className={`h-full w-full object-cover transition-opacity duration-300 ${
                       isLoaded ? "opacity-100" : "opacity-0"

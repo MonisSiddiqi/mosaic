@@ -5,23 +5,24 @@ import { useProjectQuery } from "@/queries/projects.queries";
 import { useAuth } from "@/hooks/use-auth";
 import { useParams } from "next/navigation";
 import { LoaderComponent } from "@/components/loader-component";
-import { DefaultErrorPage } from "@/components/default-error-page";
-import { H1 } from "@/components/typography/H1";
 import { P3 } from "@/components/typography/P3";
 import { H3 } from "@/components/typography/H3";
 import { ShowFile } from "./show-file";
-import { url } from "inspector";
 import { AddressCard } from "./project-address";
 import {
+  Building2Icon,
   CoinsIcon,
-  MapIcon,
-  MapPinCheck,
   MapPinnedIcon,
+  PinIcon,
   RulerIcon,
-  ScaleIcon,
+  TreeDeciduous,
+  TreePineIcon,
 } from "lucide-react";
 import { SiteMeasurementCard } from "./site-measurement";
 import BudgetPreferenceCard from "./budget-preference";
+import { ProjectTags } from "./project-tags";
+import { BackButton } from "@/components/back-button";
+import { CubeIcon } from "@radix-ui/react-icons";
 
 export const ProjectDetails = () => {
   const { user } = useAuth();
@@ -43,6 +44,8 @@ export const ProjectDetails = () => {
   if (data) {
     return (
       <div className="flex min-h-screen flex-col gap-6 rounded bg-white p-6">
+        <BackButton className="w-fit" href="/my-projects" />
+
         <ProjectDetailsAlert status={data.status} />
 
         <div>
@@ -59,6 +62,8 @@ export const ProjectDetails = () => {
           </div>
 
           <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+            {data.ProjectFile.length === 0 && <div>No files</div>}
+
             {data.ProjectFile?.map((file) => (
               <ShowFile key={file.id} url={file.url} />
             ))}
@@ -75,6 +80,8 @@ export const ProjectDetails = () => {
           </div>
 
           <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+            {data.ProjectFile.length === 0 && <div>No files</div>}
+
             {data.SampleFile?.map((file) => (
               <ShowFile key={file.id} url={file.url} />
             ))}
@@ -84,7 +91,7 @@ export const ProjectDetails = () => {
         <div className="grid gap-5 md:grid-cols-2">
           <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
             <div className="flex items-center gap-2">
-              <MapPinnedIcon className="size-5" />{" "}
+              <MapPinnedIcon className="size-5 text-red-500" />{" "}
               <p className="text-lg">Location</p>{" "}
             </div>
 
@@ -93,7 +100,7 @@ export const ProjectDetails = () => {
 
           <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
             <div className="flex items-center gap-2">
-              <RulerIcon className="size-5" />{" "}
+              <RulerIcon className="size-5 text-blue-700" />{" "}
               <p className="text-lg">Site Measurement</p>{" "}
             </div>
 
@@ -103,7 +110,7 @@ export const ProjectDetails = () => {
 
         <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
           <div className="flex items-center gap-2">
-            <CoinsIcon className="size-5" />{" "}
+            <Building2Icon className="size-5 text-yellow-400" />{" "}
             <p className="text-lg">Budget Preference</p>{" "}
           </div>
           <BudgetPreferenceCard
@@ -111,6 +118,16 @@ export const ProjectDetails = () => {
             preferenceMessage={data.preferenceMessage}
           />
         </div>
+
+        {(data.Service || data.ProjectTag.length > 0) && (
+          <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
+            <div className="flex items-center gap-2">
+              <CubeIcon className="size-5 text-lime-600" />{" "}
+              <p className="text-lg">Service and Tags</p>{" "}
+            </div>
+            <ProjectTags tags={data.ProjectTag} service={data.Service} />
+          </div>
+        )}
       </div>
     );
   }

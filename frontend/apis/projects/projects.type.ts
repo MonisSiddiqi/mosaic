@@ -1,3 +1,4 @@
+import { Service } from "../services";
 import { Tag } from "../tags";
 import { Address } from "../users";
 
@@ -63,18 +64,21 @@ export type SiteMeasurement = {
   createdAt: string;
 };
 
+export type ProjectTag = {
+  projectId: string;
+  tagId: string;
+  updatedAt: string;
+  createdAt: string;
+  tag: Tag;
+};
+
 export type GetProjectApiResponse = Project & {
   ProjectFile: ProjectFile[];
   SampleFile: ProjectFile[];
   SiteMeasurement: SiteMeasurement;
   Address: Address;
-  ProjectTag: {
-    projectId: string;
-    tagId: string;
-    updatedAt: string;
-    createdAt: string;
-    tag: Tag;
-  }[];
+  ProjectTag: ProjectTag[];
   ProjectUpdate: [];
   Bid: [];
+  Service: Service;
 };
