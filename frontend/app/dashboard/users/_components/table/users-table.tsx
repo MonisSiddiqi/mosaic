@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "@/components/table";
 import { useState } from "react";
 import {

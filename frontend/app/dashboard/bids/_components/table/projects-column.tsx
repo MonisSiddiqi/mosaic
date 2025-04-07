@@ -32,6 +32,16 @@ export const projectsColumns: ColumnDef<Project>[] = [
   },
 
   {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      return <div> {row.original.status}</div>;
+    },
+  },
+
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created At" />
@@ -43,11 +53,11 @@ export const projectsColumns: ColumnDef<Project>[] = [
     ),
   },
 
-   {
-      id: "actions",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Actions" />
-      ),
-      cell: ({ row }) => <ProjectsTableRowActions row={row} />,
-    },
+  {
+    id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Actions" />
+    ),
+    cell: ({ row }) => <ProjectsTableRowActions row={row} />,
+  },
 ];

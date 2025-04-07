@@ -1,9 +1,13 @@
+"use client";
+
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
+import { DataTableFacetedFilter } from "@/components/table";
+import { useServicesQuery } from "@/queries/services.queries";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -13,6 +17,8 @@ export function ProjectsTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  const { data } = useServicesQuery();
 
   return (
     <div className="flex items-center justify-between">
@@ -36,6 +42,7 @@ export function ProjectsTableToolbar<TData>({
           </Button>
         )}
       </div>
+
       <DataTableViewOptions table={table} />
     </div>
   );

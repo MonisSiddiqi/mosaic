@@ -58,3 +58,21 @@ export enum UserRole {
 }
 
 export type EditProfileApiResponse = ProfileApiResponse;
+
+export type LoginHistory = {
+  id: string;
+  userId: string;
+  status: boolean;
+  message: string | null;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type GetLoginHistoryApiResponseItem = LoginHistory & {
+  user: User & { UserProfile: UserProfile };
+};
+
+export type GetLoginHistoryApiResponse = {
+  total: number;
+  list: GetLoginHistoryApiResponseItem[];
+};

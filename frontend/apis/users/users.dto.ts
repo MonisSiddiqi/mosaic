@@ -26,3 +26,9 @@ export type CreateAddressDto = {
   city: string;
   postalCode: string;
 };
+
+export type GetLoginHistoryDto = {
+  filter?: ColumnFiltersState;
+  page?: number;
+  limit?: number;
+};

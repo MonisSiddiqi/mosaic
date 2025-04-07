@@ -2,6 +2,8 @@ import {
   createAddressApi,
   editProfileApi,
   getAllUsersApi,
+  getLoginHistoryApi,
+  GetLoginHistoryDto,
   getMyProfileApi,
 } from "@/apis/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -56,5 +58,29 @@ export const useCreateAddressMutation = () => {
   return useMutation({
     mutationKey: ["createAddress"],
     mutationFn: createAddressApi,
+  });
+};
+
+export const useLoginHistoryQuery = ({
+  pagination,
+  filter,
+}: {
+  pagination: PaginationState;
+  filter: ColumnFiltersState;
+}) => {
+  return useQuery({
+    queryKey: ["loginHistory", { pagination, filter }],
+    queryFn: ({ queryKey }) => {
+      const { pagination, filter } = queryKey[1] as {
+        pagination: PaginationState;
+        filter: ColumnFiltersState;
+      };
+
+      return getLoginHistoryApi({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+        filter: filter,
+      });
+    },
   });
 };

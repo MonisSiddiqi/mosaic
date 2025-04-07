@@ -25,6 +25,7 @@ export const apiEndpoints = {
     editProfile: `/api/v1/users/me`,
     getAll: `/api/v1/users`,
     createAddress: `/api/v1/addresses`,
+    loginHistory: `/api/v1/users/login-history`,
   },
   projects: {
     get: (id: string) => `/api/v1/projects/${id}`,
@@ -32,5 +33,12 @@ export const apiEndpoints = {
     add: `/api/v1/projects`,
     edit: (id: string) => `/api/v1/projects/${id}`,
     delete: (id: string) => `/api/v1/projects/${id}`,
+  },
+  notifications: {
+    getAll: `/api/v1/notifications`,
+    markAsRead: `/api/v1/notifications`,
+  },
+  dashboard: {
+    getData: `/api/v1/dashboard`,
   },
 };

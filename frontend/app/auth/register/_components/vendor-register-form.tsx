@@ -15,17 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { useRegisterMutation } from "@/queries/auth.queries";
-import { OtpType } from "@/apis/auth";
 import Link from "next/link";
-import { useTagsQuery } from "@/queries/tags.queries";
-import { useServicesQuery } from "@/queries/services.queries";
-import { Skeleton } from "@/components/ui/skeleton";
-import MultipleSelector from "@/components/ui/multiple-selector";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const optionSchema = z.object({
   label: z.string(),
@@ -43,8 +38,18 @@ const formSchema = z
     state: z.string().min(1, "State is required."),
     city: z.string().min(1, "City is required."),
     postalCode: z.string().min(1, "Postal code is required."),
-    tags: z.array(optionSchema).optional(),
-    services: z.array(optionSchema).optional(),
+    //office address
+    officeLine1: z.string().min(1, { message: "Office line 1 is required." }),
+    officeLine2: z.string().optional(),
+    officeCountry: z
+      .string()
+      .min(1, { message: "Office country is required." }),
+    officeState: z.string().min(1, { message: "Office state is required." }),
+    officeCity: z.string().min(1, { message: "Office city is required." }),
+    officePostalCode: z
+      .string()
+      .min(1, { message: "Office postal code is required." }),
+    sameAsAddress: z.boolean().optional(),
     password: z
       .string()
       .min(8, "Password must be at least 8 character")
@@ -79,11 +84,35 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
       state: "",
       city: "",
       postalCode: "",
+      officeLine1: "",
+      officeLine2: "",
+      officeCountry: "",
+      officeState: "",
+      officeCity: "",
+      officePostalCode: "",
+      sameAsAddress: false,
     },
   });
 
-  const { data: services, isLoading: isServicesLoading } = useServicesQuery();
-  const { data: tags, isLoading: isTagsLoading } = useTagsQuery();
+  const sameAsAddress = form.watch("sameAsAddress");
+
+  const line1 = form.watch("line1");
+  const line2 = form.watch("line2");
+  const country = form.watch("country");
+  const state = form.watch("state");
+  const city = form.watch("city");
+  const postalCode = form.watch("postalCode");
+
+  useEffect(() => {
+    if (sameAsAddress) {
+      form.setValue("officeLine1", form.getValues("line1"));
+      form.setValue("officeLine2", form.getValues("line2"));
+      form.setValue("officeCountry", form.getValues("country"));
+      form.setValue("officeState", form.getValues("state"));
+      form.setValue("officeCity", form.getValues("city"));
+      form.setValue("officePostalCode", form.getValues("postalCode"));
+    }
+  }, [sameAsAddress, line1, line2, country, state, city, postalCode]);
 
   const router = useRouter();
 
@@ -273,70 +302,126 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
             />
           </div>
 
-          {/* <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
-            <div className="md:col-span-2">
-              <p>Services & Tags</p>
+          <div className="grid gap-7 bg-white p-6 md:grid-cols-2">
+            <div className="flex items-center gap-2 md:col-span-2">
+              <Checkbox
+                id="sameAsAddress"
+                checked={sameAsAddress}
+                onCheckedChange={(checked) =>
+                  form.setValue("sameAsAddress", checked as boolean)
+                }
+              />
+              <label htmlFor="sameAsAddress">Same as Address</label>
             </div>
+
             <FormField
               control={form.control}
-              name="services"
+              name="officeLine1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select Services</FormLabel>
-                  {isServicesLoading ? (
-                    <Skeleton className="h-9" />
-                  ) : (
-                    <MultipleSelector
-                      className="flex max-w-full items-center"
-                      value={field.value}
-                      onChange={field.onChange}
-                      defaultOptions={services?.list.map((item) => ({
-                        label: item.name,
-                        value: item.id,
-                        disable: false,
-                      }))}
-                      placeholder="Select..."
-                      emptyIndicator={
-                        <p className="text-center text-gray-600">
-                          No found found
-                        </p>
-                      }
+                  <FormLabel>Office Line 1</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office address line 1"
+                      {...field}
+                      disabled={sameAsAddress}
                     />
-                  )}
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
               control={form.control}
-              name="tags"
+              name="officeLine2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select Tags</FormLabel>
-                  {isTagsLoading ? (
-                    <Skeleton className="h-9" />
-                  ) : (
-                    <MultipleSelector
-                      className="flex max-w-full items-center"
-                      value={field.value}
-                      onChange={field.onChange}
-                      defaultOptions={tags?.list.map((item) => ({
-                        label: item.name,
-                        value: item.id,
-                        disable: false,
-                      }))}
-                      placeholder="Select..."
-                      emptyIndicator={
-                        <p className="text-center text-gray-600">
-                          No tag found
-                        </p>
-                      }
+                  <FormLabel>Office Line 2 (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office address line 2"
+                      {...field}
+                      disabled={sameAsAddress}
                     />
-                  )}
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-          </div> */}
+
+            <FormField
+              control={form.control}
+              name="officeCountry"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office Country</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office country"
+                      {...field}
+                      disabled={sameAsAddress}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="officeState"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office State</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office state"
+                      {...field}
+                      disabled={sameAsAddress}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="officeCity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office City</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office city"
+                      {...field}
+                      disabled={sameAsAddress}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="officePostalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office Postal Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter office postal code"
+                      {...field}
+                      disabled={sameAsAddress}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
             <Button

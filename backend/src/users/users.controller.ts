@@ -20,6 +20,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { EditProfileDto } from './dto/edit-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { GetLoginHistoryDto } from './dto/get-login-history-dto';
 
 @Controller('users')
 export class UsersController {
@@ -30,6 +31,13 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   findAll(@Query() getUsersDto: GetUsersDto, @GetUser() authUser: User) {
     return this.usersService.findAll(getUsersDto, authUser);
+  }
+
+  @Get('login-history')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  getLoginHistory(@Query() getLoginHistoryDto: GetLoginHistoryDto) {
+    return this.usersService.getLoginHistory(getLoginHistoryDto);
   }
 
   @Get('me')

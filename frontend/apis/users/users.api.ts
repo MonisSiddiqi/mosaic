@@ -6,6 +6,8 @@ import {
   EditProfileApiResponse,
   EditProfileDto,
   GetAllUsersApiResponse,
+  GetLoginHistoryApiResponse,
+  GetLoginHistoryDto,
   GetUsersDto,
   ProfileApiResponse,
   User,
@@ -57,5 +59,14 @@ export const createAddressApi = async (
     apiEndpoints.users.createAddress,
     createAddressDto,
   );
+  return response.data.result;
+};
+
+export const getLoginHistoryApi = async (
+  getLoginHistoryDto: GetLoginHistoryDto,
+): Promise<GetLoginHistoryApiResponse> => {
+  const response = await httpClient.get(apiEndpoints.users.loginHistory, {
+    params: getLoginHistoryDto,
+  });
   return response.data.result;
 };

@@ -36,19 +36,19 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
 
       if (role === "USER")
         return (
-          <Badge className="cursor-default bg-green-700 text-white hover:bg-green-700">
+          <Badge className="w-20 min-w-20 max-w-20 cursor-default bg-green-700 text-white hover:bg-green-700">
             <p className="mx-auto">User</p>
           </Badge>
         );
       if (role === "VENDOR")
         return (
-          <Badge className="cursor-default bg-blue-700 text-white hover:bg-blue-700">
+          <Badge className="w-20 min-w-20 max-w-20 cursor-default bg-blue-700 text-white hover:bg-blue-700">
             <p className="mx-auto">Vendor</p>
           </Badge>
         );
       if (role === "ADMIN")
         return (
-          <Badge className="cursor-default bg-orange-700 text-white hover:bg-orange-700">
+          <Badge className="w-20 min-w-20 max-w-20 cursor-default bg-orange-700 text-white hover:bg-orange-700">
             <p className="whitespace-nowrap">Admin</p>
           </Badge>
         );

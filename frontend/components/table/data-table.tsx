@@ -45,6 +45,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   rowSelection?: RowSelectionState;
   setRowSelection?: OnChangeFn<RowSelectionState>;
+  columnVisibility?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
@@ -60,9 +61,10 @@ export function DataTable<TData, TValue>({
   isLoading,
   setRowSelection,
   rowSelection,
+  columnVisibility: initialColumnVisibility,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(initialColumnVisibility || {});
 
   const table = useReactTable({
     getRowId: (row: any) => row.id,

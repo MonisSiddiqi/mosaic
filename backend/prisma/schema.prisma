@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(uuid()) @db.VarChar(36)
-  email           String          @unique
+  id              String           @id @default(uuid()) @db.VarChar(36)
+  email           String           @unique
   password        String
-  isEmailVerified Boolean         @default(false)
-  isActive        Boolean         @default(true)
-  role            UserRole        @default(USER)
-  updatedAt       DateTime        @updatedAt @db.Timestamptz
-  createdAt       DateTime        @default(now()) @db.Timestamptz
+  isEmailVerified Boolean          @default(false)
+  isActive        Boolean          @default(true)
+  role            UserRole         @default(USER)
+  updatedAt       DateTime         @updatedAt @db.Timestamptz
+  createdAt       DateTime         @default(now()) @db.Timestamptz
   UserProfile     UserProfile?
   projects        Project[]
   reviews         Review[]
@@ -33,6 +33,8 @@ model User {
   LoginHistory    LoginHistory[]
   Bid             Bid[]
   ProjectUpdate   ProjectUpdate[]
+  BusinessAddress BusinessAddress?
+  Notification    Notification[]
 }
 
 model UserProfile {
@@ -40,6 +42,7 @@ model UserProfile {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String   @unique @db.VarChar(36)
   name      String
+  license   String?
   image     String?
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
@@ -50,6 +53,23 @@ model LoginHistory {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String   @db.VarChar(36)
   status    Boolean  @default(false)
+  message   String?
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String   @db.VarChar(36)
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?  @db.VarChar(36)
+  heading   String
+  message   String
+  data      Json?
+  isRead    Boolean  @default(false)
   updatedAt DateTime @updatedAt @db.Timestamptz
   createdAt DateTime @default(now()) @db.Timestamptz
 }
@@ -88,6 +108,7 @@ model Project {
   ProjectUpdate     ProjectUpdate[]
   ProjectFile       ProjectFile[]
   SampleFile        SampleFile[]
+  Notification      Notification[]
 
   @@index([userId])
 }
@@ -128,6 +149,20 @@ model Address {
   updatedAt  DateTime  @updatedAt @db.Timestamptz
   createdAt  DateTime  @default(now()) @db.Timestamptz
   Project    Project[]
+}
+
+model BusinessAddress {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?  @unique @db.VarChar(36)
+  line1      String
+  line2      String?
+  country    String
+  state      String
+  city       String
+  postalCode String
+  updatedAt  DateTime @updatedAt @db.Timestamptz
+  createdAt  DateTime @default(now()) @db.Timestamptz
 }
 
 model Tag {

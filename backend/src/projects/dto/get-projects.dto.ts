@@ -3,10 +3,11 @@ import { IsEnum, IsNumber, IsOptional, IsUUID, Min } from 'class-validator';
 import { SortingValue } from 'src/common/enum/sorting-value.enum';
 
 export enum ProjectsSortingFieldEnum {
-  NAME = 'name',
+  TITLE = 'title',
   DESCRIPTION = 'description',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
+  STATUS = 'status',
 }
 
 export class GetProjectsDto {
@@ -19,7 +20,14 @@ export class GetProjectsDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [{ id: 'title'; value: string }, { id: 'users'; value: string[] }];
+  filter: [
+    { id: 'title'; value: string },
+    { id: 'users'; value: string[] },
+    { id: 'status'; value: string[] },
+    { id: 'services'; value: string[] },
+    { id: 'location'; value: string[] },
+    { id: 'tags'; value: string[] },
+  ];
 
   @IsOptional()
   @IsNumber()

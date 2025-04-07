@@ -28,6 +28,8 @@ import { TagsController } from './tags/tags.controller';
 import { TagsModule } from './tags/tags.module';
 import { BidsModule } from './bids/bids.module';
 import { BidsController } from './bids/bids.controller';
+import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsController } from './notifications/notifications.controller';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { BidsController } from './bids/bids.controller';
     MailModule,
     TagsModule,
     BidsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -76,8 +79,8 @@ export class AppModule {
         { path: '/auth/logout', method: RequestMethod.DELETE },
         { path: '/auth/check', method: RequestMethod.POST },
         { path: '/auth/verify-otp', method: RequestMethod.POST },
-        { path: '/notification/receive', method: RequestMethod.GET },
-        { path: '/notification', method: RequestMethod.GET },
+        { path: '/notifications/receive', method: RequestMethod.GET },
+        { path: '/notifications', method: RequestMethod.GET },
       )
       .forRoutes(
         AuthController,
@@ -89,6 +92,8 @@ export class AppModule {
         AddressesController,
         TagsController,
         BidsController,
+        NotificationsController,
+        AppController,
       );
   }
 }

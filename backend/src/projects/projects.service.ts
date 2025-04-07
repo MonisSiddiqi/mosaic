@@ -3,7 +3,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { GetProjectsDto } from './dto/get-projects.dto';
-import { Prisma, User, UserRole } from '@prisma/client';
+import { Prisma, ProjectStatus, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { StorageService } from 'src/storage/storage.service';
@@ -148,8 +148,12 @@ export class ProjectsService {
 
     const textFilter = filter?.find((item) => item.id === 'title');
     const userFilter = filter?.find((item) => item.id === 'users');
+    const statusFilter = filter?.find((item) => item.id === 'status');
+    const serviceFilter = filter?.find((item) => item.id === 'services');
+    const locationFilter = filter?.find((item) => item.id === 'location');
+    const tagFilter = filter?.find((item) => item.id === 'tags');
 
-    if (userFilter) {
+    if (userFilter?.value?.length) {
       projectWhereInput.user = {
         id: {
           in: userFilter.value,
@@ -164,9 +168,41 @@ export class ProjectsService {
       };
     }
 
+    if (statusFilter?.value?.length) {
+      projectWhereInput.status = {
+        in: statusFilter.value as ProjectStatus[],
+      };
+    }
+
+    if (serviceFilter?.value?.length) {
+      projectWhereInput.Service = {
+        id: {
+          in: serviceFilter.value,
+        },
+      };
+    }
+
+    if (locationFilter?.value?.length) {
+      projectWhereInput.Address = {
+        city: {
+          in: locationFilter.value,
+        },
+      };
+    }
+
+    if (tagFilter?.value?.length) {
+      projectWhereInput.ProjectTag = {
+        some: {
+          tagId: {
+            in: tagFilter.value,
+          },
+        },
+      };
+    }
+
     const projects = await this.prismaService.project.findMany({
       where: projectWhereInput,
-      include: { ProjectFile: true },
+      include: { ProjectFile: true, Service: true },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy: {
         [sortField]: sortValue,

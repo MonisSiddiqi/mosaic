@@ -18,6 +18,7 @@ export type Project = {
 
 export type GetAllProjectApiResponseItem = Project & {
   ProjectFile: ProjectFile[];
+  Service: Service;
 };
 
 export type GetAllProjectsApiResponse = {

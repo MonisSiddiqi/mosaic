@@ -18,6 +18,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { MailService } from 'src/mail/mail.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +51,7 @@ export class AuthService {
 
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     const user = await this.prismaService.user.upsert({
       where: {
         email,
@@ -177,7 +178,23 @@ export class AuthService {
       );
     }
 
+    const loginHistoryInput: Prisma.LoginHistoryCreateInput = {
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+    };
+
     if (!user.isActive) {
+      await this.prismaService.loginHistory.create({
+        data: {
+          ...loginHistoryInput,
+          status: false,
+          message: 'Account is not active',
+        },
+      });
+
       throw new UnauthorizedException('Your account is not active');
     }
 
@@ -187,10 +204,26 @@ export class AuthService {
     );
 
     if (!isPasswordMatch) {
+      await this.prismaService.loginHistory.create({
+        data: {
+          ...loginHistoryInput,
+          status: false,
+          message: 'Invalid Password',
+        },
+      });
       throw new UnauthorizedException('Invalid Password.');
     }
 
     const jwtPayload = this.createJwtPayload(user.id);
+
+    await this.prismaService.loginHistory.create({
+      data: {
+        ...loginHistoryInput,
+        status: true,
+        message: 'Login Successfully',
+      },
+    });
+
     return new ApiResponse<SignInResponse>(jwtPayload, SUCCESS_SIGN_IN_MESSAGE);
   }
 

@@ -1,34 +1,54 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Building, Gavel, Truck } from "lucide-react";
+import { Gavel, LayersIcon, UsersIcon, GridIcon } from "lucide-react";
+import { StatisticsCard } from "./-components/users-statistics-card";
+import { SignUpStatisticsCard } from "./-components/signup-statistics-card";
+import { SubscriptionStatisticsCard } from "./-components/subscription-statistics-card";
+import { useDashboardQuery } from "@/queries/dashboard.queries";
 
 export default function Dashboard() {
+  const { data, isLoading } = useDashboardQuery();
+
   return (
     <div className="space-y-6 p-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Total Users"
-          value="5,678"
-          icon={<Users className="h-8 w-8" />}
-          description="15% increase from last month"
+        <StatisticsCard
+          value={data?.homeOwners}
+          title="Home Owners"
+          description="Total number of home owners"
+          icon={UsersIcon}
+          isLoading={isLoading}
         />
-        <StatCard
-          title="Active Properties"
-          value="1,234"
-          icon={<Building className="h-8 w-8" />}
-          description="5% increase from last month"
+
+        <StatisticsCard
+          value={data?.vendors}
+          title="Trade Professionals"
+          description="Total number of trade professionals"
+          icon={LayersIcon}
+          isLoading={isLoading}
         />
-        <StatCard
+
+        <StatisticsCard
+          value={data?.projects}
+          title="Total Projects"
+          description="Total number of projects submitted"
+          icon={GridIcon}
+          isLoading={isLoading}
+        />
+
+        <StatisticsCard
           title="Open Bids"
-          value="89"
-          icon={<Gavel className="h-8 w-8" />}
-          description="3% decrease from last month"
+          value={data?.openBids}
+          icon={Gavel}
+          description="Total number of open bids"
+          isLoading={isLoading}
         />
-        <StatCard
-          title="Registered Vendors"
-          value="456"
-          icon={<Truck className="h-8 w-8" />}
-          description="10% increase from last month"
-        />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <SignUpStatisticsCard />
+        <SubscriptionStatisticsCard />
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>

@@ -40,6 +40,7 @@ export const ProjectsTable = () => {
           total: data?.total || 0,
           data: data?.list || [],
         }}
+        columnVisibility={{ location: false, tags: false }}
         DataTableToolbar={ProjectsTableToolbar}
         sorting={sorting}
         setSorting={setSorting}

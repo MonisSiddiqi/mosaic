@@ -50,13 +50,9 @@ export class AuthController {
         ? await this.authService.verifyOtp(verifyOtpDto)
         : await this.authService.verifyForgotPasswordOtp(verifyOtpDto);
 
-    console.log('here');
-
     console.log(result);
 
     response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
-
-    console.log('here 2');
 
     return result;
   }

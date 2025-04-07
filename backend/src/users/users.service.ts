@@ -10,6 +10,7 @@ import { GetUsersDto } from './dto/get-user.dto';
 import { EditProfileDto } from './dto/edit-profile.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
+import { GetLoginHistoryDto } from './dto/get-login-history-dto';
 
 @Injectable()
 export class UsersService {
@@ -199,6 +200,69 @@ export class UsersService {
         },
       },
       'User profile updated successfully',
+    );
+  }
+
+  async getLoginHistory(getLoginHistoryDto: GetLoginHistoryDto) {
+    const { filter, page, limit } = getLoginHistoryDto;
+
+    const loginHistoryWhereInput: Prisma.LoginHistoryWhereInput = {};
+
+    const emailFilter = filter?.find((item) => item.id === 'email');
+
+    if (emailFilter) {
+      loginHistoryWhereInput.user = {
+        email: {
+          contains: (emailFilter.value as string) || undefined,
+          mode: 'insensitive',
+        },
+      };
+    }
+
+    const loginHistory = await this.prismaService.loginHistory.findMany({
+      where: loginHistoryWhereInput,
+      include: {
+        user: {
+          include: {
+            UserProfile: true,
+          },
+          omit: {
+            password: true,
+          },
+        },
+      },
+
+      ...(page > 0 ? { take: limit, skip: (page - 1) * limit } : {}),
+
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const total = await this.prismaService.loginHistory.count({
+      where: loginHistoryWhereInput,
+    });
+
+    const list = await Promise.all(
+      loginHistory.map(async (history) => ({
+        ...history,
+        user: {
+          ...history.user,
+          UserProfile: {
+            ...history.user.UserProfile,
+            image: history.user.UserProfile?.image
+              ? await this.storageService.getSignedFileUrl(
+                  history.user.UserProfile.image,
+                )
+              : null,
+          },
+        },
+      })),
+    );
+
+    return new ApiResponse(
+      { total, list },
+      'Login history fetched successfully',
     );
   }
 }
