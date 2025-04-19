@@ -45,4 +45,8 @@ export const apiEndpoints = {
   addresses: {
     getAddresses: `/api/v1/addresses`,
   },
+
+  payments: {
+    getAllPlans: `/api/v1/payments/plans`,
+  },
 };

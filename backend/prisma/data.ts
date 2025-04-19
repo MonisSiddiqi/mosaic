@@ -503,4 +503,8 @@ export const services = [
   },
 ];
 
-console.log(services.length);
+export const plans: { name: string; amount: number }[] = [
+  { name: 'Essential Trades', amount: 50 },
+  { name: 'Skilled Trades', amount: 80 },
+  { name: 'High-Value Trades', amount: 99 },
+];

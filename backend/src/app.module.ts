@@ -31,6 +31,7 @@ import { BidsController } from './bids/bids.controller';
 import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsController } from './notifications/notifications.controller';
 import { PaymentsModule } from './payments/payments.module';
+import { PaymentsController } from './payments/payments.controller';
 
 @Module({
   imports: [
@@ -96,6 +97,7 @@ export class AppModule {
         BidsController,
         NotificationsController,
         AppController,
+        PaymentsController,
       );
   }
 }

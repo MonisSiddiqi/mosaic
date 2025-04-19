@@ -77,17 +77,17 @@ model Notification {
 }
 
 model Service {
-  id                 String            @id @default(uuid()) @db.VarChar(36)
-  SubscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  subscriptionPlanId String?           @db.VarChar(36)
-  iconUrl            String?
-  name               String            @unique
-  description        String
-  updatedAt          DateTime          @updatedAt @db.Timestamptz
-  createdAt          DateTime          @default(now()) @db.Timestamptz
-  Project            Project[]
-  VendorService      VendorService[]
-  Tag                Tag[]
+  id            String          @id @default(uuid()) @db.VarChar(36)
+  Plan          Plan?           @relation(fields: [planId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  planId        String?         @db.VarChar(36)
+  iconUrl       String?
+  name          String          @unique
+  description   String
+  updatedAt     DateTime        @updatedAt @db.Timestamptz
+  createdAt     DateTime        @default(now()) @db.Timestamptz
+  Project       Project[]
+  VendorService VendorService[]
+  Tag           Tag[]
 }
 
 model Project {
@@ -307,10 +307,10 @@ model Otp {
   createdAt       DateTime @default(now())
 }
 
-model SubscriptionPlan {
+model Plan {
   id          String     @id @default(uuid()) @db.VarChar(36)
   name        String     @unique
-  description String
+  description String?
   amount      Float
   updatedAt   DateTime   @updatedAt
   createdAt   DateTime   @default(now())
@@ -319,22 +319,22 @@ model SubscriptionPlan {
 }
 
 model UserPlan {
-  id                 String            @id @default(uuid()) @db.VarChar(36)
-  User               User?             @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  userId             String?           @db.VarChar(36)
-  SubscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  subscriptionPlanId String?           @db.VarChar(36)
-  Coupon             Coupon?           @relation(fields: [couponId], references: [id], onUpdate: Cascade, onDelete: Restrict)
-  couponId           String?           @db.VarChar(36)
-  paymentId          String
-  startDate          DateTime
-  endDate            DateTime
-  type               Type              @default(MONTHLY)
-  mode               Mode              @default(PAID)
-  updatedAt          DateTime          @updatedAt
-  createdAt          DateTime          @default(now())
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  User      User?    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  userId    String?  @db.VarChar(36)
+  Plan      Plan?    @relation(fields: [planId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  planId    String?  @db.VarChar(36)
+  Coupon    Coupon?  @relation(fields: [couponId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  couponId  String?  @db.VarChar(36)
+  paymentId String
+  startDate DateTime
+  endDate   DateTime
+  type      Type     @default(MONTHLY)
+  mode      Mode     @default(PAID)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 
-  @@index([userId, subscriptionPlanId, couponId])
+  @@index([userId, planId, couponId])
 }
 
 model Coupon {

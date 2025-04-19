@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import Stripe from 'stripe';
+import { addMonths } from 'date-fns';
 
 @Injectable()
 export class StripeService {
@@ -19,10 +20,12 @@ export class StripeService {
   }
 
   async createCheckoutSession(userId: string, planId: string) {
-    const plan = await this.prisma.subscriptionPlan.findUnique({
+    const plan = await this.prismaService.plan.findUnique({
       where: { id: planId },
     });
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
 
     const session = await this.stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -30,7 +33,7 @@ export class StripeService {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: plan.stripePriceId,
+          price: plan.id,
           quantity: 1,
         },
       ],
@@ -47,14 +50,16 @@ export class StripeService {
       const session = event.data.object as Stripe.Checkout.Session;
       const { userId, planId } = session.metadata;
 
-      await this.prisma.userSubscription.create({
+      const startDate = new Date();
+      const endDate = addMonths(startDate, 1);
+
+      await this.prismaService.userPlan.create({
         data: {
           userId,
-          planId,
-          stripeCustomerId: session.customer as string,
-          stripeSubscriptionId: session.subscription as string,
-          status: 'ACTIVE',
-          startDate: new Date(),
+          planId: planId,
+          paymentId: session.subscription as string,
+          startDate,
+          endDate,
         },
       });
     }
