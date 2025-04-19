@@ -66,3 +66,10 @@ export const getProjectApi = async (
 
   return response.data.result;
 };
+
+export const toggleUserActiveApi = async (userId: string): Promise<void> => {
+  const response = await httpClient.patch(
+    apiEndpoints.users.toggleActive(userId),
+  );
+  return response.data.result;
+};

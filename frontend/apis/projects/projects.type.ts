@@ -1,6 +1,6 @@
+import { Address } from "../addresses";
 import { Service } from "../services";
 import { Tag } from "../tags";
-import { Address } from "../users";
 
 export type Project = {
   id: string;
@@ -35,23 +35,6 @@ export type ProjectFile = {
   createdAt: string;
 };
 
-export enum ProjectStatusEnum {
-  IN_PROGRESS = "IN_PROGRESS",
-  AWARDED = "AWARDED",
-  COMPLETED = "COMPLETED",
-}
-
-export enum FileType {
-  BEFORE = "BEFORE",
-  AFTER = "AFTER",
-}
-
-export enum Unit {
-  METER = "METER",
-  FEET = "FEET",
-  YARD = "YARD",
-}
-
 export type SiteMeasurement = {
   id: string;
   projectId: string;
@@ -83,3 +66,26 @@ export type GetProjectApiResponse = Project & {
   Bid: [];
   Service: Service;
 };
+
+export enum ProjectStatusEnum {
+  IN_PROGRESS = "IN_PROGRESS",
+  AWARDED = "AWARDED",
+  COMPLETED = "COMPLETED",
+}
+
+export enum FileType {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+}
+
+export enum Unit {
+  METER = "METER",
+  FEET = "FEET",
+  YARD = "YARD",
+}
+
+export const statusOptions = [
+  { value: ProjectStatusEnum.IN_PROGRESS, label: "In Progress" },
+  { value: ProjectStatusEnum.COMPLETED, label: "Completed" },
+  { value: ProjectStatusEnum.AWARDED, label: "Awarded" },
+];

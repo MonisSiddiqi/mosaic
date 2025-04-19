@@ -44,6 +44,8 @@ export class UsersService {
 
     const emailFilter = filter?.find((item) => item.id === 'email');
     const roleFilter = filter?.find((item) => item.id === 'role');
+    const locationFilter = filter?.find((item) => item.id === 'location');
+    const isActiveFilter = filter?.find((item) => item.id === 'isActive');
 
     if (emailFilter) {
       userWhereInput.email = {
@@ -56,6 +58,29 @@ export class UsersService {
       userWhereInput.role = {
         in: (roleFilter.value as UserRole[]) || undefined,
       };
+    }
+
+    if (locationFilter) {
+      userWhereInput.Address = {
+        city: {
+          in: locationFilter.value.map((item) => item) || undefined,
+        },
+      };
+    }
+
+    if (isActiveFilter) {
+      const active = isActiveFilter.value.find((item) => item === 'ACTIVE');
+      const inAcitve = isActiveFilter.value.find(
+        (item) => item === 'IN_ACTIVE',
+      );
+
+      if (!(active && inAcitve)) {
+        if (active) {
+          userWhereInput.isActive = true;
+        } else if (inAcitve) {
+          userWhereInput.isActive = false;
+        }
+      }
     }
 
     const users = await this.prismaService.user.findMany({
@@ -264,5 +289,34 @@ export class UsersService {
       { total, list },
       'Login history fetched successfully',
     );
+  }
+
+  async toggleActive(id: string) {
+    console.log('request received');
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new UnprocessableEntityException(
+        `User with this id ${id} does not found`,
+      );
+    }
+
+    const updatedUser = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive: !user.isActive,
+      },
+      omit: {
+        password: true,
+      },
+    });
+
+    return new ApiResponse(updatedUser, 'Status Updated Successfully');
   }
 }

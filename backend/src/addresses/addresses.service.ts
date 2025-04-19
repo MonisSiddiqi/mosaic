@@ -35,4 +35,9 @@ export class AddressesService {
 
     return new ApiResponse(address, 'Address added successfully');
   }
+
+  async getAddresses() {
+    const addresses = await this.prismaService.address.findMany();
+    return new ApiResponse(addresses, 'Addressses fetched successfully');
+  }
 }

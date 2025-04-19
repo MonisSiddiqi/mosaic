@@ -13,9 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 
 const signupData = {
-  daily: { users: 42, vendors: 30 },
-  weekly: { users: 287, vendors: 67 },
-  monthly: { users: 1243, vendors: 234 },
+  daily: { users: 0, vendors: 0 },
+  weekly: { users: 0, vendors: 0 },
+  monthly: { users: 2, vendors: 1 },
 };
 
 export const SignUpStatisticsCard = () => {
@@ -33,9 +33,9 @@ export const SignUpStatisticsCard = () => {
       <CardContent>
         <Tabs defaultValue="weekly" onValueChange={setTimeframe}>
           <TabsList className="grid grid-cols-3">
-            <TabsTrigger value="daily">Daily</TabsTrigger>
-            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+            <TabsTrigger value="daily">Today</TabsTrigger>
+            <TabsTrigger value="weekly">This Week</TabsTrigger>
+            <TabsTrigger value="monthly">This Month</TabsTrigger>
           </TabsList>
           <TabsContent value="daily" className="mt-4 space-y-4">
             <div className="flex gap-4">

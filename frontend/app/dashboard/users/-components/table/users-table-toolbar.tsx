@@ -1,9 +1,14 @@
+"use client";
+
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
+import { DataTableFacetedFilter } from "@/components/table";
+import { useAddressesQuery } from "@/queries/addresses.queries";
+import { activeOptions, roleOptions } from "@/apis/users";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -13,6 +18,12 @@ export function UsersTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  const { data: addresses } = useAddressesQuery();
+
+  const uniqueAddress = new Set<string>();
+
+  addresses?.forEach((item) => uniqueAddress.add(item.city));
 
   return (
     <div className="flex items-center justify-between">
@@ -25,6 +36,29 @@ export function UsersTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
+        <DataTableFacetedFilter
+          column={table.getColumn("role")}
+          title="Role"
+          options={roleOptions}
+        />
+        <DataTableFacetedFilter
+          column={table.getColumn("isActive")}
+          title="Status"
+          options={activeOptions as []}
+        />
+        <DataTableFacetedFilter
+          column={table.getColumn("location")}
+          title="Location"
+          options={
+            uniqueAddress
+              ? Array.from(uniqueAddress).map((item) => ({
+                  label: item,
+                  value: item,
+                }))
+              : []
+          }
+        />
+
         {isFiltered && (
           <Button
             variant="ghost"

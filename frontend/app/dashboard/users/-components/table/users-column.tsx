@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/table";
 import { GetAllUsersApiResponseItem } from "@/apis/users";
 import { Badge } from "@/components/ui/badge";
+import UserActiveSwitch from "../switch/user-active-switch";
 
 export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
   {
@@ -56,6 +57,21 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
   },
 
   {
+    accessorKey: "isActive",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <UserActiveSwitch
+          isActive={row.original.isActive}
+          userId={row.original.id}
+        />
+      );
+    },
+  },
+
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created At" />
@@ -65,5 +81,10 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
         {format(new Date(row.original.createdAt), "dd MMM, yyyy hh:mm aa")}
       </div>
     ),
+  },
+
+  {
+    accessorKey: "location",
+    enableHiding: false,
   },
 ];

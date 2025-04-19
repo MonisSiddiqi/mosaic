@@ -1,8 +1,8 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
-import { VendorServicePage } from "./_components/services-vendor-page";
-import { ServicesTable } from "./_components/table/services-table";
+import { VendorServicePage } from "./-components/services-vendor-page";
+import { ServicesTable } from "./-components/table/services-table";
 
 export default function ServicePage() {
   const { user } = useAuth();

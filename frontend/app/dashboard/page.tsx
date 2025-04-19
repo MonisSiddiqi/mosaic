@@ -6,6 +6,7 @@ import { StatisticsCard } from "./-components/users-statistics-card";
 import { SignUpStatisticsCard } from "./-components/signup-statistics-card";
 import { SubscriptionStatisticsCard } from "./-components/subscription-statistics-card";
 import { useDashboardQuery } from "@/queries/dashboard.queries";
+import { SignupTrend } from "./-components/signup-trend";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();
@@ -50,13 +51,16 @@ export default function Dashboard() {
         <SignUpStatisticsCard />
         <SubscriptionStatisticsCard />
       </div>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+      <div>
+        <SignupTrend />
+      </div>
+      {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Recent User Registrations</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Add a table or list of recent user registrations here */}
             <p className="text-gray-600">
               Display a list of recently registered users here.
             </p>
@@ -67,7 +71,6 @@ export default function Dashboard() {
             <CardTitle>Latest Bids</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Add a table or list of latest bids here */}
             <p className="text-gray-600">
               Display a list of the latest bids here.
             </p>
@@ -79,12 +82,11 @@ export default function Dashboard() {
           <CardTitle>System Notifications</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Add a list of important system notifications here */}
           <p className="text-gray-600">
             Display important system notifications and alerts here.
           </p>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

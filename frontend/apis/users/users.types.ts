@@ -1,3 +1,5 @@
+import { Address } from "@/apis/addresses";
+
 export type LoginResponse = {
   token_type: string;
   access_token: string;
@@ -18,19 +20,6 @@ export type UserProfile = {
   userId: string;
   name: string;
   image: string | null;
-  updatedAt: string;
-  createdAt: string;
-};
-
-export type Address = {
-  id: string;
-  userId: string;
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  country: string;
-  postalCode: string;
   updatedAt: string;
   createdAt: string;
 };
@@ -76,3 +65,14 @@ export type GetLoginHistoryApiResponse = {
   total: number;
   list: GetLoginHistoryApiResponseItem[];
 };
+
+export const roleOptions = [
+  { value: UserRole.USER, label: "User" },
+  { value: UserRole.VENDOR, label: "Vendor" },
+  { value: UserRole.ADMIN, label: "Admin" },
+];
+
+export const activeOptions = [
+  { value: "ACTIVE", label: "Active" },
+  { value: "IN_ACTIVE", label: "In Active" },
+];

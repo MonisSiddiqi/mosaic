@@ -29,4 +29,12 @@ export type Config = {
     user: string;
     password: string;
   };
+
+  payments: {
+    stripe: {
+      secretKey: string;
+      webhookSecret: string;
+      frontendUrl: string;
+    };
+  };
 };

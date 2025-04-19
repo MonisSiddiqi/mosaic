@@ -8,26 +8,26 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { DataTableFacetedFilter } from "@/components/table";
 import { useServicesQuery } from "@/queries/services.queries";
-import { ProjectStatusEnum } from "@/apis/projects";
 import { useTagsQuery } from "@/queries/tags.queries";
+import { useAddressesQuery } from "@/queries/addresses.queries";
+import { statusOptions } from "@/apis/projects";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
-
-export const statusOptions = [
-  { value: ProjectStatusEnum.IN_PROGRESS, label: "In Progress" },
-  { value: ProjectStatusEnum.COMPLETED, label: "Completed" },
-  { value: ProjectStatusEnum.AWARDED, label: "Awarded" },
-];
 
 export function ProjectsTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const { data } = useServicesQuery();
   const { data: tags } = useTagsQuery();
+  const { data: addresses } = useAddressesQuery();
 
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  const uniqueAddresses = new Set<string>();
+
+  addresses?.forEach((item) => uniqueAddresses.add(item.city));
 
   return (
     <div className="flex items-center justify-between">
@@ -72,7 +72,14 @@ export function ProjectsTableToolbar<TData>({
         <DataTableFacetedFilter
           column={table.getColumn("location")}
           title="Location"
-          options={[{ label: "Michigan", value: "Michigan" }]}
+          options={
+            uniqueAddresses
+              ? Array.from(uniqueAddresses).map((item) => ({
+                  label: item,
+                  value: item,
+                }))
+              : []
+          }
         />
 
         {isFiltered && (

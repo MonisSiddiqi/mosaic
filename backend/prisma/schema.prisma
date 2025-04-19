@@ -35,6 +35,8 @@ model User {
   ProjectUpdate   ProjectUpdate[]
   BusinessAddress BusinessAddress?
   Notification    Notification[]
+  UserPlan        UserPlan[]
+  UserCoupon      UserCoupon[]
 }
 
 model UserProfile {
@@ -75,15 +77,17 @@ model Notification {
 }
 
 model Service {
-  id            String          @id @default(uuid()) @db.VarChar(36)
-  iconUrl       String?
-  name          String          @unique
-  description   String
-  updatedAt     DateTime        @updatedAt @db.Timestamptz
-  createdAt     DateTime        @default(now()) @db.Timestamptz
-  Project       Project[]
-  VendorService VendorService[]
-  Tag           Tag[]
+  id                 String            @id @default(uuid()) @db.VarChar(36)
+  SubscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  subscriptionPlanId String?           @db.VarChar(36)
+  iconUrl            String?
+  name               String            @unique
+  description        String
+  updatedAt          DateTime          @updatedAt @db.Timestamptz
+  createdAt          DateTime          @default(now()) @db.Timestamptz
+  Project            Project[]
+  VendorService      VendorService[]
+  Tag                Tag[]
 }
 
 model Project {
@@ -281,7 +285,7 @@ model VendorService {
 
 model Testimonial {
   id          String   @id @default(uuid()) @db.VarChar(36)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId      String   @db.VarChar(36)
   rating      Int
   title       String
@@ -295,12 +299,66 @@ model Testimonial {
 model Otp {
   id              String   @id @default(uuid()) @db.VarChar(36)
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  type            OtpType
   userId          String   @unique @db.VarChar(36)
+  type            OtpType
   oneTimePassword String
   isVerified      Boolean  @default(false)
   updatedAt       DateTime @updatedAt
   createdAt       DateTime @default(now())
+}
+
+model SubscriptionPlan {
+  id          String     @id @default(uuid()) @db.VarChar(36)
+  name        String     @unique
+  description String
+  amount      Float
+  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime   @default(now())
+  UserPlan    UserPlan[]
+  Service     Service[]
+}
+
+model UserPlan {
+  id                 String            @id @default(uuid()) @db.VarChar(36)
+  User               User?             @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  userId             String?           @db.VarChar(36)
+  SubscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  subscriptionPlanId String?           @db.VarChar(36)
+  Coupon             Coupon?           @relation(fields: [couponId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  couponId           String?           @db.VarChar(36)
+  paymentId          String
+  startDate          DateTime
+  endDate            DateTime
+  type               Type              @default(MONTHLY)
+  mode               Mode              @default(PAID)
+  updatedAt          DateTime          @updatedAt
+  createdAt          DateTime          @default(now())
+
+  @@index([userId, subscriptionPlanId, couponId])
+}
+
+model Coupon {
+  id          String       @id @default(uuid()) @db.VarChar(36)
+  code        String       @unique
+  description String?
+  monthsFree  Int
+  limit       Int?
+  isActive    Boolean      @default(true)
+  expiresAt   DateTime?
+  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime     @default(now())
+  UserCoupon  UserCoupon[]
+  UserPlan    UserPlan[]
+}
+
+model UserCoupon {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  Coupon    Coupon   @relation(fields: [couponId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  couponId  String   @db.VarChar(36)
+  User      User?    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  userId    String?  @db.VarChar(36)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 enum OtpType {
@@ -335,4 +393,16 @@ enum Unit {
   METER
   FEET
   YARD
+}
+
+enum Type {
+  MONTHLY
+  YEARLY
+}
+
+enum Mode {
+  PAID
+  ADMIN
+  TRIAL
+  COUPON
 }

@@ -30,6 +30,7 @@ import { BidsModule } from './bids/bids.module';
 import { BidsController } from './bids/bids.controller';
 import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsController } from './notifications/notifications.controller';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { NotificationsController } from './notifications/notifications.controlle
     TagsModule,
     BidsModule,
     NotificationsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [

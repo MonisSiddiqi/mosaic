@@ -24,4 +24,8 @@ export const configValidationSchema = Joi.object({
   SMTP_PORT: Joi.number().required(),
   SMTP_USER: Joi.string().required().email(),
   SMTP_PASSWORD: Joi.string().required(),
+
+  STRIPE_SECRET_KEY: Joi.string().required(),
+  STRIPE_WEBHOOK_SECRET: Joi.string().required(),
+  FRONTEND_URL: Joi.string().required(),
 });

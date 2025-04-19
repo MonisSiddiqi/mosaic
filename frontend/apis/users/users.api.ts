@@ -1,7 +1,6 @@
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
 import {
-  Address,
   CreateAddressDto,
   EditProfileApiResponse,
   EditProfileDto,
@@ -13,6 +12,7 @@ import {
   User,
 } from "@/apis/users";
 import { headers } from "next/headers";
+import { Address } from "../addresses";
 
 export const getMyProfileApi = async (): Promise<ProfileApiResponse> => {
   const response = await httpClient.get(apiEndpoints.users.me);

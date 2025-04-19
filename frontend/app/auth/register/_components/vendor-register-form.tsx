@@ -303,6 +303,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
           </div>
 
           <div className="grid gap-7 bg-white p-6 md:grid-cols-2">
+            <p>Business Address</p>
             <div className="flex items-center gap-2 md:col-span-2">
               <Checkbox
                 id="sameAsAddress"

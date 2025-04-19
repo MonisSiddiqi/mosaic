@@ -27,4 +27,12 @@ export default (): Config => ({
     user: process.env.SMTP_USER as string,
     password: process.env.SMTP_PASSWORD as string,
   },
+
+  payments: {
+    stripe: {
+      secretKey: process.env.STRIPE_SECRET_KEY,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+      frontendUrl: process.env.FRONTEND_URL,
+    },
+  },
 });

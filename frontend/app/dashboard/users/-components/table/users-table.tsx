@@ -42,6 +42,7 @@ export const UsersTable = () => {
           total: data?.total || 0,
           data: data?.list || [],
         }}
+        columnVisibility={{ location: false }}
         DataTableToolbar={UsersTableToolbar}
         sorting={sorting}
         setSorting={setSorting}

@@ -23,7 +23,12 @@ export class GetUsersDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [{ id: 'role'; value: UserRole[] }, { id: 'email'; value: string }];
+  filter: [
+    { id: 'role'; value: UserRole[] },
+    { id: 'email'; value: string },
+    { id: 'location'; value: string[] },
+    { id: 'isActive'; value: string[] },
+  ];
 
   @IsOptional()
   @IsNumber()

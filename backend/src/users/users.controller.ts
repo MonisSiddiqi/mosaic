@@ -65,4 +65,11 @@ export class UsersController {
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.findOne(id);
   }
+
+  @Patch('toggle-active/:id')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  userToggleStatus(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.usersService.toggleActive(id);
+  }
 }

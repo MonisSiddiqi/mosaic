@@ -26,6 +26,7 @@ export const apiEndpoints = {
     getAll: `/api/v1/users`,
     createAddress: `/api/v1/addresses`,
     loginHistory: `/api/v1/users/login-history`,
+    toggleActive: (id: string) => `/api/v1/users/toggle-active/${id}`,
   },
   projects: {
     get: (id: string) => `/api/v1/projects/${id}`,
@@ -40,5 +41,8 @@ export const apiEndpoints = {
   },
   dashboard: {
     getData: `/api/v1/dashboard`,
+  },
+  addresses: {
+    getAddresses: `/api/v1/addresses`,
   },
 };
