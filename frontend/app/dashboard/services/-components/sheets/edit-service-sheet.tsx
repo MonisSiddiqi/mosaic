@@ -13,6 +13,7 @@ type Props = {
   id: string;
   title: string;
   description: string;
+  planId: string | null;
   open: boolean;
   setOpen: (value: boolean) => void;
 };
@@ -22,6 +23,7 @@ export const EditServiceSheet: FC<Props> = ({
   setOpen,
   title,
   description,
+  planId,
   open,
 }) => {
   const handleClose = (status: boolean) => setOpen(status);
@@ -40,6 +42,7 @@ export const EditServiceSheet: FC<Props> = ({
           id={id}
           title={title}
           description={description}
+          planId={planId}
         />
       </SheetContent>
     </Sheet>

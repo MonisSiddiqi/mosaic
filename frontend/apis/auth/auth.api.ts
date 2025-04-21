@@ -1,4 +1,3 @@
-import httpClient from "@/apis";
 import {
   LoginDto,
   LoginResponse,
@@ -6,6 +5,7 @@ import {
   VerifyOtpDto,
 } from "@/apis/auth";
 import { apiEndpoints } from "@/apis/api-endpoints";
+import httpClient from "..";
 
 export const loginApi = async (values: LoginDto): Promise<LoginResponse> => {
   const response = await httpClient.post(apiEndpoints.auth.login, {
@@ -17,7 +17,9 @@ export const loginApi = async (values: LoginDto): Promise<LoginResponse> => {
 };
 
 export const logoutApi = async (): Promise<boolean> => {
+  console.log("Hello 2 ");
   const response = await httpClient.delete(apiEndpoints.auth.logout);
+  console.log("Hello 3");
 
   return response.data.result;
 };

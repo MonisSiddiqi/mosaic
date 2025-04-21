@@ -508,3 +508,58 @@ export const plans: { name: string; amount: number }[] = [
   { name: 'Skilled Trades', amount: 80 },
   { name: 'High-Value Trades', amount: 99 },
 ];
+
+export const tier1Services = [
+  'Handyman',
+  'Grass Service',
+  'Painting',
+  'Drywall',
+  'Windows',
+  'Garage Doors',
+  'Drop Ceiling',
+  'Epoxy Flooring',
+  'Tree Service',
+  'Signs',
+  'Waterproofing',
+  'Gutter Cleaning',
+];
+
+export const tier2Services = [
+  'Plumbing',
+  'Electrical',
+  'HVAC',
+  'Roofing',
+  'Masonry',
+  'Concrete',
+  'Flooring',
+  'Finish Carpentry',
+  'Excavation',
+  'Irrigation System',
+  'Insulation',
+  'Demolition',
+  'Tile Install',
+  'Fireplace Services',
+  'Exterior Carpentry',
+  'Staging Services',
+];
+
+export const tier3Services = [
+  'Remodeling',
+  'General Contractors',
+  'Engineering Services',
+  'Property Management',
+  'Custom Work',
+  'Commercial Construction',
+  'Septic & Well Services',
+  'Fire Suppression',
+  'Utility Services',
+  'Underground Tap',
+  'Full Demolition',
+  'Large-Scale Foundation Work',
+  'Asphalt & Driveway Work',
+  'Materials Supplier',
+  'Dumpster Service',
+  'Signs & Large Installations',
+];
+
+console.log(tier1Services.length + tier2Services.length + tier3Services.length);

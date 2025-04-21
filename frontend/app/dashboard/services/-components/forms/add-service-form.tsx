@@ -2,7 +2,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { RefreshCcwIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FC, useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -19,6 +18,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useAddServiceMutation } from "@/queries/services.queries";
 import { Textarea } from "@/components/ui/textarea";
+import { useAllPlansQuery } from "@/queries/payments.queries";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   icon: z
@@ -29,6 +36,7 @@ const formSchema = z.object({
     .optional(),
   title: z.string().min(2, "Title is required."),
   description: z.string().min(5, "Description is required."),
+  planId: z.string().optional(),
 });
 
 type Props = {
@@ -44,10 +52,12 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
       icon: undefined,
       title: "",
       description: "",
+      planId: "",
     },
   });
 
   const mutation = useAddServiceMutation();
+  const { data: plans, isLoading: isPlansLoading } = useAllPlansQuery();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -69,7 +79,7 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="mt-4 grid w-full gap-4">
+        <div className="mt-4 grid w-full gap-6">
           {/* SVG Icon Upload & Preview */}
           <FormField
             control={form.control}
@@ -157,10 +167,50 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="planId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Plan</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      console.log(value, form.getValues("planId"));
+                      if (value === "none") {
+                        form.setValue("planId", "", { shouldValidate: true });
+                      } else {
+                        form.setValue("planId", value);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Plan" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      {plans?.map((item) => (
+                        <SelectItem
+                          key={item.id}
+                          value={item.id}
+                          className="flex justify-between"
+                        >
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </div>
 
         {/* Submit Button */}
-        <div className="flex w-full justify-end">
+        <div className="mt-7 flex w-full justify-end">
           <Button
             disabled={mutation.isPending}
             type="submit"

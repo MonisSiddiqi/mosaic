@@ -61,6 +61,7 @@ export function ServicesTableRowActions<TData>({
         title={service.name}
         description={service.description}
         open={openEdit}
+        planId={service.planId}
         setOpen={() => setOpenEdit(false)}
       />
     </>

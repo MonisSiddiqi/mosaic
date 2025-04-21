@@ -12,6 +12,7 @@ export type AddServiceDto = {
   icon?: File;
   title: string;
   description: string;
+  planId?: string;
 };
 
 export type EditServiceDto = { id: string } & AddServiceDto;

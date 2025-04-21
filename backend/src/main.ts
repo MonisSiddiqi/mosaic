@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bodyParser: true });
@@ -27,6 +28,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'https://mosaic-1phb3tmwf-monis-siddiqis-projects.vercel.app',
     ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
   app.setGlobalPrefix('api', {
@@ -45,6 +47,8 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new ApiResponseInterceptor());
+
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   app.enableShutdownHooks();
 

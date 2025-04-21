@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex flex-col items-center antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} flex h-screen w-screen flex-col items-center overflow-hidden antialiased`}
       >
         <RouterSpinner />
         <Providers>{children}</Providers>

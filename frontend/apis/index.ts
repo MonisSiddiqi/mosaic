@@ -14,7 +14,7 @@ interface ErrorResponse {
 const authRoutes = [
   "/api/v1/auth/login",
   "/api/v1/auth/check",
-  `api/v1/auth/logout`,
+  "/api/v1/auth/logout",
 ];
 
 const httpClient = axios.create({
@@ -81,5 +81,3 @@ const logoutAndRedirect = async () => {
   }
 };
 export default httpClient;
-
-export * from "@/apis/api-endpoints";

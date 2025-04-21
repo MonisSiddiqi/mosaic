@@ -9,10 +9,8 @@ import {
   ParseUUIDPipe,
   UseGuards,
   UseInterceptors,
-  BadRequestException,
   UploadedFile,
   Query,
-  UploadedFiles,
   ParseFilePipe,
   FileTypeValidator,
 } from '@nestjs/common';
@@ -21,10 +19,7 @@ import { User, UserRole } from '@prisma/client';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { GetServicesDto } from './dto/get-services.dto';
 import { SkipAuth } from 'src/auth/decorators/skip-auth.decorator';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -50,7 +45,6 @@ export class ServicesController {
     )
     icon: Express.Multer.File,
   ) {
-
     return this.servicesService.create(icon, createServiceDto);
   }
 
@@ -83,7 +77,6 @@ export class ServicesController {
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('icon'))
-
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -92,7 +85,8 @@ export class ServicesController {
         fileIsRequired: false,
         validators: [new FileTypeValidator({ fileType: 'image/svg' })],
       }),
-    ) icon: Express.Multer.File,
+    )
+    icon: Express.Multer.File,
   ) {
     return this.servicesService.update(id, updateServiceDto, icon);
   }

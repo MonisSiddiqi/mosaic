@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   Home,
-  Users,
   Gavel,
   BarChart2,
   Package,

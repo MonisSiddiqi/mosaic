@@ -20,7 +20,7 @@ export class GetServicesDto {
   sortValue: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  filter: [{ id: 'name'; value: string }];
+  filter: [{ id: 'name'; value: string }, { id: 'plan'; value: string[] }];
 
   @IsOptional()
   @IsNumber()

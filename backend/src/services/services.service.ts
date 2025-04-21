@@ -22,7 +22,7 @@ export class ServicesService {
   ) {}
 
   async create(icon: Express.Multer.File, createServiceDto: CreateServiceDto) {
-    const { name, description } = createServiceDto;
+    const { name, description, planId } = createServiceDto;
 
     const isExist = await this.prismaService.service.findUnique({
       where: {
@@ -55,6 +55,22 @@ export class ServicesService {
       }
     }
 
+    if (planId) {
+      const plan = await this.prismaService.plan.findUnique({
+        where: { id: planId },
+      });
+
+      if (!plan) {
+        throw new UnprocessableEntityException('Plan not found');
+      }
+
+      serviceCreateInput.Plan = {
+        connect: {
+          id: planId,
+        },
+      };
+    }
+
     const service = await this.prismaService.service.create({
       data: serviceCreateInput,
     });
@@ -68,6 +84,7 @@ export class ServicesService {
     const serviceWhereInput: Prisma.ServiceWhereInput = {};
 
     const textFilter = filter?.find((item) => item.id === 'name');
+    const planFilter = filter?.find((item) => item.id === 'plan');
 
     const orderBy: Prisma.ServiceOrderByWithRelationInput = {};
 
@@ -86,6 +103,14 @@ export class ServicesService {
       };
     }
 
+    if (planFilter) {
+      serviceWhereInput.Plan = {
+        name: {
+          in: planFilter.value,
+        },
+      };
+    }
+
     const services = await this.prismaService.service.findMany({
       where: serviceWhereInput,
       include: {
@@ -94,6 +119,7 @@ export class ServicesService {
             userId: authUser?.id,
           },
         },
+        Plan: true,
       },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy,
@@ -135,7 +161,7 @@ export class ServicesService {
     updateServiceDto: UpdateServiceDto,
     icon: Express.Multer.File,
   ) {
-    const { name, description } = updateServiceDto;
+    const { name, description, planId } = updateServiceDto;
 
     const service = await this.prismaService.service.findUnique({
       where: {
@@ -163,6 +189,22 @@ export class ServicesService {
       );
 
       serviceUpdateInput.iconUrl = iconUrl;
+    }
+
+    if (planId) {
+      const plan = await this.prismaService.plan.findUnique({
+        where: { id: planId },
+      });
+
+      if (!plan) {
+        throw new UnprocessableEntityException('Plan not found');
+      }
+
+      serviceUpdateInput.Plan = {
+        connect: {
+          id: planId,
+        },
+      };
     }
 
     const updatedService = await this.prismaService.service.update({

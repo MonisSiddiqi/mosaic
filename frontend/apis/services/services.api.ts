@@ -42,6 +42,7 @@ export const addServiceApi = async (
     icon: values.icon,
     name: values.title,
     description: values.description,
+    planId: values.planId,
   };
 
   const response = await httpClient.post(apiEndpoints.services.add, body, {
@@ -56,23 +57,27 @@ export const addServiceApi = async (
 export const editServiceApi = async (
   values: EditServiceDto,
 ): Promise<Service> => {
+  console.log("Hello 2");
+
   const body = {
     icon: values.icon,
     name: values.title,
     description: values.description,
+    planId: values.planId,
   };
 
-  const response = await httpClient.patch(
-    apiEndpoints.services.edit(values.id),
-    body,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
-  );
+  try {
+    const response = await httpClient.patch(
+      apiEndpoints.services.edit(values.id),
+      body,
+    );
 
-  return response.data.result;
+    console.log("hello 3");
+    return response.data.result;
+  } catch (error) {
+    console.error("🔥 API error:", error);
+    throw error;
+  }
 };
 
 export const addVendorServiceApi = async (

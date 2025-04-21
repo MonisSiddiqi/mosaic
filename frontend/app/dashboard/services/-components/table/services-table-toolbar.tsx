@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { AddServiceSheet } from "../sheets/add-service-sheet";
+import { DataTableFacetedFilter } from "@/components/table";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
+
+const plans = ["Essential Trades", "High-Value Trades", "Skilled Trades"];
 
 export function ServicesTableToolbar<TData>({
   table,
@@ -26,6 +29,11 @@ export function ServicesTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
+        <DataTableFacetedFilter
+          column={table.getColumn("plan")}
+          title="Plan"
+          options={plans.map((item) => ({ label: item, value: item }))}
+        />
         {isFiltered && (
           <Button
             variant="ghost"
@@ -38,7 +46,6 @@ export function ServicesTableToolbar<TData>({
         )}
       </div>
       <div className="flex items-end gap-4">
-
         <DataTableViewOptions table={table} />
         <AddServiceSheet />
       </div>

@@ -6,6 +6,7 @@ import { Service } from "@/apis/services";
 import { ServicesTableRowActions } from "./services-table-row-actions";
 import Image from "next/image";
 import { EyeOffIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export const servicesColumns: ColumnDef<Service>[] = [
   {
@@ -19,7 +20,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       console.log(icon);
 
       return (
-        <div className="ml-2 mt-2 ">
+        <div className="ml-2 mt-2">
           {icon ? (
             <Image
               src={icon}
@@ -48,6 +49,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       return <div className="ml-2">{row.original.name}</div>;
     },
   },
+
   {
     accessorKey: "description",
     header: ({ column }) => (
@@ -56,6 +58,62 @@ export const servicesColumns: ColumnDef<Service>[] = [
     cell: ({ row }) => {
       return <div> {row.original.description}</div>;
     },
+  },
+
+  {
+    accessorKey: "plan",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Plan" />
+    ),
+    cell: ({ row }) => {
+      const name = row.original.Plan?.name;
+
+      if (!name)
+        return (
+          <Badge
+            variant={"secondary"}
+            className="w-32 whitespace-nowrap text-gray-400"
+          >
+            No Plan
+          </Badge>
+        );
+
+      //TODO: Have a better design
+      if (name === "Essential Trades") {
+        return (
+          <Badge
+            variant={"secondary"}
+            className="w-32 whitespace-nowrap bg-primary text-white hover:bg-primary"
+          >
+            {name}
+          </Badge>
+        );
+      }
+
+      if (name === "Skilled Trades") {
+        return (
+          <Badge
+            variant={"secondary"}
+            className="w-32 whitespace-nowrap bg-brand-primary text-white hover:bg-brand-primary"
+          >
+            {name}
+          </Badge>
+        );
+      }
+
+      if (name === "High-Value Trades") {
+        return (
+          <Badge
+            variant={"secondary"}
+            className="w-32 whitespace-nowrap bg-brand-gold text-white hover:bg-brand-gold"
+          >
+            {name}
+          </Badge>
+        );
+      }
+    },
+
+    enableSorting: false,
   },
 
   {

@@ -22,6 +22,7 @@ export const BottomSidebar = () => {
   const router = useRouter();
 
   const onLogout = async () => {
+    console.log("trying logout...");
     try {
       await logout();
       toast({

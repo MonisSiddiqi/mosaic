@@ -21,7 +21,7 @@ export const columns: ColumnDef<GetAllPlansApiResponseItem>[] = [
       <DataTableColumnHeader column={column} title="Amount" />
     ),
     cell: ({ row }) => {
-      return <div> {row.original.amount + "/month"}</div>;
+      return <div> ${row.original.amount + "/month"}</div>;
     },
   },
 
@@ -35,7 +35,5 @@ export const columns: ColumnDef<GetAllPlansApiResponseItem>[] = [
         {format(new Date(row.original.createdAt), "dd MMM, yyyy hh:mm aa")}
       </div>
     ),
-
-    enableSorting: false,
   },
 ];

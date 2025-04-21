@@ -1,14 +1,14 @@
 export const apiEndpoints = {
   services: {
     getAll: `/api/v1/services`,
-    delete: (id: string) => `/api/services/${id}`,
+    delete: (id: string) => `/api/v1/services/${id}`,
     add: `/api/v1/services`,
-    edit: (id: string) => `/api/services/${id}`,
+    edit: (id: string) => `/api/v1/services/${id}`,
     addVendorService: `/api/v1/services/vendor`,
   },
   tags: {
     getAll: `/api/v1/tags`,
-    delete: (id: string) => `/api/tags/${id}`,
+    delete: (id: string) => `/api/v1/tags/${id}`,
     add: `/api/v1/tags`,
     edit: (id: string) => `/api/tags/${id}`,
     addVendorTag: `/api/v1/tags/vendor`,

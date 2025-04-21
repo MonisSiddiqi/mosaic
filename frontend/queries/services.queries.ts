@@ -1,6 +1,7 @@
 import {
   addServiceApi,
   addVendorServiceApi,
+  editServiceApi,
   getAllServicesApi,
 } from "@/apis/services";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -54,5 +55,13 @@ export const useAddVendorServiceMutation = () => {
   return useMutation({
     mutationKey: ["addVendorService"],
     mutationFn: addVendorServiceApi,
+  });
+};
+
+export const useEditServiceMutation = (id: string) => {
+  console.log("Hello");
+  return useMutation({
+    mutationKey: [`editService`],
+    mutationFn: editServiceApi,
   });
 };
