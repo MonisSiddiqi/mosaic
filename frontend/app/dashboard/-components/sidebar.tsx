@@ -25,8 +25,16 @@ export const routes = [
     href: "/dashboard",
     icon: <Home className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Dashboard",
-    roles: [],
+    roles: [UserRole.ADMIN],
   },
+
+  {
+    href: "/dashboard/bids",
+    icon: <Gavel className="h-5 min-h-5 w-5 min-w-5" />,
+    text: "Bids Management",
+    roles: [UserRole.VENDOR, UserRole.ADMIN],
+  },
+
   {
     href: "/dashboard/services",
     icon: <Layers className="h-5 min-h-5 w-5 min-w-5" />,
@@ -43,7 +51,7 @@ export const routes = [
     href: "/dashboard/projects",
     icon: <Grid className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Projects Management",
-    roles: [],
+    roles: [UserRole.ADMIN],
   },
 
   {
@@ -51,13 +59,6 @@ export const routes = [
     icon: <UsersIcon className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Users Management",
     roles: [UserRole.ADMIN],
-  },
-
-  {
-    href: "/dashboard/bids",
-    icon: <Gavel className="h-5 min-h-5 w-5 min-w-5" />,
-    text: "Bids Management",
-    roles: [UserRole.VENDOR, UserRole.ADMIN],
   },
 
   {

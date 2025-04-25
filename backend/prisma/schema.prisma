@@ -385,8 +385,8 @@ enum BidStatus {
 
 enum UserRole {
   USER
-  VENDOR
   ADMIN
+  COMPANY
 }
 
 enum Unit {

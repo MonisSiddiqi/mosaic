@@ -23,12 +23,10 @@ async function bootstrap() {
   const logger = new Logger();
 
   app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
-    origin: [
-      'http://localhost:3000',
-      'https://mosaic-1phb3tmwf-monis-siddiqis-projects.vercel.app',
-    ],
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
   });
 
   app.setGlobalPrefix('api', {
