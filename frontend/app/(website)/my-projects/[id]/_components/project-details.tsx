@@ -2,22 +2,13 @@
 
 import { ProjectDetailsAlert } from "./project-details-alert";
 import { useProjectQuery } from "@/queries/projects.queries";
-import { useAuth } from "@/hooks/use-auth";
 import { useParams } from "next/navigation";
 import { LoaderComponent } from "@/components/loader-component";
 import { P3 } from "@/components/typography/P3";
 import { H3 } from "@/components/typography/H3";
 import { ShowFile } from "./show-file";
 import { AddressCard } from "./project-address";
-import {
-  Building2Icon,
-  CoinsIcon,
-  MapPinnedIcon,
-  PinIcon,
-  RulerIcon,
-  TreeDeciduous,
-  TreePineIcon,
-} from "lucide-react";
+import { Building2Icon, MapPinnedIcon, RulerIcon } from "lucide-react";
 import { SiteMeasurementCard } from "./site-measurement";
 import BudgetPreferenceCard from "./budget-preference";
 import { ProjectTags } from "./project-tags";
@@ -25,8 +16,6 @@ import { BackButton } from "@/components/back-button";
 import { CubeIcon } from "@radix-ui/react-icons";
 
 export const ProjectDetails = () => {
-  const { user } = useAuth();
-
   const params = useParams();
 
   const id = params.id as string;

@@ -1,7 +1,6 @@
-import { LoaderComponent } from "@/components/loader-component";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { LoaderIcon, UsersIcon } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { FC } from "react";
 
 type Props = {

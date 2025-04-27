@@ -6,28 +6,22 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
-import { DataTableFacetedFilter } from "@/components/table";
-import { useServicesQuery } from "@/queries/services.queries";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function ProjectsTableToolbar<TData>({
-  table,
-}: DataTableToolbarProps<TData>) {
+export function TableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
-
-  const { data } = useServicesQuery();
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter title..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter project..."
+          value={(table.getColumn("text")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.getColumn("text")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />

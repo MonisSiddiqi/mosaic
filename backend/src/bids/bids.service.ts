@@ -1,8 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { GetBidsDto } from './dto/get-bids.dto';
 
 @Injectable()
 export class BidsService implements OnModuleInit {
@@ -10,12 +11,59 @@ export class BidsService implements OnModuleInit {
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAll(authUser: User) {
+  async findAll(getBidsDto: GetBidsDto, authUser: User) {
+    const { sortField, sortValue, page, limit, filter } = getBidsDto;
+
+    const bidWhereInput: Prisma.BidWhereInput = {};
+
+    const textFilter = filter?.find((item) => item.id === 'text');
+    const vendorFilter = filter?.find((item) => item.id === 'vendor');
+
+    if (textFilter && textFilter.value?.trim()) {
+      bidWhereInput.project = {
+        OR: [
+          { title: { contains: textFilter.value, mode: 'insensitive' } },
+          { description: { contains: textFilter.value, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    if (authUser.role === 'ADMIN') {
+      if (vendorFilter) {
+        bidWhereInput.project = {
+          userId: {
+            in: vendorFilter.value,
+          },
+        };
+      }
+    } else {
+      bidWhereInput.vendorId = authUser.id;
+    }
+
     const bids = await this.prismaService.bid.findMany({
-      where: { vendorId: authUser.id },
+      where: bidWhereInput,
+      orderBy: {
+        vendorStatus: 'desc',
+      },
+      ...(page > 0
+        ? {
+            skip: (page - 1) * limit,
+            take: limit,
+          }
+        : {}),
+
+      include: {
+        project: {
+          include: {
+            user: { include: { UserProfile: true }, omit: { password: true } },
+          },
+        },
+      },
     });
 
-    return new ApiResponse(bids, 'Bids fetched successfully');
+    const total = await this.prismaService.bid.count({ where: bidWhereInput });
+
+    return new ApiResponse({ total, list: bids }, 'Bids fetched successfully');
   }
 
   onModuleInit() {
@@ -32,24 +80,23 @@ export class BidsService implements OnModuleInit {
     //proeject was rejected by vendor
     const projects = await this.prismaService.project.findMany({
       where: {
-        OR: [
-          {
-            Bid: { some: {} },
-          },
-          {
-            Bid: {
-              none: {
-                vendorStatus: { not: 'ACCEPTED' },
-                userStatus: { not: 'ACCEPTED' },
-              },
+        Bid: {
+          none: {
+            NOT: {
+              userStatus: 'ACCEPTED',
+              vendorStatus: 'ACCEPTED',
             },
           },
-        ],
+        },
       },
       include: {
         Bid: true,
       },
     });
+
+    if (projects.length === 0) {
+      this.logger.debug('All Projects have assigned bid');
+    }
 
     for (const project of projects) {
       //get all vendors which did not get bid of this project before and which was not got the bid before

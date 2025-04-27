@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { AddTagSheet } from "../sheets/add-tag-sheet";
-import { DataTableFacetedFilter } from "@/components/table";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

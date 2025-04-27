@@ -12,7 +12,6 @@ export type User = {
   isActive: boolean;
   updatedAt: string;
   createdAt: string;
-  UserProfile: UserProfile;
 };
 
 export type UserProfile = {

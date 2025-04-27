@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { routes } from "./sidebar";
 

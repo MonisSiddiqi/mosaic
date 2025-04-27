@@ -49,4 +49,8 @@ export const apiEndpoints = {
   payments: {
     getAllPlans: `/api/v1/payments/plans`,
   },
+
+  bids: {
+    getAll: `/api/v1/bids`,
+  },
 };

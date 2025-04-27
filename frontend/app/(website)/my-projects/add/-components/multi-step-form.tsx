@@ -1,20 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  MapPinIcon,
-  Building2Icon,
-  RulerIcon,
-  DollarSignIcon,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { ProjectDetails } from "./form-steps/project-details";
 import { Location } from "./form-steps/locations";
 import { SiteMeasurements } from "./form-steps/site-measurement";
@@ -44,7 +31,7 @@ export function MultiStepForm() {
   const CurrentStepIcon = steps[currentStep].icon;
 
   const getProgress = () => {
-    let step = 0;
+    const step = 0;
     if (currentStep === step) {
       return 5;
     } else if (currentStep === step + 1) {

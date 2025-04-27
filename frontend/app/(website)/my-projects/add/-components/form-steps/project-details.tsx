@@ -139,7 +139,7 @@ export const ProjectDetails = ({}) => {
             <FormField
               control={form.control}
               name="serviceId"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Service</FormLabel>
                   {isServicesLoading ? (

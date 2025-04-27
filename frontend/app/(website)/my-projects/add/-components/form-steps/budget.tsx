@@ -9,7 +9,6 @@ import { toast } from "@/hooks/use-toast";
 import { useAddProjectMutation } from "@/queries/projects.queries";
 import { useRouter } from "next/navigation";
 import { useAddProject } from "@/hooks/use-add-project";
-import { AddProjectDto } from "@/apis/projects/projects.type";
 import {
   Form,
   FormControl,
@@ -21,6 +20,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { PlusIcon, XIcon } from "lucide-react";
+import { AddProjectDto } from "@/apis/projects";
 
 const budgetSchema = z.object({
   budgetPreference: z.number(),

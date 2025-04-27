@@ -1,10 +1,4 @@
-import {
-  Check,
-  CheckCheckIcon,
-  CheckCircle2Icon,
-  HelpCircle,
-  X,
-} from "lucide-react";
+import { Check, CheckCircle2Icon, X } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";

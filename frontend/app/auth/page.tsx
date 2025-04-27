@@ -18,7 +18,7 @@ export default function AuthPage() {
         <LoginForm />
         <Separator className="mt-5" />
         <div className="flex items-center justify-center">
-          <p>Don't have an account ?</p>
+          <p>{"Don't"} have an account ?</p>
           <Button
             type="button"
             className="text-brand-primary"

@@ -22,12 +22,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 
-const optionSchema = z.object({
-  label: z.string(),
-  value: z.string(),
-  disable: z.boolean().optional(),
-});
-
 const formSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),

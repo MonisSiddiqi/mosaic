@@ -2,9 +2,6 @@
 
 import { useServicesQuery } from "@/queries/services.queries";
 import { ServiceCard } from "./service-card";
-import { SearchIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Search } from "@/app/-components/search";
 import { useState } from "react";
 import { ProjectCardSkeleton } from "./service-card.skeleton";
@@ -22,7 +19,8 @@ export const ServicesContainer = () => {
       <Search query={query} setQuery={setQuery} />
       {query && (
         <div className="mb-8 text-gray-400">
-          Search results for <span className="text-primary">"{query}"</span>{" "}
+          Search results for{" "}
+          <span className="text-primary">&quot{query}&quot</span>{" "}
         </div>
       )}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

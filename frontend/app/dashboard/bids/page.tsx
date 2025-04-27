@@ -1,6 +1,6 @@
-import { BidList } from "./_components/bid-list";
 import { BidStats } from "./_components/bid-status";
 import { PageHeader } from "./_components/bids-page-header";
+import { BidsTable } from "./_components/table/table";
 
 export default function VendorBidsPage() {
   return (
@@ -12,9 +12,7 @@ export default function VendorBidsPage() {
 
       <BidStats />
 
-      <div className="rounded-lg border bg-white">
-        <BidList />
-      </div>
+      <BidsTable />
     </div>
   );
 }

@@ -19,7 +19,7 @@ const signupData = {
 };
 
 export const SignUpStatisticsCard = () => {
-  const [timeframe, setTimeframe] = useState("weekly");
+  const [_, setTimeframe] = useState("weekly");
 
   return (
     <Card>

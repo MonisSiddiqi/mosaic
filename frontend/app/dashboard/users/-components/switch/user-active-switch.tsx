@@ -29,10 +29,10 @@ const UserActiveSwitch: FC<Props> = ({ isActive, userId }) => {
         title: "Updated successfully",
         variant: "success",
       });
-    } catch (e: any) {
+    } catch (err) {
       toast({
         variant: "destructive",
-        title: e.message,
+        title: err instanceof Error ? err.message : "Failed",
       });
     }
   };
