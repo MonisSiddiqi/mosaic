@@ -80,8 +80,8 @@ export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
             )}
 
             <div className="absolute right-4 top-4 z-20">
-              <Badge className={statusConfig.className}>
-                {statusConfig.label}
+              <Badge className={statusConfig?.className + " gap-2"}>
+                <statusConfig.icon className="size-4" /> {statusConfig?.label}
               </Badge>
             </div>
           </div>

@@ -1,5 +1,5 @@
-import { getAllBidsApi } from "@/apis/bids";
-import { useQuery } from "@tanstack/react-query";
+import { bidActionApi, getAllBidsApi } from "@/apis/bids";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
   PaginationState,
@@ -23,5 +23,12 @@ export const useAllBidsQuery = (queryDto?: {
         limit: pagination?.pageSize,
         filter,
       }),
+  });
+};
+
+export const useBidActionMutation = (bidId: string) => {
+  return useMutation({
+    mutationKey: ["bid", bidId],
+    mutationFn: bidActionApi,
   });
 };

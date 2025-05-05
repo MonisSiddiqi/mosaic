@@ -236,7 +236,22 @@ export class ProjectsService {
       Address: true,
       ProjectTag: { include: { tag: true } },
       ProjectUpdate: true,
-      Bid: true,
+      Bid: {
+        where: {
+          vendorStatus: 'ACCEPTED',
+          userStatus: 'PENDING',
+        },
+        include: {
+          vendor: {
+            omit: {
+              password: true,
+            },
+            include: {
+              UserProfile: true,
+            },
+          },
+        },
+      },
       Service: true,
     };
 

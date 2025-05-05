@@ -47,7 +47,12 @@ export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Home Owner's Response" />
     ),
-    cell: ({ row }) => <StatusBadge status={row.original.userStatus} />,
+    cell: ({ row }) =>
+      row.original.vendorStatus === "REJECTED" ? (
+        <p className="text-gray-500">N/A</p>
+      ) : (
+        <StatusBadge status={row.original.userStatus} />
+      ),
   },
 
   {

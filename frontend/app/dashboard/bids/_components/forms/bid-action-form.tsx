@@ -12,13 +12,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleCheckBigIcon, SendIcon, XIcon } from "lucide-react";
+import { CircleCheckBigIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ActionWarning } from "../action-warning";
+import { useBidActionMutation } from "@/queries/bids.queries";
+import { toast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
+  bidId: string;
   status: BidStatus;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -59,7 +63,7 @@ const formSchema = z
     path: ["status"],
   });
 
-export const BidActionForm: FC<Props> = ({ status }) => {
+export const BidActionForm: FC<Props> = ({ status, bidId, setOpen }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,8 +72,32 @@ export const BidActionForm: FC<Props> = ({ status }) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const mutation = useBidActionMutation(bidId);
+
+  const queryClient = useQueryClient();
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await mutation.mutateAsync({
+        bidId,
+        action: values.status,
+        message: values.proposalMessage,
+        attachment: values.attachment,
+      });
+      toast({
+        variant: "success",
+        title: "Action taken successfully",
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["bids"] });
+
+      setOpen(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: error instanceof Error ? error.message : "Failed to take action",
+      });
+    }
   };
 
   return (
@@ -136,7 +164,7 @@ export const BidActionForm: FC<Props> = ({ status }) => {
             <FormField
               control={form.control}
               name="attachment"
-              render={({ field }) => (
+              render={({}) => (
                 <FormItem>
                   <FormLabel>Attach your propsal documents</FormLabel>
                   <FormControl>
@@ -144,7 +172,9 @@ export const BidActionForm: FC<Props> = ({ status }) => {
                       type="file"
                       placeholder="Attach your file"
                       onChange={(e) =>
-                        form.setValue("attachment", e.target.files?.[0])
+                        form.setValue("attachment", e.target.files?.[0], {
+                          shouldValidate: true,
+                        })
                       }
                     />
                   </FormControl>
@@ -164,8 +194,16 @@ export const BidActionForm: FC<Props> = ({ status }) => {
         )}
 
         <div className="mt-2 flex justify-end">
-          <Button className="gap-2">
-            <SendIcon className="size-5" /> Submit
+          <Button disabled={mutation.isPending} className="gap-2">
+            {mutation.isPending ? (
+              <>
+                <Loader2Icon className="size-5 animate-spin" /> Submitting...{" "}
+              </>
+            ) : (
+              <>
+                <SendIcon className="size-5" /> Submit
+              </>
+            )}
           </Button>
         </div>
       </form>

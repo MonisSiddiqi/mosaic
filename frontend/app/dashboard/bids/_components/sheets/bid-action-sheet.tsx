@@ -5,19 +5,19 @@ import {
   SheetContent,
   SheetDescription,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { BidActionForm } from "../forms/bid-action-form";
 import { BidStatus } from "@/apis/bids";
 import { Dispatch, FC, SetStateAction } from "react";
 
 type Props = {
+  bidId: string;
   status: BidStatus;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const BidActionSheet: FC<Props> = ({ status, open, setOpen }) => {
+export const BidActionSheet: FC<Props> = ({ status, open, setOpen, bidId }) => {
   return (
     <Sheet open={open} onOpenChange={(val) => setOpen(val)}>
       <SheetContent>
@@ -26,7 +26,12 @@ export const BidActionSheet: FC<Props> = ({ status, open, setOpen }) => {
           Take action on this bid and this cannot be undo once submitted
         </SheetDescription>
 
-        <BidActionForm status={status} open={open} setOpen={setOpen} />
+        <BidActionForm
+          bidId={bidId}
+          status={status}
+          open={open}
+          setOpen={setOpen}
+        />
       </SheetContent>
     </Sheet>
   );

@@ -1,7 +1,12 @@
 import { ProjectStatusEnum } from "@/apis/projects";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getStatusConfig } from "@/lib/utils";
-import { CheckCircleIcon, ClockIcon, HandshakeIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  ClockIcon,
+  HandshakeIcon,
+  TrafficConeIcon,
+} from "lucide-react";
 import { ElementType, FC } from "react";
 
 type Props = {
@@ -22,6 +27,12 @@ export const ProjectDetailsAlert: FC<Props> = ({ status }) => {
       icon: ClockIcon,
       title: "Searching Best Vendor for you.",
       description: `We are actively evaluating trusted vendors to match your project requirements. Sit back while we find the most suitable professionals based on your preferences, location, and project scope.`,
+    },
+    {
+      status: ProjectStatusEnum.VENDOR_FOUND,
+      icon: TrafficConeIcon,
+      title: "A vendor has been found for your project.",
+      description: `We've identified a qualified vendor who matches your project's needs. Please review their proposal and proceed with the next steps.`,
     },
     {
       status: ProjectStatusEnum.AWARDED,

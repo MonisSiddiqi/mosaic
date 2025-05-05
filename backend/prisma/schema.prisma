@@ -373,6 +373,7 @@ enum FileType {
 
 enum ProjectStatus {
   IN_PROGRESS
+  VENDOR_FOUND
   AWARDED
   COMPLETED
 }

@@ -1,35 +1,31 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { tier3Services } from './data';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const plan1 = await prisma.plan.findFirst({
+  const projects = await prisma.project.findMany({
     where: {
-      name: 'High-Value Trades',
+      Bid: {
+        some: {
+          vendorStatus: 'ACCEPTED',
+          userStatus: 'PENDING',
+        },
+      },
     },
   });
 
-  if (plan1) {
-    for (const item of tier3Services) {
-      const service = await prisma.service.findFirst({
-        where: {
-          name: item,
-        },
-      });
+  console.log(projects.length);
 
-      if (service) {
-        await prisma.service.update({
-          where: {
-            id: service.id,
-          },
-          data: {
-            planId: plan1.id,
-          },
-        });
-      }
-    }
+  for (const project of projects) {
+    await prisma.project.update({
+      where: {
+        id: project.id,
+      },
+      data: {
+        status: 'VENDOR_FOUND',
+      },
+    });
   }
 }
 

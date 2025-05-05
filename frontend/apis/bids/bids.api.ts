@@ -1,6 +1,6 @@
 import httpClient from "..";
 import { apiEndpoints } from "../api-endpoints";
-import { GetAllBidsDto } from "./bids.dto";
+import { BidActionDto, GetAllBidsDto } from "./bids.dto";
 import { GetAllBidsApiResponse } from "./bids.type";
 
 export const getAllBidsApi = async (
@@ -11,4 +11,20 @@ export const getAllBidsApi = async (
   });
 
   return response.data.result;
+};
+
+export const bidActionApi = async (
+  bidActionDto: BidActionDto,
+): Promise<string> => {
+  const response = await httpClient.post(
+    apiEndpoints.bids.action,
+    bidActionDto,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+
+  return response.data.message;
 };

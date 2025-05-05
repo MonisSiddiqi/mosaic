@@ -1,7 +1,12 @@
 import { ProjectStatusEnum } from "@/apis/projects/projects.type";
 import { API_URL } from "@/config";
 import { clsx, type ClassValue } from "clsx";
-import { CheckCircleIcon, ClockIcon, HandshakeIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  ClockIcon,
+  HandshakeIcon,
+  TrafficConeIcon,
+} from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -34,6 +39,14 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
         variant: "pending",
         icon: ClockIcon,
       };
+    case ProjectStatusEnum.VENDOR_FOUND:
+      return {
+        label: "Vendor Found",
+        className: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+        variant: "pending",
+        icon: TrafficConeIcon,
+      };
+
     case ProjectStatusEnum.AWARDED:
       return {
         label: "Awarded",

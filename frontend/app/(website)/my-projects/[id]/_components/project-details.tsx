@@ -14,6 +14,8 @@ import BudgetPreferenceCard from "./budget-preference";
 import { ProjectTags } from "./project-tags";
 import { BackButton } from "@/components/back-button";
 import { CubeIcon } from "@radix-ui/react-icons";
+import VendorProposal from "./vendor-proposal";
+import { Bid } from "@/apis/bids";
 
 export const ProjectDetails = () => {
   const params = useParams();
@@ -36,6 +38,8 @@ export const ProjectDetails = () => {
         <BackButton className="w-fit" href="/my-projects" />
 
         <ProjectDetailsAlert status={data.status} />
+
+        {data.Bid && data.Bid.length > 0 && <VendorProposal {...data.Bid[0]} />}
 
         <div>
           <H3 className="text-lg">{data.title}</H3>

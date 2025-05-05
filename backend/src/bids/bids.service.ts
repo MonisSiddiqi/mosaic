@@ -1,15 +1,30 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { GetBidsDto } from './dto/get-bids.dto';
+import { BidActionDto } from './dto/bid-action.dto';
+import { StorageService } from 'src/storage/storage.service';
+import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 
 @Injectable()
 export class BidsService implements OnModuleInit {
+  onModuleInit() {
+    this.bidInvite();
+  }
+
   logger = new Logger(BidsService.name);
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   async findAll(getBidsDto: GetBidsDto, authUser: User) {
     const { sortField, sortValue, page, limit, filter } = getBidsDto;
@@ -66,8 +81,149 @@ export class BidsService implements OnModuleInit {
     return new ApiResponse({ total, list: bids }, 'Bids fetched successfully');
   }
 
-  onModuleInit() {
-    this.bidInvite();
+  async bidAction(
+    bidActionDto: BidActionDto,
+    authUser: User,
+    attachment?: Express.Multer.File,
+  ) {
+    const { bidId, action, message } = bidActionDto;
+
+    const bidWhereInput: Prisma.BidWhereInput = { id: bidId };
+
+    if (authUser.role === 'USER') {
+      bidWhereInput.project = {
+        userId: authUser.id,
+      };
+    }
+
+    if (authUser.role === 'VENDOR') {
+      bidWhereInput.vendorId = authUser.id;
+    }
+
+    const bid = await this.prismaService.bid.findFirst({
+      where: bidWhereInput,
+      include: {
+        project: true,
+      },
+    });
+
+    if (!bid) {
+      throw new UnprocessableEntityException('Bid not found');
+    }
+
+    //actions for admin
+    if (action === 'ACCEPTED' && authUser.role === 'VENDOR') {
+      if (!attachment) {
+        throw new UnprocessableEntityException('attachment is required');
+      }
+
+      if (bid.project.status === 'AWARDED') {
+        throw new UnprocessableEntityException(
+          'Project has already assinged to some vendor',
+        );
+      }
+
+      if (bid.project.status === 'COMPLETED') {
+        throw new UnprocessableEntityException('Project has already completed');
+      }
+
+      const key = await this.storageService.uploadFile(
+        attachment,
+        StorageFolderEnum.PROJECTS,
+      );
+
+      await this.prismaService.bid.update({
+        where: { id: bidId },
+        data: {
+          vendorStatus: 'ACCEPTED',
+          vendorAttachmentUrl: key,
+          vendorAttachmentName: attachment.originalname,
+          vendorMessage: message,
+        },
+      });
+
+      await this.prismaService.project.update({
+        where: {
+          id: bid.projectId,
+        },
+        data: {
+          status: 'VENDOR_FOUND',
+        },
+      });
+
+      return new ApiResponse(null, 'Bid accepted successfully');
+    }
+
+    if (action === 'REJECTED' && authUser.role === 'VENDOR') {
+      const bid = await this.prismaService.bid.update({
+        where: { id: bidId },
+        data: {
+          vendorStatus: 'REJECTED',
+        },
+      });
+
+      await this.prismaService.project.update({
+        where: {
+          id: bid.projectId,
+        },
+        data: {
+          status: 'IN_PROGRESS',
+        },
+      });
+
+      return new ApiResponse(null, 'Bid rejected successfully');
+    }
+
+    //actions for user
+    if (action === 'ACCEPTED' && authUser.role === 'USER') {
+      if (bid.project.status === 'AWARDED') {
+        throw new UnprocessableEntityException(
+          'Project has already assinged to some vendor',
+        );
+      }
+
+      if (bid.project.status === 'COMPLETED') {
+        throw new UnprocessableEntityException('Project has already completed');
+      }
+
+      await this.prismaService.bid.update({
+        where: { id: bidId },
+        data: {
+          userStatus: 'ACCEPTED',
+        },
+      });
+
+      await this.prismaService.project.update({
+        where: {
+          id: bid.projectId,
+        },
+        data: {
+          status: 'AWARDED',
+        },
+      });
+
+      return new ApiResponse(null, 'Project awarded successfully');
+    }
+
+    if (action === 'REJECTED' && authUser.role === 'USER') {
+      const bid = await this.prismaService.bid.update({
+        where: { id: bidId },
+        data: {
+          userStatus: 'REJECTED',
+        },
+      });
+
+      await this.prismaService.project.update({
+        where: {
+          id: bid.projectId,
+        },
+        data: {
+          status: 'IN_PROGRESS',
+        },
+      });
+
+      return new ApiResponse(null, 'Bid rejected successfully');
+    }
   }
 
   @Cron(CronExpression.EVERY_30_MINUTES)
@@ -129,6 +285,14 @@ export class BidsService implements OnModuleInit {
             vendorId: vendor.id,
             userStatus: 'PENDING',
             vendorStatus: 'PENDING',
+          },
+        });
+        await this.prismaService.project.update({
+          where: {
+            id: project.id,
+          },
+          data: {
+            status: 'VENDOR_FOUND',
           },
         });
       } else {

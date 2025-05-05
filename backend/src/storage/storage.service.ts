@@ -58,11 +58,8 @@ export class StorageService {
         accessKeyId: config?.accessKeyId || '',
         secretAccessKey: config?.secretAccessKey || '',
       },
-      // endpoint: 'https://s3.amazonaws.com',
-      forcePathStyle: true, // ✅ Use virtual-hosted-style URLs (recommended)
+      forcePathStyle: true,
     });
-
-    // this.warmUpS3Connection();
   }
 
   public async uploadFile(

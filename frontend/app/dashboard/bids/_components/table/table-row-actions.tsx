@@ -39,14 +39,18 @@ export function TableRowActions<TData extends GetAllBidsApiResponseItem>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => setOpen(true)}
-            className="cursor-pointer"
-          >
-            <NavigationIcon className="h-4 w-4" />
-            Take Action
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          {row.original.vendorStatus === "PENDING" && (
+            <>
+              <DropdownMenuItem
+                onClick={() => setOpen(true)}
+                className="cursor-pointer"
+              >
+                <NavigationIcon className="h-4 w-4" />
+                Take Action
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
 
           <DropdownMenuItem className="cursor-pointer">
             <Eye className="h-4 w-4" />
@@ -64,6 +68,7 @@ export function TableRowActions<TData extends GetAllBidsApiResponseItem>({
         open={open}
         setOpen={setOpen}
         status={row.original.vendorStatus}
+        bidId={row.original.id}
       />
     </>
   );

@@ -1,6 +1,9 @@
-import { Address } from "../addresses";
-import { Service } from "../services";
-import { Tag } from "../tags";
+import { UserProfile } from "@/apis/users";
+import { Address } from "@/apis/addresses";
+import { Bid } from "@/apis/bids";
+import { Service } from "@/apis/services";
+import { Tag } from "@/apis/tags";
+import { User } from "../users";
 
 export type Project = {
   id: string;
@@ -63,12 +66,13 @@ export type GetProjectApiResponse = Project & {
   Address: Address;
   ProjectTag: ProjectTag[];
   ProjectUpdate: [];
-  Bid: [];
+  Bid: (Bid & { vendor: User & { UserProfile: UserProfile } })[];
   Service: Service;
 };
 
 export enum ProjectStatusEnum {
   IN_PROGRESS = "IN_PROGRESS",
+  VENDOR_FOUND = "VENDOR_FOUND",
   AWARDED = "AWARDED",
   COMPLETED = "COMPLETED",
 }
