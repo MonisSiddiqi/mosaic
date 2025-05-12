@@ -54,6 +54,9 @@ export const apiEndpoints = {
 
   payments: {
     getAllPlans: `/api/v1/payments/plans`,
+    stripe: {
+      createCheckout: `/api/v1/payments/create-checkout`,
+    },
   },
 
   bids: {

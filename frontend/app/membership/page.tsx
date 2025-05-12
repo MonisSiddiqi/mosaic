@@ -21,12 +21,24 @@ import {
 } from "@/components/ui/accordion";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAllPlansQuery } from "@/queries/payments.queries";
+import {
+  useAllPlansQuery,
+  useCreateStripeCheckout,
+} from "@/queries/payments.queries";
 import { LoaderComponent } from "@/components/loader-component";
 import { faqs } from "./dats";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function MembershipPage() {
   const { data: plans, isError, error, isLoading } = useAllPlansQuery();
+
+  const [sumittingPlan, setSumittingPlan] = useState("");
+
+  const { user } = useAuth();
+
+  const mutaion = useCreateStripeCheckout();
 
   if (isError) {
     throw error;
@@ -41,6 +53,35 @@ export default function MembershipPage() {
       />
     );
   }
+
+  const handleCheckout = async (
+    planName: string,
+    interval: "month" | "year",
+  ) => {
+    if (!user?.id) {
+      toast({ variant: "destructive", title: "You are not loggedin" });
+      return;
+    }
+
+    if (mutaion.isPending) return;
+
+    setSumittingPlan(planName);
+
+    try {
+      const { url } = await mutaion.mutateAsync({
+        interval,
+        planName,
+        userId: user.id,
+      });
+
+      if (url) window.location.href = url;
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong while redirecting to Stripe.",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto h-screen overflow-auto px-4 py-12">
@@ -117,9 +158,13 @@ export default function MembershipPage() {
                 </CardContent>
                 <CardFooter>
                   <Button
+                    onClick={() => handleCheckout(plan.name, "month")}
+                    disabled={mutaion.isPending && sumittingPlan === plan.name}
                     className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
-                    {plan.name}
+                    {mutaion.isPending && sumittingPlan === plan.name
+                      ? "Submitting..."
+                      : plan.name}
                   </Button>
                 </CardFooter>
               </Card>
@@ -175,9 +220,13 @@ export default function MembershipPage() {
                 </CardContent>
                 <CardFooter>
                   <Button
+                    onClick={() => handleCheckout(plan.name, "year")}
+                    disabled={mutaion.isPending && sumittingPlan === plan.name}
                     className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
-                    {plan.name}
+                    {mutaion.isPending && sumittingPlan === plan.name
+                      ? "Submitting..."
+                      : plan.name}{" "}
                   </Button>
                 </CardFooter>
               </Card>

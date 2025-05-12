@@ -13,3 +13,9 @@ export type Plan = {
 export type GetAllPlansApiResponseItem = Plan & { Service: Service[] };
 
 export type GetAllPlansApiResponse = GetAllPlansApiResponseItem[];
+
+export type Interval = "day" | "month" | "week" | "year";
+
+export type CreateStripeCheckoutApiResponse = {
+  url: string;
+};

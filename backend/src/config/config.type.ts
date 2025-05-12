@@ -34,7 +34,8 @@ export type Config = {
     stripe: {
       secretKey: string;
       webhookSecret: string;
-      frontendUrl: string;
     };
   };
+
+  frontendUrl: string;
 };
