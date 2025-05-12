@@ -1,7 +1,11 @@
 import {
   addProjectApi,
+  addProjectUpdateApi,
+  deleteProjectUpdateApi,
   getAllProjectsApi,
   getProjectApi,
+  getProjectUpdatesApi,
+  updateProjectUpdateApi,
 } from "@/apis/projects/projects.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -51,9 +55,36 @@ export const useAddProjectMutation = () => {
 };
 
 export const useProjectQuery = (id: string) => {
-  console.log(id);
   return useQuery({
     queryKey: ["project", id],
     queryFn: () => getProjectApi(id),
+  });
+};
+
+export const useAddProjectUpdateMutation = () => {
+  return useMutation({
+    mutationKey: ["addProjectUpdate"],
+    mutationFn: addProjectUpdateApi,
+  });
+};
+
+export const useGetProjectUpdatesQuery = (id: string) => {
+  return useQuery({
+    queryKey: ["getProjectUpdates", id],
+    queryFn: () => getProjectUpdatesApi(id),
+  });
+};
+
+export const useUpdateProjectUpdateMutation = () => {
+  return useMutation({
+    mutationKey: ["updateProjectUpdate"],
+    mutationFn: updateProjectUpdateApi,
+  });
+};
+
+export const useDeleteProjectUpdateMutation = () => {
+  return useMutation({
+    mutationKey: ["deleteProjectUpdate"],
+    mutationFn: deleteProjectUpdateApi,
   });
 };

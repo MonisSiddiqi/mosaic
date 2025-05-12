@@ -17,7 +17,7 @@ export const LoaderComponent: FC<Props> = ({
 }) => {
   return (
     <div className={className}>
-      <div className="flex gap-2 text-gray-800">
+      <div className="flex animate-pulse items-center gap-2 text-gray-800">
         <Loader2Icon className={cn(`size-5 animate-spin`, loaderClassName)} />{" "}
         {showText && text}
       </div>

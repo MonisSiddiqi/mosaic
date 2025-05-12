@@ -226,7 +226,7 @@ model ProjectUpdate {
   projectId         String              @db.VarChar(36)
   Vendor            User?               @relation(fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   vendorId          String?             @db.VarChar(36)
-  comment           String
+  description       String
   updatedAt         DateTime            @updatedAt @db.Timestamptz
   createdAt         DateTime            @default(now()) @db.Timestamptz
   ProjectUpdateFile ProjectUpdateFile[]
@@ -238,7 +238,7 @@ model ProjectUpdateFile {
   type            FileType
   fileUrl         String
 
-  @@id([projectUpdateId])
+  @@id([projectUpdateId, type])
 }
 
 model Review {
@@ -312,6 +312,9 @@ model Plan {
   name        String     @unique
   description String?
   amount      Float
+  isPopular   Boolean    @default(false)
+  productId   String? // Stripe Product ID
+  priceId     String? // Stripe Price ID
   updatedAt   DateTime   @updatedAt
   createdAt   DateTime   @default(now())
   UserPlan    UserPlan[]

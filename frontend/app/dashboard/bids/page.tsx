@@ -1,5 +1,6 @@
 import { BidStats } from "./_components/bid-status";
 import { PageHeader } from "./_components/bids-page-header";
+import { ExpiredPlanNotice } from "./_components/expired-plan-notice";
 import { BidsTable } from "./_components/table/table";
 
 export default function VendorBidsPage() {
@@ -10,9 +11,9 @@ export default function VendorBidsPage() {
         description="View and manage all your project bids in one place"
       />
 
-      <BidStats />
-
       <BidsTable />
+
+      <ExpiredPlanNotice />
     </div>
   );
 }

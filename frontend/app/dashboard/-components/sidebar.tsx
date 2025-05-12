@@ -25,14 +25,14 @@ export const routes = [
     href: "/dashboard",
     icon: <Home className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Dashboard",
-    roles: [UserRole.ADMIN],
+    roles: [],
   },
 
   {
     href: "/dashboard/bids",
     icon: <Gavel className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Bids Management",
-    roles: [UserRole.VENDOR, UserRole.ADMIN],
+    roles: [UserRole.VENDOR],
   },
 
   {

@@ -1,4 +1,4 @@
-import { Address } from "@/apis/users";
+import { Address } from "@/apis/addresses";
 import React from "react";
 
 type Props = {

@@ -34,6 +34,12 @@ export const apiEndpoints = {
     add: `/api/v1/projects`,
     edit: (id: string) => `/api/v1/projects/${id}`,
     delete: (id: string) => `/api/v1/projects/${id}`,
+    updates: {
+      add: `/api/v1/projects/updates`,
+      get: (projectId: string) => `/api/v1/projects/updates/${projectId}`,
+      update: `/api/v1/projects/updates`,
+      delete: (projectId: string) => `/api/v1/projects/updates/${projectId}`,
+    },
   },
   notifications: {
     getAll: `/api/v1/notifications`,

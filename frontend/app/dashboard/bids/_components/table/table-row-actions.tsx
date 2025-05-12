@@ -19,6 +19,7 @@ import {
 import { BidActionSheet } from "../sheets/bid-action-sheet";
 import { useState } from "react";
 import { GetAllBidsApiResponseItem } from "@/apis/bids";
+import Link from "next/link";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -52,10 +53,16 @@ export function TableRowActions<TData extends GetAllBidsApiResponseItem>({
             </>
           )}
 
-          <DropdownMenuItem className="cursor-pointer">
-            <Eye className="h-4 w-4" />
-            View Details
-          </DropdownMenuItem>
+          {row.original.userStatus !== "REJECTED" &&
+            row.original.vendorStatus !== "REJECTED" && (
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href={`/dashboard/bids/${row.original.projectId}`}>
+                  <Eye className="h-4 w-4" />
+                  View Details
+                </Link>
+              </DropdownMenuItem>
+            )}
+
           <DropdownMenuSeparator />
           <DropdownMenuItem className="cursor-pointer">
             <DownloadCloudIcon className="h-4 w-4" />

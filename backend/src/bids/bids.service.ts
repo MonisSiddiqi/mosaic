@@ -111,7 +111,7 @@ export class BidsService implements OnModuleInit {
       throw new UnprocessableEntityException('Bid not found');
     }
 
-    //actions for admin
+    //actions for vendor
     if (action === 'ACCEPTED' && authUser.role === 'VENDOR') {
       if (!attachment) {
         throw new UnprocessableEntityException('attachment is required');
@@ -229,21 +229,10 @@ export class BidsService implements OnModuleInit {
   @Cron(CronExpression.EVERY_30_MINUTES)
   async bidInvite() {
     this.logger.debug('Running bid invite cron job');
-    //get all open projects which has not assigned to any vendor
-    //cases
-    //project is very new and bid still not pushed
-    //project was accepted by vendor but rejected by user
-    //proeject was rejected by vendor
+
     const projects = await this.prismaService.project.findMany({
       where: {
-        Bid: {
-          none: {
-            NOT: {
-              userStatus: 'ACCEPTED',
-              vendorStatus: 'ACCEPTED',
-            },
-          },
-        },
+        status: 'IN_PROGRESS',
       },
       include: {
         Bid: true,

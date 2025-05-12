@@ -1,7 +1,9 @@
-import { url } from 'inspector';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { GetProjectsDto } from './dto/get-projects.dto';
 import { Prisma, ProjectStatus, User, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,6 +13,7 @@ import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 
 @Injectable()
 export class ProjectsService {
+  logger = new Logger(ProjectsService.name);
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -286,13 +289,5 @@ export class ProjectsService {
       projectWithSignedUrl,
       'Project fetched successfully',
     );
-  }
-
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} project`;
   }
 }

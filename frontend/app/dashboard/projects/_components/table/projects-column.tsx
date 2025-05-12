@@ -5,7 +5,7 @@ import { DataTableColumnHeader } from "@/components/table";
 
 import { GetAllProjectApiResponseItem } from "@/apis/projects/projects.type";
 import { ProjectsTableRowActions } from "./projects-table-row-actions";
-import { getStatusConfig } from "@/lib/utils";
+import { cn, getStatusConfig } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
@@ -44,8 +44,11 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
       const Icon = statusConfig.icon;
 
       return (
-        <Badge variant={statusConfig.variant as any}>
-          <Icon className="h-3 w-3 min-w-3" /> {statusConfig.label}
+        <Badge
+          variant={statusConfig.variant as any}
+          className={statusConfig.className}
+        >
+          <Icon className={cn("h-3 w-3 min-w-3")} /> {statusConfig.label}
         </Badge>
       );
     },

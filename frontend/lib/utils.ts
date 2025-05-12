@@ -43,7 +43,7 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
       return {
         label: "Vendor Found",
         className: "bg-blue-100 text-blue-800 hover:bg-blue-100",
-        variant: "pending",
+        variant: "success",
         icon: TrafficConeIcon,
       };
 
@@ -51,7 +51,7 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
       return {
         label: "Awarded",
         className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
-        variant: "pending",
+        variant: "success",
         icon: HandshakeIcon,
       };
     case ProjectStatusEnum.COMPLETED:
@@ -65,6 +65,7 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
 };
 
 export const isImageUrl = (url: string) =>
-  /\.(jpeg|jpg|png|webp|gif)(\?|$)/i.test(url);
+  /\.(jpeg|jpg|png|webp|gif|svg)(\?|$)/i.test(url);
+
 export const isVideoUrl = (url: string) =>
   /\.(mp4|webm|mov|avi)(\?|$)/i.test(url);

@@ -1,15 +1,28 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Gavel, LayersIcon, UsersIcon, GridIcon } from "lucide-react";
 import { StatisticsCard } from "./-components/users-statistics-card";
 import { SignUpStatisticsCard } from "./-components/signup-statistics-card";
 import { SubscriptionStatisticsCard } from "./-components/subscription-statistics-card";
 import { useDashboardQuery } from "@/queries/dashboard.queries";
 import { SignupTrend } from "./-components/signup-trend";
+import { useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@/apis/users";
+import { BidStats } from "./bids/_components/bid-status";
+import { PageHeader } from "./bids/_components/bids-page-header";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();
+
+  const { user } = useAuth();
+
+  if (user?.role === UserRole.VENDOR) {
+    return (
+      <div className="rounded-md bg-white p-5">
+        <BidStats />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -55,63 +68,6 @@ export default function Dashboard() {
       <div>
         <SignupTrend />
       </div>
-      {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent User Registrations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">
-              Display a list of recently registered users here.
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Latest Bids</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">
-              Display a list of the latest bids here.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>System Notifications</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            Display important system notifications and alerts here.
-          </p>
-        </CardContent>
-      </Card> */}
     </div>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  icon,
-  description,
-}: {
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-  description: string;
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
   );
 }

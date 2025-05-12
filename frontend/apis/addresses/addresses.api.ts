@@ -1,4 +1,5 @@
-import httpClient, { apiEndpoints } from "@/apis";
+import httpClient from "..";
+import { apiEndpoints } from "../api-endpoints";
 import { Address } from "./addresses.type";
 
 export const getAddresses = async (): Promise<Address[]> => {

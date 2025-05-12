@@ -1,3 +1,4 @@
+import { UpdateProjectUpdateDto } from "./projects.dto";
 import { apiEndpoints } from "@/apis/api-endpoints";
 import httpClient from "@/apis";
 import {
@@ -6,6 +7,11 @@ import {
   GetAllProjectsApiResponse,
   Project,
   GetProjectApiResponse,
+  AddProjectUpdateApiResponse,
+  AddProjectUpdateDto,
+  UpdateProjectUpdateApiResponse,
+  GetProjectUpdatesApiResponse,
+  DeleteProjectUpdateApiResponse,
 } from "@/apis/projects";
 
 export const getAllProjectsApi = async ({
@@ -71,5 +77,51 @@ export const toggleUserActiveApi = async (userId: string): Promise<void> => {
   const response = await httpClient.patch(
     apiEndpoints.users.toggleActive(userId),
   );
+  return response.data.result;
+};
+
+export const addProjectUpdateApi = async (
+  values: AddProjectUpdateDto,
+): Promise<AddProjectUpdateApiResponse> => {
+  const response = await httpClient.post(
+    apiEndpoints.projects.updates.add,
+    values,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+
+  return response.data.result;
+};
+
+export const getProjectUpdatesApi = async (
+  projectId: string,
+): Promise<GetProjectUpdatesApiResponse> => {
+  const response = await httpClient.get(
+    apiEndpoints.projects.updates.get(projectId),
+  );
+  return response.data.result;
+};
+
+export const updateProjectUpdateApi = async (
+  values: UpdateProjectUpdateDto,
+): Promise<UpdateProjectUpdateApiResponse> => {
+  const response = await httpClient.patch(
+    apiEndpoints.projects.updates.update,
+    values,
+  );
+
+  return response.data.result;
+};
+
+export const deleteProjectUpdateApi = async (
+  id: string,
+): Promise<DeleteProjectUpdateApiResponse> => {
+  const response = await httpClient.delete(
+    apiEndpoints.projects.updates.delete(id),
+  );
+
   return response.data.result;
 };

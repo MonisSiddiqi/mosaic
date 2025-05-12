@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Eye, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { Project } from "@/apis/projects";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -17,6 +19,8 @@ interface DataTableRowActionsProps<TData> {
 export function ProjectsTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const project = row.original as Project;
+
   return (
     <>
       <DropdownMenu>
@@ -27,9 +31,11 @@ export function ProjectsTableRowActions<TData>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Eye className="h-4 w-4" />
-            View Details
+          <DropdownMenuItem asChild>
+            <Link href={`/dashboard/projects/${project.id}`}>
+              <Eye className="h-4 w-4" />
+              View Details
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

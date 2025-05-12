@@ -16,7 +16,7 @@ export const PersonalInformation = () => {
       <div className="grid grid-cols-1 gap-x-10 gap-y-6 md:grid-cols-2">
         <div>
           <p className="mb-1 text-sm text-gray-500">Name</p>
-          <p className="text-gray-700">{user?.UserProfile.name || "N/A"}</p>
+          <p className="text-gray-700">{user?.UserProfile?.name || "N/A"}</p>
         </div>
 
         <div>

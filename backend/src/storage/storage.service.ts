@@ -174,22 +174,12 @@ export class StorageService {
   }
 
   async deleteFile(key: string): Promise<void> {
-    this.logger.debug(`Deleting ${key}`);
+    this.logger.log(`Deleting ${key}`);
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: key,
     });
     await this.s3Client.send(command);
     this.logger.debug(`Successfully deleted ${key}`);
-  }
-  private async warmUpS3Connection() {
-    try {
-      await this.s3Client.send(
-        new ListObjectsCommand({ Bucket: this.bucketName }),
-      );
-      console.log('✅ AWS S3 Connection Warmed Up');
-    } catch (err) {
-      console.error('❌ AWS S3 Warm-Up Failed', err);
-    }
   }
 }

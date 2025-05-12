@@ -46,7 +46,7 @@ export const BottomSidebar = () => {
             <Link href="/dashboard/profile">
               <Avatar className="absolute -top-7 left-5 size-14 cursor-pointer rounded text-lg text-gray-800">
                 <AvatarImage
-                  src={user?.UserProfile.image as string}
+                  src={user?.UserProfile?.image as string}
                   alt={`@${user?.UserProfile?.name}`}
                   className="rounded-full object-cover"
                 />
@@ -84,9 +84,9 @@ export const BottomSidebar = () => {
       </TooltipProvider>
 
       <div className="w-full overflow-hidden">
-        <p className="text-sm">Welcome</p>{" "}
+        <p className="text-sm">Welcome</p>
         <p className="whitespace-nowrap text-xl font-semibold">
-          {user?.UserProfile.name}
+          {user?.UserProfile?.name}
         </p>
       </div>
     </div>

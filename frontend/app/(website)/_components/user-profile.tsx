@@ -50,18 +50,18 @@ export function UserProfile() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-11 w-11">
             <AvatarImage
-              src={getFileUrl(user.UserProfile.image)}
-              alt={user.UserProfile.name}
+              src={getFileUrl(user.UserProfile?.image as string)}
+              alt={user.UserProfile?.name}
             />
             <AvatarFallback>
-              {getInitials(user.UserProfile.name)}
+              {getInitials(user.UserProfile?.name || "")}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 p-2" align="end" forceMount>
         <DropdownMenuItem className="flex flex-col items-start hover:bg-none">
-          <div className="text-sm font-medium">{user.UserProfile.name}</div>
+          <div className="text-sm font-medium">{user.UserProfile?.name}</div>
           <div className="text-xs text-muted-foreground">{user.email}</div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

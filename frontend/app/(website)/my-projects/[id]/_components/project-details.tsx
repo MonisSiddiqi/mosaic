@@ -15,7 +15,10 @@ import { ProjectTags } from "./project-tags";
 import { BackButton } from "@/components/back-button";
 import { CubeIcon } from "@radix-ui/react-icons";
 import VendorProposal from "./vendor-proposal";
-import { Bid } from "@/apis/bids";
+import { ProjectUpdatesContainer } from "./project-updates";
+import { ProjectStatusEnum } from "@/apis/projects";
+import { useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@/apis/users";
 
 export const ProjectDetails = () => {
   const params = useParams();
@@ -23,6 +26,8 @@ export const ProjectDetails = () => {
   const id = params.id as string;
 
   const { data, isLoading, isError, error } = useProjectQuery(id);
+
+  const { user } = useAuth();
 
   if (isLoading) {
     <LoaderComponent />;
@@ -32,14 +37,33 @@ export const ProjectDetails = () => {
     throw error;
   }
 
+  let backButtonHref = "/my-projects";
+
+  if (user?.role === UserRole.VENDOR) {
+    backButtonHref = "/dashboard/bids";
+  }
+
+  if (user?.role === UserRole.ADMIN) {
+    backButtonHref = "/dashboard/projects";
+  }
+
   if (data) {
     return (
       <div className="flex min-h-screen flex-col gap-6 rounded bg-white p-6">
-        <BackButton className="w-fit" href="/my-projects" />
+        <BackButton className="w-fit" href={backButtonHref} />
 
-        <ProjectDetailsAlert status={data.status} />
+        {user?.role === UserRole.USER && (
+          <ProjectDetailsAlert status={data.status} />
+        )}
 
-        {data.Bid && data.Bid.length > 0 && <VendorProposal {...data.Bid[0]} />}
+        {data.Bid && data.Bid.length > 0 && user?.role === UserRole.USER && (
+          <VendorProposal {...data.Bid[0]} />
+        )}
+
+        {data.status !== ProjectStatusEnum.IN_PROGRESS &&
+          data.status !== ProjectStatusEnum.VENDOR_FOUND && (
+            <ProjectUpdatesContainer projectId={data.id} />
+          )}
 
         <div>
           <H3 className="text-lg">{data.title}</H3>

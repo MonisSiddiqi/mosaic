@@ -27,5 +27,5 @@ export const configValidationSchema = Joi.object({
 
   STRIPE_SECRET_KEY: Joi.string().required(),
   STRIPE_WEBHOOK_SECRET: Joi.string().required(),
-  FRONTEND_URL: Joi.string().required(),
+  STRIPE_FRONTEND_URL: Joi.string().required(),
 });

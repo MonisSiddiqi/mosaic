@@ -18,7 +18,13 @@ export default {
     "text-green-800",
     "hover:bg-green-100",
     "bg-gray-100",
+    "bg-purple-100",
+    "bg-yellow-100",
+    "text-blue-800",
+    "text-purple-800",
+    "text-green-800",
     "text-gray-800",
+    "bg-blue-100",
   ],
   theme: {
     extend: {

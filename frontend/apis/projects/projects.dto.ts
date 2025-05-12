@@ -32,3 +32,15 @@ export type AddProjectDto = {
   files: File[];
   sampleFiles: File[];
 };
+
+export type AddProjectUpdateDto = {
+  projectId: string;
+  description: string;
+  beforeImage: File;
+  afterImage: File;
+};
+
+export type UpdateProjectUpdateDto = {
+  id: string;
+  description: string;
+};

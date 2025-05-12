@@ -39,14 +39,14 @@ export const EditProfileForm: FC<Props> = ({ setOpen }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [filePreview, setFilePreview] = useState<string | null>(
-    user?.UserProfile.image as string,
+    user?.UserProfile?.image as string,
   );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       file: undefined,
-      name: user?.UserProfile.name,
+      name: user?.UserProfile?.name,
     },
   });
 

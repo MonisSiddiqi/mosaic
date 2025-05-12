@@ -93,3 +93,30 @@ export const statusOptions = [
   { value: ProjectStatusEnum.COMPLETED, label: "Completed" },
   { value: ProjectStatusEnum.AWARDED, label: "Awarded" },
 ];
+
+export type ProjectUpdate = {
+  id: string;
+  projectId: string;
+  vendorId: string | null;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type ProjectUpdateFile = {
+  projectUpdateId: string;
+  type: FileType;
+  fileUrl: string;
+};
+
+export type AddProjectUpdateApiResponse = ProjectUpdate;
+
+export type GetProjectUpdatesApiResponseItem = ProjectUpdate & {
+  ProjectUpdateFile: ProjectUpdateFile[];
+};
+
+export type GetProjectUpdatesApiResponse = GetProjectUpdatesApiResponseItem[];
+
+export type UpdateProjectUpdateApiResponse = ProjectUpdate;
+
+export type DeleteProjectUpdateApiResponse = ProjectUpdate;
