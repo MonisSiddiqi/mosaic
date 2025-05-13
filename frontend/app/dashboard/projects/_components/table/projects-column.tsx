@@ -8,6 +8,17 @@ import { ProjectsTableRowActions } from "./projects-table-row-actions";
 import { cn, getStatusConfig } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
+type BadgeVariant =
+  | "pending"
+  | "success"
+  | "default"
+  | "secondary"
+  | "destructive"
+  | "outline"
+  | "rejected"
+  | null
+  | undefined;
+
 export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
   {
     accessorKey: "title",
@@ -42,10 +53,9 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
       const statusConfig = getStatusConfig(row.original.status);
 
       const Icon = statusConfig.icon;
-
       return (
         <Badge
-          variant={statusConfig.variant as any}
+          variant={statusConfig.variant as BadgeVariant}
           className={statusConfig.className}
         >
           <Icon className={cn("h-3 w-3 min-w-3")} /> {statusConfig.label}
@@ -102,7 +112,7 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Location" />
     ),
-    cell: ({ row }) => null,
+    cell: () => null,
     enableSorting: false,
     enableHiding: false,
   },
@@ -112,7 +122,7 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Location" />
     ),
-    cell: ({ row }) => null,
+    cell: () => null,
     enableSorting: false,
     enableHiding: false,
   },

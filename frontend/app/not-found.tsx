@@ -7,7 +7,7 @@ export default function Custom404() {
         404 - Page Not Found
       </h1>
       <p className="mb-4 text-lg text-gray-600">
-        Oops! The page {"you're"} looking for doesn't exist.
+        Oops! The page {"you're"} looking for {"doesn't"} exist.
       </p>
       <Link href="/">
         <span className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-md transition hover:bg-blue-700">

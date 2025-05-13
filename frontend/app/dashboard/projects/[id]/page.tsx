@@ -1,5 +1,7 @@
 import ProjectDetailsPage from "@/app/(website)/my-projects/[id]/page";
 
-export default () => {
+const BidsPage = () => {
   return <ProjectDetailsPage />;
 };
+
+export default BidsPage;

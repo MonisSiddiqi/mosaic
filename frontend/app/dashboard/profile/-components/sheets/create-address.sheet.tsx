@@ -36,7 +36,7 @@ export const CreateAddressSheet: FC<Props> = ({ isEdit }) => {
         <SheetHeader>
           <SheetTitle>{isEdit ? "Edit Address" : "Create Address"}</SheetTitle>
           <SheetDescription>
-            Make Changes and click submit when you're done.
+            Make Changes and click submit when {"you're"} done.
           </SheetDescription>
         </SheetHeader>
         <AddAddressForm setOpen={setOpen} />

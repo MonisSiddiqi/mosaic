@@ -1,3 +1,5 @@
+import { Table as ReactTableType } from "@tanstack/react-table";
+
 import * as React from "react";
 import {
   ColumnDef,
@@ -30,7 +32,7 @@ import { DataTablePagination } from "./data-table-pagination";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  DataTableToolbar?: any;
+  DataTableToolbar?: React.ComponentType<{ table: ReactTableType<TData> }>;
   pagination?: PaginationState;
   setPagination?: OnChangeFn<PaginationState>;
   total?: number;
@@ -53,9 +55,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    // @ts-ignore
     data,
-    // @ts-ignore
     columns,
     state: {
       sorting,

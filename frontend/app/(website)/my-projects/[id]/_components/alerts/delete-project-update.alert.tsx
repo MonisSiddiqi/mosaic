@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCcwIcon } from "lucide-react";
 
 import {
@@ -13,7 +13,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
-import { deleteServiceApi } from "@/apis/services";
 import { useDeleteProjectUpdateMutation } from "@/queries/projects.queries";
 
 type Props = {

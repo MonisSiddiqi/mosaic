@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCircle2Icon, X } from "lucide-react";
+import { Check, CheckCircle2Icon } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -78,7 +78,10 @@ export default function MembershipPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong while redirecting to Stripe.",
+        title:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong while redirecting to Stripe.",
       });
     }
   };

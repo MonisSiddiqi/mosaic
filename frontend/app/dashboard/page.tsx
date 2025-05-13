@@ -9,7 +9,6 @@ import { SignupTrend } from "./-components/signup-trend";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { BidStats } from "./bids/_components/bid-status";
-import { PageHeader } from "./bids/_components/bids-page-header";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();

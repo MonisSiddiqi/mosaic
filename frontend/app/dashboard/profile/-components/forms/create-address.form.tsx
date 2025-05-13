@@ -79,7 +79,7 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
     } catch (e) {
       toast({
         variant: "destructive",
-        title: "Failed to add address",
+        title: e instanceof Error ? e.message : "Failed to add address",
       });
     }
   };

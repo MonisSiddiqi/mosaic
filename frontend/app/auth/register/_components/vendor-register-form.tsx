@@ -110,7 +110,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async () => {
     try {
       router.push(`/membership`);
     } catch (err) {

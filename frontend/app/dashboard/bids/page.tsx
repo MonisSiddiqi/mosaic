@@ -1,4 +1,3 @@
-import { BidStats } from "./_components/bid-status";
 import { PageHeader } from "./_components/bids-page-header";
 import { ExpiredPlanNotice } from "./_components/expired-plan-notice";
 import { BidsTable } from "./_components/table/table";

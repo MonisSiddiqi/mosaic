@@ -1,12 +1,11 @@
 "use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sidebar } from "@/app/dashboard/-components/sidebar";
 import { Header } from "@/app/dashboard/-components/header";
 import { notFound, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function RootLayout({
   children,

@@ -99,7 +99,7 @@ export const NotificationsContainer = () => {
               if (typeof item === "string")
                 return <PaginationEllipsis key={index} />;
               return (
-                <Link href={`/notifications?page=${item}`}>
+                <Link key={item} href={`/notifications?page=${item}`}>
                   <PaginationItem>
                     <PaginationLink isActive={item === page}>
                       {item}

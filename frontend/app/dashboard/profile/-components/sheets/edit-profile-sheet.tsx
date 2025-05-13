@@ -27,7 +27,7 @@ export const EditProfileSheet = () => {
         <SheetHeader>
           <SheetTitle>Edit Profile</SheetTitle>
           <SheetDescription>
-            Make Changes and click submit when you're done.
+            Make Changes and click submit when {"you're"} done.
           </SheetDescription>
         </SheetHeader>
         <EditProfileForm setOpen={setOpen} />

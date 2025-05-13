@@ -57,7 +57,7 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
   });
 
   const mutation = useAddServiceMutation();
-  const { data: plans, isLoading: isPlansLoading } = useAllPlansQuery();
+  const { data: plans } = useAllPlansQuery();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
