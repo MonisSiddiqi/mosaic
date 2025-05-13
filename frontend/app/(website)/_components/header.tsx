@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-import LogoImage from "@/app/assets/logo.png";
-import Image from "next/image";
+// import LogoImage from "@/app/assets/logo.png";
+// import Image from "next/image";
 
 import {
   Sheet,
@@ -15,16 +15,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, PackageIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserProfile } from "./user-profile";
 
 const navigationItems = [
   { name: "Home", href: "/" },
-  { name: "Services", href: "/services" },
-  { name: "My Projects", href: "/my-projects" },
+  // { name: "Services", href: "/services" },
+  // { name: "My Projects", href: "/my-projects" },
   { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  // { name: "Contact", href: "/contact" },
 ];
 
 export const Header = () => {
@@ -39,14 +39,10 @@ export const Header = () => {
   return (
     <header className="container mx-auto py-1">
       <div className="flex items-center justify-between px-4">
-        <Link href={"/"}>
-          <Image
-            src={LogoImage.src}
-            height={30}
-            width={150}
-            alt="Brand Logo"
-            className="min-h-11 min-w-36"
-          />
+        <Link href={"/"} className="flex items-center space-x-2 px-4 py-4">
+          <PackageIcon className="h-8 w-8" />
+          <span className="text-2xl font-semibold">Crafty</span>{" "}
+          <span className="text-sm">Future</span>
         </Link>
 
         <nav className="hidden items-center gap-4 lg:flex">
@@ -105,9 +101,10 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <div className="hidden lg:flex">
+        {/* <div className="hidden lg:flex">
           <UserProfile />
-        </div>
+        </div> */}
+        <div className="w-44"></div>
       </div>
     </header>
   );
