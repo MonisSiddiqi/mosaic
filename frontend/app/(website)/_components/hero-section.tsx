@@ -7,7 +7,7 @@ export const HeroSection = () => {
   return (
     <div className="relative h-screen w-screen">
       <div className="absolute z-50 flex h-5/6 w-full justify-center">
-        <div className="container my-auto flex flex-col justify-between px-4 md:flex-row">
+        <div className="container my-auto flex flex-col items-center justify-between px-4 md:flex-row">
           <div className="container max-w-2xl text-white">
             <p className="text-3xl font-extrabold tracking-tight md:text-5xl lg:text-5xl xl:text-6xl">
               The Smarter Way to Connect Homeowners with Skilled Trade
