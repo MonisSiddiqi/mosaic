@@ -114,7 +114,7 @@ export class StripeService implements OnModuleInit {
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${frontendUrl}/success?plan=${planName}`,
-      cancel_url: `${frontendUrl}/membership`,
+      cancel_url: `${frontendUrl}/dashboard/membership`,
       metadata: {
         userId,
         planName,
@@ -171,6 +171,7 @@ export class StripeService implements OnModuleInit {
           type: interval === 'year' ? 'YEARLY' : 'MONTHLY',
           paymentId: '',
           mode: 'PAID',
+          amount: plan.amount,
         },
       });
 

@@ -5,7 +5,7 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, throwError } from 'rxjs';
 import { Request, Response } from 'express';
 import { User } from '@prisma/client';
 
@@ -21,7 +21,6 @@ export class LoggingInterceptor implements NestInterceptor {
 
     const { method, originalUrl: path } = request;
     const user = request.user as User;
-
     const userEmail = user?.email || 'anonymous';
 
     this.logger.log(`Incoming request ${userEmail} ${method} ${path}`);
@@ -32,6 +31,13 @@ export class LoggingInterceptor implements NestInterceptor {
         this.logger.debug(
           `Request served in ${duration}ms ${userEmail} ${method} ${path}`,
         );
+      }),
+      catchError((err) => {
+        const duration = Date.now() - start;
+        this.logger.error(
+          `Request failed in ${duration}ms ${userEmail} ${method} ${path}, ${err?.message}`,
+        );
+        return throwError(() => err);
       }),
     );
   }

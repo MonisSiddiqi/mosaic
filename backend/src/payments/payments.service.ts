@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -19,5 +20,24 @@ export class PaymentsService {
     });
 
     return new ApiResponse(plans, 'Plans fetched successfullly');
+  }
+
+  async currentPlan(authUser: User) {
+    const plan = await this.prismaService.userPlan.findFirst({
+      where: {
+        userId: authUser.id,
+        endDate: {
+          gte: new Date(),
+        },
+      },
+      include: {
+        Plan: true,
+      },
+      orderBy: {
+        endDate: 'asc',
+      },
+    });
+
+    return new ApiResponse(plan);
   }
 }

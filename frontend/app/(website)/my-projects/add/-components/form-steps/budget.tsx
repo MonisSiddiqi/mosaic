@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, XIcon } from "lucide-react";
+import { PlusIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import { AddProjectDto } from "@/apis/projects";
 
 const budgetSchema = z.object({
@@ -44,7 +44,7 @@ export const BudgetStep = () => {
     },
   });
 
-  const addProjectMutation = useAddProjectMutation();
+  const mutation = useAddProjectMutation();
   const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof budgetSchema>) => {
@@ -58,7 +58,7 @@ export const BudgetStep = () => {
     setFormData(updatedFormData);
 
     try {
-      await addProjectMutation.mutateAsync(updatedFormData as AddProjectDto);
+      await mutation.mutateAsync(updatedFormData as AddProjectDto);
       toast({
         title: "Project Added Successfully",
         variant: "success",
@@ -217,7 +217,12 @@ export const BudgetStep = () => {
             Previous
           </Button>
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit">
+            {mutation.isPending && (
+              <RefreshCwIcon className="size-4 animate-spin" />
+            )}
+            Submit
+          </Button>
         </div>
       </form>
     </Form>

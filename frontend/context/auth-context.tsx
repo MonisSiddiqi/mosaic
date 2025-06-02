@@ -35,7 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (loginDto: LoginDto) => {
-      await loginApi(loginDto);
+      const data = await loginApi(loginDto);
+      localStorage.setItem("token", data.access_token);
       const profile = await profileMutation.mutateAsync();
 
       setUser(profile);

@@ -4,6 +4,7 @@ import { CreateStripeCheckoutDto } from "./payments.dto";
 import {
   CreateStripeCheckoutApiResponse,
   GetAllPlansApiResponse,
+  GetCurrentPlanApiResponse,
 } from "./payments.type";
 
 export const getAllPlansApi = async (): Promise<GetAllPlansApiResponse> => {
@@ -20,3 +21,9 @@ export const createStripeCheckoutApi = async (
   );
   return response.data.result;
 };
+
+export const getCurrentPlanApi =
+  async (): Promise<GetCurrentPlanApiResponse> => {
+    const response = await httpClient.get(apiEndpoints.payments.currentPlan);
+    return response.data.result;
+  };

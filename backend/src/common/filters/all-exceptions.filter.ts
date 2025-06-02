@@ -55,6 +55,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
       );
     }
 
+    this.logger.error(
+      `Error ${request.method} ${request.url} - Status: ${status} - ${JSON.stringify(
+        message,
+      )}`,
+    );
+
     response.status(status).json({
       path: request.url,
       status: false,

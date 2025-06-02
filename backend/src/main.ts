@@ -16,17 +16,31 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bodyParser: true });
+  const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
 
   const logger = new Logger();
 
   app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type'],
+    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // ✅ Correct HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // ✅ Allow custom headers
+  });
+
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+      res.header(
+        'Access-Control-Allow-Methods',
+        'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+      );
+      res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      return res.sendStatus(204);
+    }
+    next();
   });
 
   app.setGlobalPrefix('api', {

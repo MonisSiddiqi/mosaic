@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Combobox } from "@/components/ui/combobox";
+import { cities, countries, states } from "./address-data";
 
 const formSchema = z
   .object({
@@ -88,6 +90,16 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
     },
   });
 
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [stateOpen, setStateOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
+  const [openPostalCode, setOpenPostalCode] = useState(false);
+
+  const [openOfficeCountry, setOpenOfficeCountry] = useState(false);
+  const [openOfficeState, setOpenOfficeState] = useState(false);
+  const [openOfficeCity, setOpenOfficeCity] = useState(false);
+  const [openOfficePostalCode, setOpenOfficePostalCode] = useState(false);
+
   const sameAsAddress = form.watch("sameAsAddress");
 
   const line1 = form.watch("line1");
@@ -107,6 +119,36 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
       form.setValue("officePostalCode", form.getValues("postalCode"));
     }
   }, [sameAsAddress, line1, line2, country, state, city, postalCode]);
+
+  useEffect(() => {
+    form.setValue("state", "");
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("country")]);
+
+  useEffect(() => {
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("state")]);
+
+  useEffect(() => {
+    form.setValue("postalCode", "");
+  }, [form.watch("city")]);
+
+  useEffect(() => {
+    form.setValue("officeState", "");
+    form.setValue("officeCity", "");
+    form.setValue("officePostalCode", "");
+  }, [form.watch("officeCountry")]);
+
+  useEffect(() => {
+    form.setValue("officeCity", "");
+    form.setValue("officePostalCode", "");
+  }, [form.watch("officeState")]);
+
+  useEffect(() => {
+    form.setValue("officePostalCode", "");
+  }, [form.watch("officeCity")]);
 
   const router = useRouter();
 
@@ -246,7 +288,19 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter country" {...field} />
+                    <div>
+                      <Combobox
+                        data={countries.map((item) => ({
+                          label: item.name,
+                          value: item.name,
+                        }))}
+                        open={countryOpen}
+                        setOpen={setCountryOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="country"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -260,7 +314,28 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter state" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("country")
+                            ? states
+                                .filter(
+                                  (item) =>
+                                    item.country === form.watch("country"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={stateOpen}
+                        setOpen={setStateOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="state"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -274,7 +349,27 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter city" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("state")
+                            ? cities
+                                .filter(
+                                  (item) => item.state === form.watch("state"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={cityOpen}
+                        setOpen={setCityOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="city"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -288,7 +383,23 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter postal code" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          cities
+                            .find((item) => item.name === form.watch("city"))
+                            ?.postalCodes.map((item) => ({
+                              label: item,
+                              value: item,
+                            })) ?? []
+                        }
+                        open={openPostalCode}
+                        setOpen={setOpenPostalCode}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Postal Code"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -352,11 +463,19 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Office Country</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter office country"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
+                    <div>
+                      <Combobox
+                        data={countries.map((item) => ({
+                          label: item.name,
+                          value: item.name,
+                        }))}
+                        open={openOfficeCountry}
+                        setOpen={setOpenOfficeCountry}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Office Country"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -370,11 +489,29 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Office State</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter office state"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("officeCountry")
+                            ? states
+                                .filter(
+                                  (item) =>
+                                    item.country ===
+                                    form.watch("officeCountry"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={openOfficeState}
+                        setOpen={setOpenOfficeState}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Office State"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -388,11 +525,28 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Office City</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter office city"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("officeState")
+                            ? cities
+                                .filter(
+                                  (item) =>
+                                    item.state === form.watch("officeState"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={openOfficeCity}
+                        setOpen={setOpenOfficeCity}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Office city"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -406,11 +560,25 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Office Postal Code</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter office postal code"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
+                    <div>
+                      <Combobox
+                        data={
+                          cities
+                            .find(
+                              (item) => item.name === form.watch("officeCity"),
+                            )
+                            ?.postalCodes.map((item) => ({
+                              label: item,
+                              value: item,
+                            })) ?? []
+                        }
+                        open={openOfficePostalCode}
+                        setOpen={setOpenOfficePostalCode}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Postal Code"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -26,12 +26,12 @@ import {
   useCreateStripeCheckout,
 } from "@/queries/payments.queries";
 import { LoaderComponent } from "@/components/loader-component";
-import { faqs } from "./dats";
+import { faqs } from "../dats";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-export default function MembershipPage() {
+export default function Plans() {
   const { data: plans, isError, error, isLoading } = useAllPlansQuery();
 
   const [sumittingPlan, setSumittingPlan] = useState("");
@@ -49,7 +49,7 @@ export default function MembershipPage() {
       <LoaderComponent
         showText={true}
         text="Loading Plans..."
-        className="flex h-screen w-screen items-center justify-center"
+        className="flex h-screen w-full items-center justify-center"
       />
     );
   }
@@ -87,9 +87,9 @@ export default function MembershipPage() {
   };
 
   return (
-    <div className="container mx-auto h-screen overflow-auto px-4 py-12">
-      <div className="mb-16 text-center">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
+    <div className="grid gap-7">
+      <div className="grid gap-4 text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-brand-primary sm:text-5xl">
           Choose Your Membership Plan
         </h1>
         <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
@@ -98,24 +98,26 @@ export default function MembershipPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="monthly" className="mb-16 w-full">
-        <div className="mb-8 flex justify-center">
-          <TabsList>
-            <TabsTrigger value="monthly">Monthly Billing</TabsTrigger>
-            <TabsTrigger value="yearly">
-              Yearly Billing
-              <Badge
-                variant="secondary"
-                className="ml-2 bg-primary/20 text-primary"
-              >
-                Save 2 Months
-              </Badge>
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="monthly" className="grid gap-7">
+        <div className="flex justify-center">
+          <div className="rounded-md bg-white p-4 px-8">
+            <TabsList>
+              <TabsTrigger value="monthly">Monthly Billing</TabsTrigger>
+              <TabsTrigger value="yearly">
+                Yearly Billing
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-primary/20 text-primary"
+                >
+                  Save 2 Months
+                </Badge>
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </div>
 
-        <TabsContent value="monthly" className="space-y-8">
-          <div className="grid gap-8 md:grid-cols-3">
+        <TabsContent value="monthly" className="space-y-7">
+          <div className="grid gap-4 lg:grid-cols-3">
             {plans?.map((plan, index) => (
               <Card
                 key={plan.id}
@@ -140,13 +142,9 @@ export default function MembershipPage() {
                   <ul className="space-y-3">
                     {index > 0 && (
                       <>
-                        <li className="flex items-center">
-                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
-                          All
-                          <span className="font-semibold">
-                            &nbsp; {plans[index - 1].name} &nbsp;
-                          </span>
-                          Service Included
+                        <li className="flex">
+                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
+                          All {plans[index - 1].name} Service Included
                         </li>
                       </>
                     )}
@@ -163,7 +161,7 @@ export default function MembershipPage() {
                   <Button
                     onClick={() => handleCheckout(plan.name, "month")}
                     disabled={mutaion.isPending && sumittingPlan === plan.name}
-                    className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
+                    className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.name === "High-Value Trades" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
                     {mutaion.isPending && sumittingPlan === plan.name
                       ? "Submitting..."
@@ -176,7 +174,7 @@ export default function MembershipPage() {
         </TabsContent>
 
         <TabsContent value="yearly" className="space-y-8">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {plans?.map((plan, index) => (
               <Card
                 key={plan.id}
@@ -203,13 +201,9 @@ export default function MembershipPage() {
                   <ul className="space-y-3">
                     {index > 0 && (
                       <>
-                        <li className="flex items-center">
+                        <li className="flex">
                           <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
-                          All
-                          <span className="font-semibold">
-                            &nbsp; {plans[index - 1].name} &nbsp;
-                          </span>
-                          Service Included
+                          All {plans[index - 1].name} Service Included
                         </li>
                       </>
                     )}
@@ -225,7 +219,7 @@ export default function MembershipPage() {
                   <Button
                     onClick={() => handleCheckout(plan.name, "year")}
                     disabled={mutaion.isPending && sumittingPlan === plan.name}
-                    className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.id === "tier3" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
+                    className={`w-full ${plan.isPopular ? "bg-brand-primary hover:bg-brand-primary/90" : plan.name === "High-Value Trades" ? "bg-brand-gold hover:bg-brand-gold/90" : "bg-primary/90"}`}
                   >
                     {mutaion.isPending && sumittingPlan === plan.name
                       ? "Submitting..."
@@ -238,32 +232,35 @@ export default function MembershipPage() {
         </TabsContent>
       </Tabs>
 
-      <div className="mx-auto mb-20 max-w-3xl">
-        <h2 className="mb-10 text-center text-3xl font-bold">
-          Frequently Asked Questions
-        </h2>
-        <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent>{faq.answer}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      <div className="mt-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="mb-10 text-center text-3xl font-bold">
+            Frequently Asked Questions
+          </h2>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent>{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
 
-      <div className="text-center text-sm text-muted-foreground">
-        <p>
-          Have questions? Contact our support team at{" "}
-          <Link href="mailto:support@example.com" className="text-primary">
-            support@craftyfuture.com
-          </Link>
-        </p>
-        <p className="mt-2">
-          All plans come with a 30-day money-back guarantee. No questions asked.
-        </p>
+        <div className="my-12 text-center text-sm text-muted-foreground">
+          <p>
+            Have questions? Contact our support team at{" "}
+            <Link href="mailto:admin@craftyfuture.com" className="text-primary">
+              admin@craftyfuture.com
+            </Link>
+          </p>
+          <p className="mt-2">
+            All plans come with a 30-day money-back guarantee. No questions
+            asked.
+          </p>
+        </div>
       </div>
     </div>
   );

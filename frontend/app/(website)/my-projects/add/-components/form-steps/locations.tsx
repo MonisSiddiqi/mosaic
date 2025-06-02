@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +14,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAddProject } from "@/hooks/use-add-project";
+import { useEffect, useState } from "react";
+import { Combobox } from "@/components/ui/combobox";
+import {
+  cities,
+  countries,
+  states,
+} from "@/app/auth/register/_components/address-data";
 
 const locationSchema = z.object({
   line1: z.string().min(1, "Line 1 is required."),
@@ -25,6 +34,11 @@ const locationSchema = z.object({
 export const Location = ({}) => {
   const { formData, setFormData, handleNext, handlePrev } = useAddProject();
 
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [stateOpen, setStateOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
+  const [openPostalCode, setOpenPostalCode] = useState(false);
+
   const form = useForm<z.infer<typeof locationSchema>>({
     resolver: zodResolver(locationSchema),
     defaultValues: {
@@ -36,6 +50,21 @@ export const Location = ({}) => {
       postalCode: formData?.postalCode || "",
     },
   });
+
+  useEffect(() => {
+    form.setValue("state", "");
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("country")]);
+
+  useEffect(() => {
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("state")]);
+
+  useEffect(() => {
+    form.setValue("postalCode", "");
+  }, [form.watch("city")]);
 
   const onSubmit = async (values: z.infer<typeof locationSchema>) => {
     setFormData((prev) => ({
@@ -91,7 +120,19 @@ export const Location = ({}) => {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter country" {...field} />
+                    <div>
+                      <Combobox
+                        data={countries.map((item) => ({
+                          label: item.name,
+                          value: item.name,
+                        }))}
+                        open={countryOpen}
+                        setOpen={setCountryOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="country"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,7 +146,28 @@ export const Location = ({}) => {
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter state" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("country")
+                            ? states
+                                .filter(
+                                  (item) =>
+                                    item.country === form.watch("country"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={stateOpen}
+                        setOpen={setStateOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="state"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,7 +181,27 @@ export const Location = ({}) => {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter city" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          form.watch("state")
+                            ? cities
+                                .filter(
+                                  (item) => item.state === form.watch("state"),
+                                )
+                                .map((item) => ({
+                                  label: item.name,
+                                  value: item.name,
+                                }))
+                            : []
+                        }
+                        open={cityOpen}
+                        setOpen={setCityOpen}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="city"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -133,7 +215,23 @@ export const Location = ({}) => {
                 <FormItem>
                   <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter postal code" {...field} />
+                    <div>
+                      <Combobox
+                        data={
+                          cities
+                            .find((item) => item.name === form.watch("city"))
+                            ?.postalCodes.map((item) => ({
+                              label: item,
+                              value: item,
+                            })) ?? []
+                        }
+                        open={openPostalCode}
+                        setOpen={setOpenPostalCode}
+                        value={field.value}
+                        setValue={field.onChange}
+                        fieldName="Postal Code"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

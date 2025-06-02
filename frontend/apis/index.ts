@@ -18,13 +18,16 @@ const authRoutes = [
 ];
 
 const httpClient = axios.create({
-  baseURL: API_URL,
   withCredentials: true,
 });
 
 httpClient.interceptors.request.use(
   (config) => {
     config.headers.set("Accept", "application/json");
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    }
     return config;
   },
   (error) => {

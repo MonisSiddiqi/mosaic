@@ -21,14 +21,12 @@ export function validateFiles(files: Express.Multer.File[]) {
   if (!files || files.length === 0) return;
 
   for (const file of files) {
-    // ✅ Check file size (≤ 10MB)
     if (file.size > MAX_FILE_SIZE) {
       throw new BadRequestException(
         `File ${file.originalname} is too large. Maximum size is 10MB.`,
       );
     }
 
-    // ✅ Check file type (Only images & videos)
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException(
         `Invalid file type for ${file.originalname}. Only images and videos are allowed.`,

@@ -83,7 +83,7 @@ export function UserProfile() {
       </DropdownMenuContent>
     </DropdownMenu>
   ) : (
-    <div className="hidden items-center gap-2 lg:flex">
+    <div className="flex items-center gap-2">
       <Button asChild variant={"secondary"}>
         <Link href="/auth/register" className="text-sm font-medium">
           Register

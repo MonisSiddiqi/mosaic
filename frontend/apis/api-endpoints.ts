@@ -57,6 +57,7 @@ export const apiEndpoints = {
     stripe: {
       createCheckout: `/api/v1/payments/create-checkout`,
     },
+    currentPlan: `/api/v1/payments/current-plan`,
   },
 
   bids: {

@@ -55,10 +55,13 @@ export const editProfileApi = async (
 export const createAddressApi = async (
   createAddressDto: CreateAddressDto,
 ): Promise<Address> => {
+  console.log("I am here");
   const response = await httpClient.post(
     apiEndpoints.users.createAddress,
     createAddressDto,
   );
+
+  console.log("I am here as well");
   return response.data.result;
 };
 

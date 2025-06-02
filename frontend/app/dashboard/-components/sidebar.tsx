@@ -19,6 +19,9 @@ import { SidebarLink } from "@/app/dashboard/-components/sidebar-link";
 import { BottomSidebar } from "./bottom-sidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
+import Image from "next/image";
+
+import Logo from "@/app/assets/logo-white.svg";
 
 export const routes = [
   {
@@ -76,6 +79,13 @@ export const routes = [
   },
 
   {
+    href: "/dashboard/membership",
+    icon: <Package className="h-5 min-h-5 w-5 min-w-5" />,
+    text: "Membership",
+    roles: [UserRole.VENDOR],
+  },
+
+  {
     href: "/dashboard/login-history",
     icon: <ActivityIcon className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Login Activity",
@@ -118,9 +128,13 @@ export function Sidebar() {
           href="/dashboard"
           className="flex items-center space-x-2 border-b border-gray-500 px-4 py-4"
         >
-          <Package className="h-8 w-8" />
-          <span className="text-2xl font-semibold">Crafty</span>{" "}
-          <span className="text-sm">Future</span>
+          <Image
+            className="rounded-md fill-white"
+            src={Logo.src}
+            alt="Logo"
+            width={150}
+            height={40}
+          />
         </Link>
         <nav className="mt-2 flex flex-col gap-1">
           {filteredRoutes.map(({ href, icon, text }) => (

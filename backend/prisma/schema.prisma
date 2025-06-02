@@ -332,6 +332,7 @@ model UserPlan {
   Coupon    Coupon?  @relation(fields: [couponId], references: [id], onUpdate: Cascade, onDelete: Restrict)
   couponId  String?  @db.VarChar(36)
   paymentId String
+  amount    Float
   startDate DateTime
   endDate   DateTime
   type      Type     @default(MONTHLY)

@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -14,15 +14,16 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { useCreateAddressMutation } from "@/queries/users.queries";
 import { useAuth } from "@/hooks/use-auth";
+import { Combobox } from "@/components/ui/combobox";
+import {
+  cities,
+  countries,
+  states,
+} from "@/app/auth/register/_components/address-data";
+import { RefreshCwIcon } from "lucide-react";
 
 const formSchema = z.object({
   line1: z.string().min(2, "Address Line 1 is required."),
@@ -33,16 +34,17 @@ const formSchema = z.object({
   postalCode: z.string().min(4, "Postal code is required."),
 });
 
-const countries = ["USA", "Canada", "India", "Germany", "France"];
-const states = ["California", "Texas", "New York", "Ontario", "Bavaria"];
-const cities = ["Los Angeles", "Houston", "New York City", "Toronto", "Munich"];
-
 type Props = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const AddAddressForm: FC<Props> = ({ setOpen }) => {
   const { setUser, user } = useAuth();
+
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [stateOpen, setStateOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
+  const [openPostalCode, setOpenPostalCode] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,11 +58,39 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
     },
   });
 
-  const addressMutation = useCreateAddressMutation();
+  useEffect(() => {
+    form.setValue("state", "");
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("country")]);
+
+  useEffect(() => {
+    form.setValue("city", "");
+    form.setValue("postalCode", "");
+  }, [form.watch("state")]);
+
+  useEffect(() => {
+    form.setValue("postalCode", "");
+  }, [form.watch("city")]);
+
+  const mutation = useCreateAddressMutation();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const address = await addressMutation.mutateAsync(values);
+      const address = await mutation.mutateAsync(values);
+
+      // const response = await fetch(
+      //   "http://localhost:5000" + apiEndpoints.users.createAddress,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Accept: "application/json",
+      //     },
+      //     credentials: "include", // This is the fetch equivalent of Axios' withCredentials: true
+      //     body: JSON.stringify(values),
+      //   },
+      // );
 
       setUser((prevUser) => {
         if (!prevUser) return prevUser;
@@ -123,18 +153,19 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
               <FormItem>
                 <FormLabel>Country</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <Combobox
+                      data={countries.map((item) => ({
+                        label: item.name,
+                        value: item.name,
+                      }))}
+                      open={countryOpen}
+                      setOpen={setCountryOpen}
+                      value={field.value}
+                      setValue={field.onChange}
+                      fieldName="country"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -148,18 +179,28 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
               <FormItem>
                 <FormLabel>State</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {states.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <Combobox
+                      data={
+                        form.watch("country")
+                          ? states
+                              .filter(
+                                (item) =>
+                                  item.country === form.watch("country"),
+                              )
+                              .map((item) => ({
+                                label: item.name,
+                                value: item.name,
+                              }))
+                          : []
+                      }
+                      open={stateOpen}
+                      setOpen={setStateOpen}
+                      value={field.value}
+                      setValue={field.onChange}
+                      fieldName="state"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -173,24 +214,32 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
               <FormItem>
                 <FormLabel>City</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select city" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <Combobox
+                      data={
+                        form.watch("state")
+                          ? cities
+                              .filter(
+                                (item) => item.state === form.watch("state"),
+                              )
+                              .map((item) => ({
+                                label: item.name,
+                                value: item.name,
+                              }))
+                          : []
+                      }
+                      open={cityOpen}
+                      setOpen={setCityOpen}
+                      value={field.value}
+                      setValue={field.onChange}
+                      fieldName="city"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="postalCode"
@@ -198,7 +247,23 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
               <FormItem>
                 <FormLabel>Postal Code</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter postal code" {...field} />
+                  <div>
+                    <Combobox
+                      data={
+                        cities
+                          .find((item) => item.name === form.watch("city"))
+                          ?.postalCodes.map((item) => ({
+                            label: item,
+                            value: item,
+                          })) ?? []
+                      }
+                      open={openPostalCode}
+                      setOpen={setOpenPostalCode}
+                      value={field.value}
+                      setValue={field.onChange}
+                      fieldName="Postal Code"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -206,8 +271,11 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
           />
         </div>
 
-        <div className="flex w-full justify-end">
-          <Button type="submit" className="mt-4 px-5 py-2">
+        <div className="mt-7 flex w-full justify-end">
+          <Button disabled={mutation.isPending} type="submit">
+            {mutation.isPending && (
+              <RefreshCwIcon className="size-4 animate-spin" />
+            )}
             Submit
           </Button>
         </div>

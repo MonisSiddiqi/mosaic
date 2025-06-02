@@ -22,7 +22,7 @@ export function ExpiredPlanNotice() {
           asChild
           className="whitespace-nowrap bg-orange-600 hover:bg-orange-700"
         >
-          <Link href="/dashboard/plans">Upgrade Plan</Link>
+          <Link href="/dashboard/membership">Upgrade Plan</Link>
         </Button>
       </CardContent>
     </Card>

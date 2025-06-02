@@ -1,5 +1,5 @@
 import { IsIn, IsNotEmpty, IsString, IsUUID } from 'class-validator';
-import { Interval } from '../payments.service';
+import { Interval } from '../services/stripe.service';
 
 export class CreateCheckoutDto {
   @IsString()
