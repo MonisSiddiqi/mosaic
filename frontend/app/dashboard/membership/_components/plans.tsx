@@ -215,7 +215,7 @@ export default function Plans() {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter>
+                <CardFooter id="plans">
                   <Button
                     onClick={() => handleCheckout(plan.name, "year")}
                     disabled={mutaion.isPending && sumittingPlan === plan.name}

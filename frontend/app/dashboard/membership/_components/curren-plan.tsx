@@ -1,10 +1,24 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, CreditCard, Star, CheckCircle } from "lucide-react";
+import {
+  Calendar,
+  CreditCard,
+  Star,
+  CheckCircle,
+  ArrowRightIcon,
+} from "lucide-react";
 import { FC } from "react";
 import { GetCurrentPlanApiResponse } from "@/apis/payments";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const CurrentPlan: FC<GetCurrentPlanApiResponse> = (data) => {
   const formatDate = (dateString: string) => {
@@ -95,6 +109,13 @@ export const CurrentPlan: FC<GetCurrentPlanApiResponse> = (data) => {
           </div>
         </div>
       </CardContent>
+      <CardFooter>
+        <Button asChild variant={"outline"} className="w-full">
+          <Link href={"/dashboard/services"}>
+            View Services <ArrowRightIcon />
+          </Link>
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

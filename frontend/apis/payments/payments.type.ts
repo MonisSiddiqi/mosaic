@@ -1,4 +1,4 @@
-import { Service } from "@/apis/services";
+import { Service, ServicesListItem, VendorService } from "@/apis/services";
 
 export type Plan = {
   id: string;
@@ -51,4 +51,6 @@ export type CreateStripeCheckoutApiResponse = {
   url: string;
 };
 
-export type GetCurrentPlanApiResponse = UserPlan & { Plan: Plan };
+export type GetCurrentPlanApiResponse = UserPlan & {
+  Plan: Plan & { Service: ServicesListItem[] };
+};

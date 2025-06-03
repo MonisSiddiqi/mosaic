@@ -31,7 +31,24 @@ export class PaymentsService {
         },
       },
       include: {
-        Plan: true,
+        Plan: {
+          include: {
+            Service: {
+              include: {
+                VendorService: {
+                  where: {
+                    userId: authUser.id,
+                  },
+                },
+              },
+              orderBy: {
+                VendorService: {
+                  _count: 'desc',
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
         endDate: 'asc',
