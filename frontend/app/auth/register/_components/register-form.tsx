@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import { useRegisterMutation } from "@/queries/auth.queries";
 import { OtpType } from "@/apis/auth";
 import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@/apis/users";
 
 const formSchema = z
   .object({
@@ -58,9 +60,19 @@ export const RegisterForm: FC<Props> = ({ className }) => {
     },
   });
 
+  const registerMutation = useRegisterMutation();
+
+  const { isAuthenticated, user } = useAuth();
+
   const router = useRouter();
 
-  const registerMutation = useRegisterMutation();
+  if (isAuthenticated) {
+    if (user?.role === UserRole.USER) {
+      router.push("/");
+    } else {
+      router.push("/dashboard");
+    }
+  }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {

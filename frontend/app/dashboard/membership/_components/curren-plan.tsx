@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
   CreditCard,
-  Star,
   CheckCircle,
   ArrowRightIcon,
 } from "lucide-react";

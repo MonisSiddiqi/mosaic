@@ -19,6 +19,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { MailService } from 'src/mail/mail.service';
 import { Prisma } from '@prisma/client';
+import { VendorRegisterDto } from './dto/vendor-register.dto';
 
 @Injectable()
 export class AuthService {
@@ -72,6 +73,152 @@ export class AuthService {
             name,
           },
         },
+      },
+    });
+
+    await this.prismaService.otp.upsert({
+      where: {
+        userId: user.id,
+        type: 'REGISTRATION',
+      },
+      update: {
+        oneTimePassword: await this.createPassword(otp),
+      },
+      create: {
+        type: 'REGISTRATION',
+        userId: user.id,
+        oneTimePassword: await this.createPassword(otp),
+      },
+    });
+
+    try {
+      await this.mailService.sendRegisterOtpMail(email, name, otp);
+    } catch (err) {
+      this.logger.debug(otp);
+      this.logger.error(
+        err instanceof Error ? err.message : 'Could not send otp',
+      );
+    }
+
+    return new ApiResponse(null, `OTP Sent successfully to (${user.email})`);
+  }
+
+  async vendorRegister(
+    vendorRegisterDto: VendorRegisterDto,
+  ): Promise<ApiResponse> {
+    const {
+      name,
+      email,
+      password,
+      line1,
+      line2,
+      country,
+      state,
+      city,
+      postalCode,
+      sameAsAddress,
+      officeLine1,
+      officeLine2,
+      officeCountry,
+      officeState,
+      officeCity,
+      officePostalCode,
+    } = vendorRegisterDto;
+
+    const isExist = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        Otp: true,
+      },
+    });
+
+    if (isExist && isExist.isEmailVerified) {
+      throw new UnprocessableEntityException(
+        `User with email has (${email}) already registered.`,
+      );
+    }
+
+    //create otp
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const user = await this.prismaService.user.upsert({
+      where: {
+        email,
+      },
+      update: {
+        password: await this.createPassword(password),
+        role: 'VENDOR',
+        UserProfile: {
+          update: {
+            name,
+          },
+        },
+        Address: {
+          create: {
+            line1,
+            line2,
+            country,
+            state,
+            city,
+            postalCode,
+          },
+        },
+
+        ...(sameAsAddress
+          ? {
+              sameAsAddress,
+            }
+          : {
+              BusinessAddress: {
+                create: {
+                  line1: officeLine1,
+                  line2: officeLine2,
+                  country: officeCountry,
+                  state: officeState,
+                  city: officeCity,
+                  postalCode: officePostalCode,
+                },
+              },
+            }),
+      },
+      create: {
+        email,
+        password: await this.createPassword(password),
+        role: 'VENDOR',
+        UserProfile: {
+          create: {
+            name,
+          },
+        },
+        Address: {
+          create: {
+            line1,
+            line2,
+            country,
+            state,
+            city,
+            postalCode,
+          },
+        },
+
+        ...(sameAsAddress
+          ? {
+              sameAsAddress,
+            }
+          : {
+              BusinessAddress: {
+                create: {
+                  line1: officeLine1,
+                  line2: officeLine2,
+                  country: officeCountry,
+                  state: officeState,
+                  city: officeCity,
+                  postalCode: officePostalCode,
+                },
+              },
+            }),
       },
     });
 

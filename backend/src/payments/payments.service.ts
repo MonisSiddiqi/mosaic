@@ -40,6 +40,20 @@ export class PaymentsService {
                     userId: authUser.id,
                   },
                 },
+                Tag: {
+                  include: {
+                    VendorTag: {
+                      where: {
+                        userId: authUser.id,
+                      },
+                    },
+                  },
+                  orderBy: {
+                    VendorTag: {
+                      _count: 'desc',
+                    },
+                  },
+                },
               },
               orderBy: {
                 VendorService: {

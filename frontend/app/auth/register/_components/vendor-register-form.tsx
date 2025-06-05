@@ -23,6 +23,10 @@ import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Combobox } from "@/components/ui/combobox";
 import { cities, countries, states } from "./address-data";
+import { useVendorRegisterMutation } from "@/queries/auth.queries";
+import { OtpType } from "@/apis/auth";
+import { UserRole } from "@/apis/users";
+import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z
   .object({
@@ -34,18 +38,13 @@ const formSchema = z
     state: z.string().min(1, "State is required."),
     city: z.string().min(1, "City is required."),
     postalCode: z.string().min(1, "Postal code is required."),
-    //office address
-    officeLine1: z.string().min(1, { message: "Office line 1 is required." }),
+    officeLine1: z.string().optional(),
     officeLine2: z.string().optional(),
-    officeCountry: z
-      .string()
-      .min(1, { message: "Office country is required." }),
-    officeState: z.string().min(1, { message: "Office state is required." }),
-    officeCity: z.string().min(1, { message: "Office city is required." }),
-    officePostalCode: z
-      .string()
-      .min(1, { message: "Office postal code is required." }),
-    sameAsAddress: z.boolean().optional(),
+    officeCountry: z.string().optional(),
+    officeState: z.string().optional(),
+    officeCity: z.string().optional(),
+    officePostalCode: z.string().optional(),
+    sameAsAddress: z.boolean(),
     password: z
       .string()
       .min(8, "Password must be at least 8 character")
@@ -61,6 +60,45 @@ const formSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password and confirm password does not match.",
     path: ["confirmPassword"],
+  })
+  .superRefine((data, ctx) => {
+    if (!data.sameAsAddress) {
+      if (!data.officeLine1) {
+        ctx.addIssue({
+          path: ["officeLine1"],
+          message: "Office line 1 is required.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (!data.officeCountry) {
+        ctx.addIssue({
+          path: ["officeCountry"],
+          message: "Office country is required.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (!data.officeState) {
+        ctx.addIssue({
+          path: ["officeState"],
+          message: "Office state is required.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (!data.officeCity) {
+        ctx.addIssue({
+          path: ["officeCity"],
+          message: "Office city is required.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+      if (!data.officePostalCode) {
+        ctx.addIssue({
+          path: ["officePostalCode"],
+          message: "Office postal code is required.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    }
   });
 
 type Props = {
@@ -102,24 +140,6 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
   const sameAsAddress = form.watch("sameAsAddress");
 
-  const line1 = form.watch("line1");
-  const line2 = form.watch("line2");
-  const country = form.watch("country");
-  const state = form.watch("state");
-  const city = form.watch("city");
-  const postalCode = form.watch("postalCode");
-
-  useEffect(() => {
-    if (sameAsAddress) {
-      form.setValue("officeLine1", form.getValues("line1"));
-      form.setValue("officeLine2", form.getValues("line2"));
-      form.setValue("officeCountry", form.getValues("country"));
-      form.setValue("officeState", form.getValues("state"));
-      form.setValue("officeCity", form.getValues("city"));
-      form.setValue("officePostalCode", form.getValues("postalCode"));
-    }
-  }, [sameAsAddress, line1, line2, country, state, city, postalCode]);
-
   useEffect(() => {
     form.setValue("state", "");
     form.setValue("city", "");
@@ -150,15 +170,36 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
     form.setValue("officePostalCode", "");
   }, [form.watch("officeCity")]);
 
+  const mutation = useVendorRegisterMutation();
+
+  const { isAuthenticated, user } = useAuth();
+
   const router = useRouter();
 
-  const onSubmit = async () => {
+  if (isAuthenticated) {
+    if (user?.role === UserRole.USER) {
+      router.push("/");
+    } else {
+      router.push("/dashboard");
+    }
+  }
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      router.push(`/membership`);
+      await mutation.mutateAsync(values);
+
+      toast({
+        variant: "success",
+        title: "Otp sent successfully",
+      });
+
+      router.push(
+        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${form.getValues("email")}&role=${UserRole.VENDOR}`,
+      );
     } catch (err) {
       toast({
         variant: "destructive",
-        title: err instanceof Error ? err.message : "Failed",
+        title: err instanceof Error ? err.message : "Could not sent otp",
       });
     }
   };
@@ -420,170 +461,176 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               <label htmlFor="sameAsAddress">Same as Address</label>
             </div>
 
-            <FormField
-              control={form.control}
-              name="officeLine1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office Line 1</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter office address line 1"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!form.watch("sameAsAddress") && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="officeLine1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office Line 1</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter office address line 1"
+                          {...field}
+                          disabled={sameAsAddress}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="officeLine2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office Line 2 (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter office address line 2"
-                      {...field}
-                      disabled={sameAsAddress}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="officeLine2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office Line 2 (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter office address line 2"
+                          {...field}
+                          disabled={sameAsAddress}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="officeCountry"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office Country</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={countries.map((item) => ({
-                          label: item.name,
-                          value: item.name,
-                        }))}
-                        open={openOfficeCountry}
-                        setOpen={setOpenOfficeCountry}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="Office Country"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="officeCountry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office Country</FormLabel>
+                      <FormControl>
+                        <div>
+                          <Combobox
+                            data={countries.map((item) => ({
+                              label: item.name,
+                              value: item.name,
+                            }))}
+                            open={openOfficeCountry}
+                            setOpen={setOpenOfficeCountry}
+                            value={field.value as string}
+                            setValue={field.onChange}
+                            fieldName="Office Country"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="officeState"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office State</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          form.watch("officeCountry")
-                            ? states
-                                .filter(
+                <FormField
+                  control={form.control}
+                  name="officeState"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office State</FormLabel>
+                      <FormControl>
+                        <div>
+                          <Combobox
+                            data={
+                              form.watch("officeCountry")
+                                ? states
+                                    .filter(
+                                      (item) =>
+                                        item.country ===
+                                        form.watch("officeCountry"),
+                                    )
+                                    .map((item) => ({
+                                      label: item.name,
+                                      value: item.name,
+                                    }))
+                                : []
+                            }
+                            open={openOfficeState}
+                            setOpen={setOpenOfficeState}
+                            value={field.value as string}
+                            setValue={field.onChange}
+                            fieldName="Office State"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="officeCity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office City</FormLabel>
+                      <FormControl>
+                        <div>
+                          <Combobox
+                            data={
+                              form.watch("officeState")
+                                ? cities
+                                    .filter(
+                                      (item) =>
+                                        item.state ===
+                                        form.watch("officeState"),
+                                    )
+                                    .map((item) => ({
+                                      label: item.name,
+                                      value: item.name,
+                                    }))
+                                : []
+                            }
+                            open={openOfficeCity}
+                            setOpen={setOpenOfficeCity}
+                            value={field.value as string}
+                            setValue={field.onChange}
+                            fieldName="Office city"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="officePostalCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Office Postal Code</FormLabel>
+                      <FormControl>
+                        <div>
+                          <Combobox
+                            data={
+                              cities
+                                .find(
                                   (item) =>
-                                    item.country ===
-                                    form.watch("officeCountry"),
+                                    item.name === form.watch("officeCity"),
                                 )
-                                .map((item) => ({
-                                  label: item.name,
-                                  value: item.name,
-                                }))
-                            : []
-                        }
-                        open={openOfficeState}
-                        setOpen={setOpenOfficeState}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="Office State"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="officeCity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office City</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          form.watch("officeState")
-                            ? cities
-                                .filter(
-                                  (item) =>
-                                    item.state === form.watch("officeState"),
-                                )
-                                .map((item) => ({
-                                  label: item.name,
-                                  value: item.name,
-                                }))
-                            : []
-                        }
-                        open={openOfficeCity}
-                        setOpen={setOpenOfficeCity}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="Office city"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="officePostalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Office Postal Code</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          cities
-                            .find(
-                              (item) => item.name === form.watch("officeCity"),
-                            )
-                            ?.postalCodes.map((item) => ({
-                              label: item,
-                              value: item,
-                            })) ?? []
-                        }
-                        open={openOfficePostalCode}
-                        setOpen={setOpenOfficePostalCode}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="Postal Code"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                                ?.postalCodes.map((item) => ({
+                                  label: item,
+                                  value: item,
+                                })) ?? []
+                            }
+                            open={openOfficePostalCode}
+                            setOpen={setOpenOfficePostalCode}
+                            value={field.value as string}
+                            setValue={field.onChange}
+                            fieldName="Postal Code"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
           </div>
 
           <div className="grid gap-4 bg-white p-6 md:grid-cols-2">

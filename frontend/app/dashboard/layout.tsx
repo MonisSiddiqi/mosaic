@@ -22,7 +22,7 @@ export default function RootLayout({
     if (user?.role === UserRole.USER) {
       notFound();
     }
-  }, []);
+  }, [isAuthenticated, router, user?.role]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-gray-100">

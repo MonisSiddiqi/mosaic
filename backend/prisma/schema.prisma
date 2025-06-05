@@ -20,6 +20,7 @@ model User {
   isEmailVerified Boolean          @default(false)
   isActive        Boolean          @default(true)
   role            UserRole         @default(USER)
+  sameAsAddress   Boolean          @default(false)
   updatedAt       DateTime         @updatedAt @db.Timestamptz
   createdAt       DateTime         @default(now()) @db.Timestamptz
   UserProfile     UserProfile?

@@ -15,8 +15,8 @@ export const NoActivePlanNotice = () => {
           No Active Plan
         </h3>
         <p className="mb-6 leading-relaxed text-gray-600">
-          You don't have an active subscription yet. Choose a plan to unlock all
-          features and get started.
+          You don&apos;t have an active subscription yet. Choose a plan to
+          unlock all features and get started.
         </p>
         <Button asChild>
           <Link href={"/dashboard/membership#plans"}> Upgrade </Link>

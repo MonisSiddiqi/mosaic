@@ -20,7 +20,7 @@ export const VendorTagCard: FC<Props> = ({ tag }) => {
       setIsAdded((prev) => !prev);
       toast({
         variant: "success",
-        title: "Tag has been removed from your account.",
+        title: `Tag has been ${isAdded ? "removed" : "added"} from your account.`,
       });
     } catch (err) {
       const title = isAdded ? "Failed to remove tag." : "Failed to add tag.";

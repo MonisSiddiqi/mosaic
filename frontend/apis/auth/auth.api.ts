@@ -2,6 +2,7 @@ import {
   LoginDto,
   LoginResponse,
   RegisterDto,
+  VendorRegisterDto,
   VerifyOtpDto,
 } from "@/apis/auth";
 import { apiEndpoints } from "@/apis/api-endpoints";
@@ -17,10 +18,7 @@ export const loginApi = async (values: LoginDto): Promise<LoginResponse> => {
 };
 
 export const logoutApi = async (): Promise<boolean> => {
-  console.log("Hello 2 ");
   const response = await httpClient.delete(apiEndpoints.auth.logout);
-  console.log("Hello 3");
-
   return response.data.result;
 };
 
@@ -32,6 +30,17 @@ export const checkSessionApi = async (): Promise<boolean> => {
 
 export const registerApi = async (values: RegisterDto): Promise<null> => {
   const response = await httpClient.post(apiEndpoints.auth.register, values);
+
+  return response.data.result;
+};
+
+export const vendorRegisterApi = async (
+  values: VendorRegisterDto,
+): Promise<null> => {
+  const response = await httpClient.post(
+    apiEndpoints.auth.vendorRegister,
+    values,
+  );
 
   return response.data.result;
 };

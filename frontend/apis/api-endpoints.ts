@@ -18,6 +18,7 @@ export const apiEndpoints = {
     logout: `/api/v1/auth/logout`,
     check: `/api/v1/auth/check`,
     register: `/api/v1/auth/register`,
+    vendorRegister: `/api/v1/auth/vendor-register`,
     verifyOtp: `/api/v1/auth/verify-otp`,
   },
   users: {

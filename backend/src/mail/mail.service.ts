@@ -18,7 +18,7 @@ export class MailService {
     const mailOptions = {
       from: this.configService.get<string>('smtp.user'),
       to: email,
-      subject: 'Your OTP for MOSAIC GEORGIA Registration',
+      subject: 'Your OTP for Crafty Future Registration',
       html: `
         <p>Dear ${name},</p>
         <p>Your OTP is:</p>
@@ -26,7 +26,7 @@ export class MailService {
         <p>Please do not share this OTP with anyone to ensure the security of your account.</p>
         <p>If you did not request this, please ignore this message.</p>
         <p>Thank you for choosing us </p>
-        <p>Best regards,<br />MOSAIC GEORGIA Support Team</p>
+        <p>Best regards,<br />Crafty Future Support Team</p>
       `,
     };
 
@@ -45,7 +45,7 @@ export class MailService {
         <p>Please do not share this OTP with anyone to ensure the security of your account.</p>
         <p>If you did not request this, please ignore this message.</p>
         <p>Thank you for choosing us </p>
-        <p>Best regards,<br />MOSAIC GEORGIA Support Team</p>
+        <p>Best regards,<br />Crafty Future Support Team</p>
       `,
     };
 

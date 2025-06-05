@@ -1,12 +1,9 @@
 "use client";
 
 import { LoaderComponent } from "@/components/loader-component";
-import { Card, CardContent } from "@/components/ui/card";
 import { useCurrentPlanQuery } from "@/queries/payments.queries";
 import Plans from "./_components/plans";
 import { CurrentPlan } from "./_components/curren-plan";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Package, Sparkles } from "lucide-react";
 import { NoActivePlanNotice } from "./_components/no-active-plan-notice";
 
 const MembershipPage = () => {

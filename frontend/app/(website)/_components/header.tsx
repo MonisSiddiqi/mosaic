@@ -4,8 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-// import LogoImage from "@/app/assets/logo.png";
-// import Image from "next/image";
+import Logo from "@/app/assets/logo.svg";
 
 import {
   Sheet,
@@ -15,9 +14,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { HouseIcon, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserProfile } from "./user-profile";
+import Image from "next/image";
 
 const navigationItems = [
   { name: "Home", href: "/" },
@@ -37,22 +37,17 @@ export const Header = () => {
   }, [pathname]);
 
   return (
-    <header className="container mx-auto py-1">
+    <header className="container mx-auto py-2">
       <div className="flex items-center justify-between px-4">
-        <Link href={"/"} className="flex items-center space-x-2 px-4 py-4">
-          <HouseIcon className="h-8 w-8" />
-          <span className="text-2xl font-semibold">Crafty</span>{" "}
-          <span className="text-sm">Future</span>
-        </Link>
-        {/* <Link href={"/"}>
+        <Link href="/">
           <Image
-            src={LogoImage.src}
-            height={30}
+            className="rounded-md fill-white"
+            src={Logo.src}
+            alt="Logo"
             width={150}
-            alt="Brand Logo"
-            className="min-h-11 min-w-36"
+            height={40}
           />
-        </Link> */}
+        </Link>
 
         <nav className="hidden items-center gap-4 lg:flex">
           {navigationItems.map((item) => {

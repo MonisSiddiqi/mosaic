@@ -1,9 +1,22 @@
+"use client";
+
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { useCurrentPlanQuery } from "@/queries/payments.queries";
 
 export function ExpiredPlanNotice() {
+  const { data, isLoading } = useCurrentPlanQuery();
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (data?.Plan) {
+    return null;
+  }
+
   return (
     <Card className="mt-6 border-orange-200 bg-orange-50">
       <CardContent className="flex flex-col items-center justify-between gap-4 p-6 text-center sm:flex-row sm:text-left">
@@ -11,10 +24,10 @@ export function ExpiredPlanNotice() {
           <AlertTriangle className="h-6 w-6 text-orange-500" />
           <div>
             <h3 className="text-base font-semibold text-gray-900">
-              Your plan has expired
+              You don&apos;t have any active plan
             </h3>
             <p className="text-sm text-gray-600">
-              You will not receive new bids until you upgrade your plan.
+              You will not receive new bids until you have active plan.
             </p>
           </div>
         </div>

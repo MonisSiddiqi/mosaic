@@ -1,20 +1,25 @@
 "use client";
 
-import { useTagsQuery } from "@/queries/tags.queries";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { SearchIcon, XIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { VendorTagCard } from "./vendor-tag-card";
 import TagCardSkeleton from "./skeleton/tag-card-skeleton";
+import { useCurrentPlanQuery } from "@/queries/payments.queries";
+import Image from "next/image";
+import { NoActivePlanNotice } from "../../membership/_components/no-active-plan-notice";
 
 export const VendorTagsPage = () => {
-  const [search, setSearch] = useState("");
+  const { data: currentPlan, isLoading } = useCurrentPlanQuery();
 
-  const { data: tags, isLoading } = useTagsQuery({
-    sorting: [{ id: "vendor", desc: true }],
-    filter: [{ id: "name", value: search }],
-  });
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {Array(10)
+          .fill(null)
+          .map((item, index) => (
+            <TagCardSkeleton key={index} />
+          ))}
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto">
@@ -25,39 +30,56 @@ export const VendorTagsPage = () => {
             Toggle the tags you provide to receive relevant bid requests.
           </p>
         </div>
-        <div className="h-fit w-full rounded border-8 border-white bg-muted p-2 shadow lg:w-fit lg:p-5">
-          <div className="flex w-full flex-col gap-4 md:flex-row lg:w-fit">
-            <div className="relative w-full lg:w-fit">
-              <div className="w-full lg:w-fit">
-                <SearchIcon className="absolute left-2 top-2 size-5 text-gray-500" />
-                <Input
-                  placeholder="Search tag"
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                  }}
-                  className="w-full bg-white pl-9 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-ring lg:w-80"
-                />
-              </div>
-            </div>
-
-            {search ? (
-              <Button
-                onClick={() => setSearch("")}
-                variant={"ghost"}
-                className="ml-auto w-20 border border-white"
-              >
-                <XIcon className="size-5" />
-                Clear
-              </Button>
-            ) : (
-              <Button className="ml-auto w-20">Search</Button>
-            )}
-          </div>
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {currentPlan?.Plan ? (
+        currentPlan.Plan.Service.filter(
+          (service) => service.VendorService.length > 0,
+        ).map((service) => {
+          return (
+            <div
+              key={service.id}
+              className="my-4 rounded-md border border-gray-200 p-4"
+            >
+              <div className="flex gap-2">
+                <div className="flex h-16 min-h-6 w-16 min-w-16 items-center justify-center overflow-hidden rounded-md">
+                  {service.iconUrl ? (
+                    <Image
+                      src={service.iconUrl}
+                      alt={service.name}
+                      width={64}
+                      height={44}
+                      className="object-contain"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center bg-muted text-sm text-muted-foreground">
+                      No icon
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p
+                    key={service.id}
+                    className="from-neutral-700 text-lg font-semibold"
+                  >
+                    {service.name}
+                  </p>
+                  <p className="line-clamp-2 text-sm">{service.description}</p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {service.Tag.map((tag) => (
+                  <VendorTagCard key={tag.id} tag={tag} />
+                ))}
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <NoActivePlanNotice />
+      )}
+
+      {/* <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {isLoading
           ? Array(10)
               .fill(null)
@@ -72,7 +94,7 @@ export const VendorTagsPage = () => {
             There are currently no tags available to add to your profile.
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

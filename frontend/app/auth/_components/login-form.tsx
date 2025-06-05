@@ -31,7 +31,7 @@ type Props = {
   className?: string;
 };
 export const LoginForm: FC<Props> = ({ className }) => {
-  const { login, user } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
 
   const redirect = searchParams.get("redirect");
@@ -47,6 +47,14 @@ export const LoginForm: FC<Props> = ({ className }) => {
   });
 
   const router = useRouter();
+
+  if (isAuthenticated) {
+    if (user?.role === UserRole.USER) {
+      router.push("/");
+    } else {
+      router.push("/dashboard");
+    }
+  }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {

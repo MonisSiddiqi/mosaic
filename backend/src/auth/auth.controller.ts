@@ -23,6 +23,7 @@ import { RegisterDto } from './dto/register.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
+import { VendorRegisterDto } from './dto/vendor-register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -37,6 +38,14 @@ export class AuthController {
     @Body() registerDto: RegisterDto,
   ): Promise<ApiResponse<SignInResponse>> {
     return this.authService.register(registerDto);
+  }
+
+  @Post('vendor-register')
+  @SkipAuth()
+  vendorRegister(
+    @Body() vendorRegisterDto: VendorRegisterDto,
+  ): Promise<ApiResponse<SignInResponse>> {
+    return this.authService.vendorRegister(vendorRegisterDto);
   }
 
   @Post('verify-otp')
