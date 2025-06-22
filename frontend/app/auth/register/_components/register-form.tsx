@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -24,11 +24,23 @@ import { OtpType } from "@/apis/auth";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
+import { Combobox } from "@/components/ui/combobox";
+
+import validator from "validator";
 
 const formSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email({ message: "Please enter a valid email address." }),
+    countryCode: z.string().min(1, { message: "Dial code." }),
+    phone: z.string().refine(
+      (val) => {
+        if (validator.isMobilePhone(val)) {
+          return true;
+        } else return false;
+      },
+      { message: "Please enter a valid phone number." },
+    ),
     password: z
       .string()
       .min(8, "Password must be at least 8 character")
@@ -50,6 +62,7 @@ type Props = {
   className?: string;
 };
 export const RegisterForm: FC<Props> = ({ className }) => {
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +70,8 @@ export const RegisterForm: FC<Props> = ({ className }) => {
       email: "",
       password: "",
       confirmPassword: "",
+      countryCode: "",
+      phone: "",
     },
   });
 
@@ -76,7 +91,10 @@ export const RegisterForm: FC<Props> = ({ className }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await registerMutation.mutateAsync(values);
+      await registerMutation.mutateAsync({
+        ...values,
+        phone: values.countryCode + values.phone?.trim().replace(/^0+/, ""),
+      });
 
       toast({
         variant: "success",
@@ -137,6 +155,58 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               </FormItem>
             )}
           />
+
+          <div className="flex items-baseline">
+            <FormField
+              control={form.control}
+              name="countryCode"
+              render={({ field }) => (
+                <FormItem className="flex max-h-10 flex-col">
+                  <FormLabel className="mb-1">Dial Code</FormLabel>
+                  <FormControl>
+                    <Combobox
+                      data={[{ name: "USA", dialCode: "+1" }].map((item) => ({
+                        label: `${item.dialCode} - ${item.name}`,
+                        value: item.dialCode,
+                      }))}
+                      className="w-28 min-w-28 max-w-28 border border-gray-400 bg-transparent"
+                      fieldName="countryCode"
+                      value={field.value as string}
+                      open={open}
+                      setOpen={setOpen}
+                      setValue={field.onChange}
+                      placeHolder="Dial code"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="mt-2 w-full">
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Your phone number"
+                      autoComplete="phone"
+                      className="w-full border-gray-400 focus:outline-none"
+                      {...field}
+                      onBlur={() => {
+                        if (field.value) {
+                          field.onChange(field.value.trim().replace(/^0+/, ""));
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="password"

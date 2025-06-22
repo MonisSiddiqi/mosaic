@@ -40,7 +40,8 @@ export class ServicesController {
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: false,
-        validators: [new FileTypeValidator({ fileType: 'image/svg' })],
+        //todo
+        // validators: [new FileTypeValidator({ fileType: 'image/svg' })],
       }),
     )
     icon: Express.Multer.File,

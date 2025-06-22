@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -36,8 +36,6 @@ export const LoginForm: FC<Props> = ({ className }) => {
 
   const redirect = searchParams.get("redirect");
 
-  console.log(redirect);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,13 +46,15 @@ export const LoginForm: FC<Props> = ({ className }) => {
 
   const router = useRouter();
 
-  if (isAuthenticated) {
-    if (user?.role === UserRole.USER) {
-      router.push("/");
-    } else {
-      router.push("/dashboard");
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === UserRole.USER) {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      }
     }
-  }
+  }, [isAuthenticated, user, router]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {

@@ -50,4 +50,9 @@ export class BidsController {
   ) {
     return this.bidsService.bidAction(bidActionDto, authUser, attachment);
   }
+
+  @Get('statistics')
+  getBidsStatistics(@GetUser() authUser: User) {
+    return this.bidsService.bidsStatistics(authUser);
+  }
 }

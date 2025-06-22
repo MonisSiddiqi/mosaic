@@ -6,9 +6,10 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 type Props = {
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
+  placeholder?: string;
 };
 
-export const Search: FC<Props> = ({ query, setQuery }) => {
+export const Search: FC<Props> = ({ query, setQuery, placeholder }) => {
   const [search, setSearch] = useState(query);
 
   return (
@@ -21,7 +22,7 @@ export const Search: FC<Props> = ({ query, setQuery }) => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && setQuery(search)}
-              placeholder="Search service..."
+              placeholder={placeholder ? placeholder : "Search..."}
               className="w-full pl-9 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-ring lg:w-80"
             />
           </div>

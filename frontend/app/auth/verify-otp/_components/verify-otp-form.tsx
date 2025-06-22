@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { LogInIcon, RefreshCcwIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   otp: z.string().min(6, {
@@ -41,9 +42,10 @@ const formSchema = z.object({
 type Props = {
   type: OtpType;
   email: string;
+  className?: string;
 };
 
-export const VerifyOtpForm: FC<Props> = ({ type, email }) => {
+export const VerifyOtpForm: FC<Props> = ({ type, email, className }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -95,7 +97,10 @@ export const VerifyOtpForm: FC<Props> = ({ type, email }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("w-full space-y-6", className)}
+      >
         <FormField
           control={form.control}
           name="otp"

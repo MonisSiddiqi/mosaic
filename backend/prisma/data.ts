@@ -262,12 +262,12 @@ export const services = [
   {
     name: 'Tile Install',
     description:
-      'Our tile installation services cover bathrooms, kitchens, backsplashes, and mosaic designs. We handle grout repairs and ensure precise alignment for a stylish, durable surface.',
+      'Our tile installation services cover bathrooms, kitchens, backsplashes, and Crafty Future designs. We handle grout repairs and ensure precise alignment for a stylish, durable surface.',
     tags: [
       'Bathroom Tile Installation',
       'Kitchen Backsplash',
       'Grout Repair',
-      'Mosaic Tile Work',
+      'Crafty Future Tile Work',
     ],
   },
   {

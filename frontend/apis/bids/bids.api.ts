@@ -1,7 +1,10 @@
 import httpClient from "..";
 import { apiEndpoints } from "../api-endpoints";
 import { BidActionDto, GetAllBidsDto } from "./bids.dto";
-import { GetAllBidsApiResponse } from "./bids.type";
+import {
+  GetAllBidsApiResponse,
+  GetBidsStatisticsApiResponse,
+} from "./bids.type";
 
 export const getAllBidsApi = async (
   getAllBidsDto: GetAllBidsDto,
@@ -28,3 +31,16 @@ export const bidActionApi = async (
 
   return response.data.message;
 };
+
+export const getBidsStatisticsApi =
+  async (): Promise<GetBidsStatisticsApiResponse> => {
+    const response = await httpClient.get(apiEndpoints.bids.statistics);
+
+    await new Promise((res, rej) =>
+      setTimeout(() => {
+        res("");
+      }, 3000),
+    );
+
+    return response.data.result;
+  };

@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateIf,
@@ -9,6 +10,11 @@ import { RegisterDto } from './register.dto';
 import { Transform } from 'class-transformer';
 
 export class VendorRegisterDto extends RegisterDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  serviceDistance: number;
+
   @IsNotEmpty()
   @IsString()
   line1: string;
@@ -32,6 +38,11 @@ export class VendorRegisterDto extends RegisterDto {
   @IsNotEmpty()
   @IsString()
   postalCode: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  budgetPreference: number;
 
   @IsNotEmpty()
   @Transform(({ value }) => {

@@ -25,7 +25,7 @@ export function Copy({ textToCopy, label, className }: CopyProps) {
       onClick={handleCopy}
       aria-label={`Copy ${label}`}
       className={cn(
-        `flex items-center gap-2 text-gray-700 hover:text-gray-900`,
+        `flex items-center gap-2 text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-500`,
         className,
       )}
     >

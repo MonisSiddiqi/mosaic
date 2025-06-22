@@ -39,7 +39,8 @@ export const cities = [
   {
     name: "Sterling Heights",
     state: STATE_MI,
-    postalCodes: ["48310", "48312", "48313"],
+    // postalCodes: ["48310", "48312", "48313"],
+    postalCodes: [48310, 48311, 48312, 48313, 48314],
   },
   {
     name: "Troy",

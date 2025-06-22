@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { BidActionForm } from "../forms/bid-action-form";
 import { BidStatus } from "@/apis/bids";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 
 type Props = {
   bidId: string;
@@ -20,7 +20,7 @@ type Props = {
 export const BidActionSheet: FC<Props> = ({ status, open, setOpen, bidId }) => {
   return (
     <Sheet open={open} onOpenChange={(val) => setOpen(val)}>
-      <SheetContent>
+      <SheetContent className={`w-full overflow-y-scroll sm:max-w-lg`}>
         <SheetTitle>Action</SheetTitle>
         <SheetDescription>
           Take action on this bid and this cannot be undo once submitted

@@ -8,7 +8,7 @@ import { useDashboardQuery } from "@/queries/dashboard.queries";
 import { SignupTrend } from "./-components/signup-trend";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { BidStats } from "./bids/_components/bid-status";
+import { BidStats } from "./bids/_components/bid-stats";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();

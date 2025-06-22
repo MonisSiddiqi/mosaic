@@ -27,11 +27,36 @@ import { useVendorRegisterMutation } from "@/queries/auth.queries";
 import { OtpType } from "@/apis/auth";
 import { UserRole } from "@/apis/users";
 import { useAuth } from "@/hooks/use-auth";
+import ServiceDistance from "./service-distance";
 
-const formSchema = z
+import validator from "validator";
+import BudgetPreferenceField from "./budget-preference-field";
+import { Separator } from "@/components/ui/separator";
+
+export const formSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email({ message: "Please enter a valid email address." }),
+    countryCode: z.string().min(1, { message: "Dial code is required." }),
+    phone: z.string().refine(
+      (val) => {
+        if (validator.isMobilePhone(val)) {
+          return true;
+        } else return false;
+      },
+      { message: "Please enter a valid phone number." },
+    ),
+    serviceDistance: z
+      .string()
+      .min(1, "Service distance is required")
+      .refine((val) => !isNaN(Number(val)) && Number(val) >= 50, {
+        message: "Please enter a valid distance greater than or equal to 50 km",
+      })
+      .refine((val) => Number(val) <= 20000, {
+        message:
+          "Please enter a valid distance less than or equal to 20,000 km",
+      }),
+    budgetPreference: z.number().default(5),
     line1: z.string().min(1, "Line 1 is required."),
     line2: z.string().optional(),
     country: z.string().min(1, "Country is required."),
@@ -66,35 +91,35 @@ const formSchema = z
       if (!data.officeLine1) {
         ctx.addIssue({
           path: ["officeLine1"],
-          message: "Office line 1 is required.",
+          message: "Line 1 is required.",
           code: z.ZodIssueCode.custom,
         });
       }
       if (!data.officeCountry) {
         ctx.addIssue({
           path: ["officeCountry"],
-          message: "Office country is required.",
+          message: "Country is required.",
           code: z.ZodIssueCode.custom,
         });
       }
       if (!data.officeState) {
         ctx.addIssue({
           path: ["officeState"],
-          message: "Office state is required.",
+          message: "State is required.",
           code: z.ZodIssueCode.custom,
         });
       }
       if (!data.officeCity) {
         ctx.addIssue({
           path: ["officeCity"],
-          message: "Office city is required.",
+          message: "City is required.",
           code: z.ZodIssueCode.custom,
         });
       }
       if (!data.officePostalCode) {
         ctx.addIssue({
           path: ["officePostalCode"],
-          message: "Office postal code is required.",
+          message: "Postal code is required.",
           code: z.ZodIssueCode.custom,
         });
       }
@@ -105,11 +130,14 @@ type Props = {
   className?: string;
 };
 export const VendorRegisterForm: FC<Props> = ({ className }) => {
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
+      countryCode: "",
+      phone: "",
       password: "",
       confirmPassword: "",
       line1: "",
@@ -125,6 +153,8 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
       officeCity: "",
       officePostalCode: "",
       sameAsAddress: false,
+      serviceDistance: "100",
+      budgetPreference: 5,
     },
   });
 
@@ -186,7 +216,11 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await mutation.mutateAsync(values);
+      await mutation.mutateAsync({
+        ...values,
+        serviceDistance: Number(values.serviceDistance),
+        phone: values.countryCode + values.phone?.trim().replace(/^0+/, ""),
+      });
 
       toast({
         variant: "success",
@@ -211,7 +245,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
         className={cn("", className)}
       >
         <div className="grid w-full items-center gap-6">
-          <div className="grid w-full grid-cols-2 gap-4 bg-white p-6">
+          <div className="grid w-full gap-4 bg-white p-6 md:grid-cols-2">
             <div className="md:col-span-2">
               <p>Details</p>
             </div>
@@ -288,6 +322,60 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 </FormItem>
               )}
             />
+
+            <div className="flex items-baseline">
+              <FormField
+                control={form.control}
+                name="countryCode"
+                render={({ field }) => (
+                  <FormItem className="flex max-h-10 flex-col">
+                    <FormLabel className="mb-1">Dial Code</FormLabel>
+                    <FormControl>
+                      <Combobox
+                        data={[{ name: "USA", dialCode: "+1" }].map((item) => ({
+                          label: `${item.dialCode} - ${item.name}`,
+                          value: item.dialCode,
+                        }))}
+                        className="w-28 min-w-28 max-w-28 border border-gray-400 bg-transparent"
+                        fieldName="countryCode"
+                        value={field.value as string}
+                        open={open}
+                        setOpen={setOpen}
+                        setValue={field.onChange}
+                        placeHolder="Dial code"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Your phone number"
+                        autoComplete="phone"
+                        className="w-full border-gray-400 focus:outline-none"
+                        {...field}
+                        onBlur={() => {
+                          if (field.value) {
+                            field.onChange(
+                              field.value.trim().replace(/^0+/, ""),
+                            );
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           <div className="grid gap-7 bg-white p-6 md:grid-cols-2">
@@ -429,10 +517,13 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                         data={
                           cities
                             .find((item) => item.name === form.watch("city"))
-                            ?.postalCodes.map((item) => ({
-                              label: item,
-                              value: item,
-                            })) ?? []
+                            ?.postalCodes.map(
+                              (item) =>
+                                ({
+                                  label: item,
+                                  value: item,
+                                }) as { label: string; value: string },
+                            ) ?? []
                         }
                         open={openPostalCode}
                         setOpen={setOpenPostalCode}
@@ -460,7 +551,6 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               />
               <label htmlFor="sameAsAddress">Same as Address</label>
             </div>
-
             {!form.watch("sameAsAddress") && (
               <>
                 <FormField
@@ -468,10 +558,10 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officeLine1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office Line 1</FormLabel>
+                      <FormLabel>Line 1</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter office address line 1"
+                          placeholder="Enter address line 1"
                           {...field}
                           disabled={sameAsAddress}
                         />
@@ -486,10 +576,10 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officeLine2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office Line 2 (Optional)</FormLabel>
+                      <FormLabel>Line 2 (Optional)</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter office address line 2"
+                          placeholder="Enter address line 2"
                           {...field}
                           disabled={sameAsAddress}
                         />
@@ -504,7 +594,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officeCountry"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office Country</FormLabel>
+                      <FormLabel>Country</FormLabel>
                       <FormControl>
                         <div>
                           <Combobox
@@ -516,7 +606,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                             setOpen={setOpenOfficeCountry}
                             value={field.value as string}
                             setValue={field.onChange}
-                            fieldName="Office Country"
+                            fieldName="Country"
                           />
                         </div>
                       </FormControl>
@@ -530,7 +620,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officeState"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office State</FormLabel>
+                      <FormLabel>State</FormLabel>
                       <FormControl>
                         <div>
                           <Combobox
@@ -552,7 +642,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                             setOpen={setOpenOfficeState}
                             value={field.value as string}
                             setValue={field.onChange}
-                            fieldName="Office State"
+                            fieldName="State"
                           />
                         </div>
                       </FormControl>
@@ -566,7 +656,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officeCity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office City</FormLabel>
+                      <FormLabel>City</FormLabel>
                       <FormControl>
                         <div>
                           <Combobox
@@ -588,7 +678,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                             setOpen={setOpenOfficeCity}
                             value={field.value as string}
                             setValue={field.onChange}
-                            fieldName="Office city"
+                            fieldName="City"
                           />
                         </div>
                       </FormControl>
@@ -602,7 +692,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                   name="officePostalCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Office Postal Code</FormLabel>
+                      <FormLabel>Postal Code</FormLabel>
                       <FormControl>
                         <div>
                           <Combobox
@@ -612,10 +702,13 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                                   (item) =>
                                     item.name === form.watch("officeCity"),
                                 )
-                                ?.postalCodes.map((item) => ({
-                                  label: item,
-                                  value: item,
-                                })) ?? []
+                                ?.postalCodes.map(
+                                  (item) =>
+                                    ({
+                                      label: item,
+                                      value: item,
+                                    }) as { label: string; value: string },
+                                ) ?? []
                             }
                             open={openOfficePostalCode}
                             setOpen={setOpenOfficePostalCode}
@@ -632,6 +725,10 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               </>
             )}
           </div>
+
+          <ServiceDistance />
+
+          <BudgetPreferenceField />
 
           <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
             <Button

@@ -26,6 +26,8 @@ type Props = {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   fieldName: string;
+  placeHolder?: string;
+  className?: string;
 };
 
 export const Combobox: React.FC<Props> = ({
@@ -35,6 +37,8 @@ export const Combobox: React.FC<Props> = ({
   value,
   setValue,
   fieldName,
+  placeHolder,
+  className,
 }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,18 +47,20 @@ export const Combobox: React.FC<Props> = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full min-w-[200px] justify-between"
+          className={cn("w-full min-w-[200px] justify-between", className)}
         >
           {value
             ? data.find((item) => item.value === value)?.label
-            : `Select ${fieldName}...`}
+            : placeHolder
+              ? placeHolder
+              : `Select ${fieldName}...`}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput
-            placeholder={`Search ${fieldName}...`}
+            placeholder={placeHolder ? placeHolder : `Search ${fieldName}...`}
             className="h-9"
           />
           <CommandList>

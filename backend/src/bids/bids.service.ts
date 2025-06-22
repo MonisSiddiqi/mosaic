@@ -226,6 +226,33 @@ export class BidsService implements OnModuleInit {
     }
   }
 
+  async bidsStatistics(authUser: User) {
+    const totolBids = await this.prismaService.bid.count({
+      where: { vendorId: authUser.id },
+    });
+
+    const pendingBids = await this.prismaService.bid.count({
+      where: { vendorId: authUser.id, vendorStatus: 'PENDING' },
+    });
+
+    const acceptedBids = await this.prismaService.bid.count({
+      where: { vendorId: authUser.id, vendorStatus: 'ACCEPTED' },
+    });
+
+    const rejectedBids = await this.prismaService.bid.count({
+      where: { vendorId: authUser.id, vendorStatus: 'REJECTED' },
+    });
+
+    const data = {
+      totolBids,
+      pendingBids,
+      acceptedBids,
+      rejectedBids,
+    };
+
+    return new ApiResponse(data);
+  }
+
   @Cron(CronExpression.EVERY_30_MINUTES)
   async bidInvite() {
     this.logger.debug('Running bid invite cron job');

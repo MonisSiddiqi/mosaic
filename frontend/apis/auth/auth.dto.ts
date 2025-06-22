@@ -7,6 +7,7 @@ export type LoginDto = {
 
 export type RegisterDto = LoginDto & {
   name: string;
+  phone: string;
 };
 
 export type VendorRegisterDto = RegisterDto & {
@@ -17,6 +18,8 @@ export type VendorRegisterDto = RegisterDto & {
   city: string;
   postalCode: string;
   sameAsAddress: boolean;
+  serviceDistance: number;
+  budgetPreference: number;
 
   // These fields are required only if sameAsAddress is false
   officeLine1?: string;

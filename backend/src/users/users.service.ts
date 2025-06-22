@@ -14,16 +14,6 @@ import { GetLoginHistoryDto } from './dto/get-login-history-dto';
 
 @Injectable()
 export class UsersService {
-  userSelect: Prisma.UserSelect = {
-    id: true,
-    email: true,
-    isActive: true,
-    isEmailVerified: true,
-    role: true,
-    createdAt: true,
-    updatedAt: true,
-    UserProfile: true,
-  };
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -85,7 +75,12 @@ export class UsersService {
 
     const users = await this.prismaService.user.findMany({
       where: userWhereInput,
-      select: this.userSelect,
+      omit: {
+        password: true,
+      },
+      include: {
+        UserProfile: true,
+      },
       orderBy: {
         [sortField]: sortValue,
       },
@@ -105,7 +100,12 @@ export class UsersService {
       where: {
         id,
       },
-      select: this.userSelect,
+      include: {
+        UserProfile: true,
+      },
+      omit: {
+        password: true,
+      },
     });
 
     if (!user) {

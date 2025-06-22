@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mosaic Georgia",
-  description: "Your one stop solution for all home ",
+  title: "Crafty Future",
+  description: "Real jobs. Trusted pros. No middlemen.",
 };
 
 export default function RootLayout({

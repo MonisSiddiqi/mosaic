@@ -23,6 +23,13 @@ export type GetAllBidsApiResponse = {
   list: GetAllBidsApiResponseItem[];
 };
 
+export type GetBidsStatisticsApiResponse = {
+  totolBids: number;
+  pendingBids: number;
+  acceptedBids: number;
+  rejectedBids: number;
+};
+
 export enum BidStatus {
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",

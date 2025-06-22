@@ -12,14 +12,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleCheckBigIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
+import {
+  CircleCheckBigIcon,
+  EyeIcon,
+  Loader2Icon,
+  SendIcon,
+  XIcon,
+} from "lucide-react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ActionWarning } from "../action-warning";
 import { useBidActionMutation } from "@/queries/bids.queries";
 import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import SiteVisitDetails from "../site-visit-details";
 
 type Props = {
   bidId: string;
@@ -64,6 +71,8 @@ const formSchema = z
   });
 
 export const BidActionForm: FC<Props> = ({ status, bidId, setOpen }) => {
+  const [siteVisit, setSiteVisit] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -118,7 +127,10 @@ export const BidActionForm: FC<Props> = ({ status, bidId, setOpen }) => {
                     variant={"secondary"}
                     type="button"
                     className={`gap-2 ${field.value === BidStatus.ACCEPTED ? "bg-green-600 text-white hover:bg-green-600 hover:text-white" : "border border-green-500 bg-white text-green-600 hover:bg-green-600 hover:text-white"}`}
-                    onClick={() => field.onChange(BidStatus.ACCEPTED)}
+                    onClick={() => {
+                      field.onChange(BidStatus.ACCEPTED);
+                      setSiteVisit(false);
+                    }}
                   >
                     <CircleCheckBigIcon /> Accept
                   </Button>
@@ -127,9 +139,25 @@ export const BidActionForm: FC<Props> = ({ status, bidId, setOpen }) => {
                     variant={"secondary"}
                     type="button"
                     className={`gap-2 ${field.value === BidStatus.REJECTED ? "bg-red-500 text-white hover:bg-red-500 hover:text-white" : "border border-red-500 bg-white text-red-600 hover:bg-red-500 hover:text-white"}`}
-                    onClick={() => field.onChange(BidStatus.REJECTED)}
+                    onClick={() => {
+                      field.onChange(BidStatus.REJECTED);
+                      setSiteVisit(false);
+                    }}
                   >
                     <XIcon /> Rejected
+                  </Button>
+
+                  <Button
+                    variant={"secondary"}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSiteVisit(!siteVisit);
+                      field.onChange(BidStatus.PENDING);
+                    }}
+                    className={`gap-2 ${siteVisit ? "bg-cyan-500 text-white hover:bg-cyan-500 hover:text-white" : "border border-cyan-500 bg-white text-cyan-600 hover:bg-cyan-500 hover:text-white"}`}
+                  >
+                    <EyeIcon /> Site Visit
                   </Button>
                 </div>
               </FormControl>
@@ -137,75 +165,95 @@ export const BidActionForm: FC<Props> = ({ status, bidId, setOpen }) => {
             </FormItem>
           )}
         />
+        {siteVisit && form.watch("status") === BidStatus.PENDING && (
+          <SiteVisitDetails
+            user={{
+              email: "sample@gamil.com",
+              name: "Vishal",
+              phone: "+123456789",
+              image: null,
+            }}
+            projectName="Home Constructions"
+          />
+        )}
 
-        {form.watch("status") === BidStatus.ACCEPTED && (
+        {!siteVisit && (
           <>
-            <FormField
-              control={form.control}
-              name="proposalMessage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Proposal Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Enter your proposal message"
-                      className="h-24"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    Tell your proposal message to the home owners
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="attachment"
-              render={({}) => (
-                <FormItem>
-                  <FormLabel>Attach your propsal documents</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      placeholder="Attach your file"
-                      onChange={(e) =>
-                        form.setValue("attachment", e.target.files?.[0], {
-                          shouldValidate: true,
-                        })
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    Attach the related document (.pdf) you want to show to home
-                    owner
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-          </>
-        )}
-
-        {form.watch("status") !== "PENDING" && (
-          <ActionWarning status={form.watch("status")} />
-        )}
-
-        <div className="mt-2 flex justify-end">
-          <Button disabled={mutation.isPending} className="gap-2">
-            {mutation.isPending ? (
+            {form.watch("status") === BidStatus.ACCEPTED && (
               <>
-                <Loader2Icon className="size-5 animate-spin" /> Submitting...{" "}
-              </>
-            ) : (
-              <>
-                <SendIcon className="size-5" /> Submit
+                <FormField
+                  control={form.control}
+                  name="proposalMessage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Proposal Message</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Enter your proposal message"
+                          className="h-24"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Tell your proposal message to the home owners
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="attachment"
+                  render={({}) => (
+                    <FormItem>
+                      <FormLabel>Attach your propsal documents</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          placeholder="Attach your file"
+                          onChange={(e) =>
+                            form.setValue("attachment", e.target.files?.[0], {
+                              shouldValidate: true,
+                            })
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Attach the related document (.pdf) you want to show to
+                        home owner
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
               </>
             )}
-          </Button>
-        </div>
+
+            {form.watch("status") !== "PENDING" && !siteVisit && (
+              <ActionWarning status={form.watch("status")} />
+            )}
+
+            {(form.watch("status") === BidStatus.ACCEPTED ||
+              form.watch("status") === BidStatus.REJECTED) &&
+              !siteVisit && (
+                <div className="mt-2 flex justify-end">
+                  <Button disabled={mutation.isPending} className="gap-2">
+                    {mutation.isPending ? (
+                      <>
+                        <Loader2Icon className="size-5 animate-spin" />{" "}
+                        Submitting...{" "}
+                      </>
+                    ) : (
+                      <>
+                        <SendIcon className="size-5" /> Submit
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+          </>
+        )}
       </form>
     </Form>
   );

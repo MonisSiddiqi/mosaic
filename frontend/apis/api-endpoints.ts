@@ -64,5 +64,6 @@ export const apiEndpoints = {
   bids: {
     getAll: `/api/v1/bids`,
     action: `/api/v1/bids/action`,
+    statistics: `/api/v1/bids/statistics`,
   },
 };

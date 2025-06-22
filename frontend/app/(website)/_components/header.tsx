@@ -24,10 +24,12 @@ const navigationItems = [
   { name: "Services", href: "/services" },
   { name: "My Projects", href: "/my-projects" },
   { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: "Blogs", href: "/blogs" },
+
+  // { name: "Contact", href: "/contact" },
 ];
 
-export const Header = () => {
+export const Header = ({ className }: { className?: string }) => {
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();
@@ -37,8 +39,8 @@ export const Header = () => {
   }, [pathname]);
 
   return (
-    <header className="container mx-auto py-2">
-      <div className="flex items-center justify-between px-4">
+    <header className={cn("container mx-auto", className)}>
+      <div className="flex h-16 items-center justify-between px-4">
         <Link href="/">
           <Image
             className="rounded-md fill-white"

@@ -33,7 +33,7 @@ export class AuthService {
   logger = new Logger(AuthService.name);
 
   async register(registerDto: RegisterDto): Promise<ApiResponse> {
-    const { name, email, password } = registerDto;
+    const { name, email, password, phone } = registerDto;
 
     const isExist = await this.prismaService.user.findUnique({
       where: {
@@ -50,6 +50,22 @@ export class AuthService {
       );
     }
 
+    //check if phone is alredy taken by someone else
+    const isPhoneExist = await this.prismaService.user.findFirst({
+      where: {
+        phone,
+        email: {
+          not: email,
+        },
+      },
+    });
+
+    if (isPhoneExist) {
+      throw new UnprocessableEntityException(
+        `Phone number (${phone}) is already taken by another user.`,
+      );
+    }
+
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -59,6 +75,7 @@ export class AuthService {
       },
       update: {
         password: await this.createPassword(password),
+        phone,
         UserProfile: {
           update: {
             name,
@@ -67,6 +84,7 @@ export class AuthService {
       },
       create: {
         email,
+        phone,
         password: await this.createPassword(password),
         UserProfile: {
           create: {
@@ -123,6 +141,9 @@ export class AuthService {
       officeState,
       officeCity,
       officePostalCode,
+      serviceDistance,
+      phone,
+      budgetPreference,
     } = vendorRegisterDto;
 
     const isExist = await this.prismaService.user.findUnique({
@@ -140,6 +161,22 @@ export class AuthService {
       );
     }
 
+    //check if phone is alredy taken by someone else
+    const isPhoneExist = await this.prismaService.user.findFirst({
+      where: {
+        phone,
+        email: {
+          not: email,
+        },
+      },
+    });
+
+    if (isPhoneExist) {
+      throw new UnprocessableEntityException(
+        `Phone number (${phone}) is already taken by another user.`,
+      );
+    }
+
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -150,6 +187,9 @@ export class AuthService {
       update: {
         password: await this.createPassword(password),
         role: 'VENDOR',
+        phone,
+        budgetPreference,
+        serviceDistance,
         UserProfile: {
           update: {
             name,
@@ -185,8 +225,11 @@ export class AuthService {
       },
       create: {
         email,
+        phone,
         password: await this.createPassword(password),
         role: 'VENDOR',
+        serviceDistance,
+        budgetPreference,
         UserProfile: {
           create: {
             name,

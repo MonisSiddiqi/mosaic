@@ -32,6 +32,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsController } from './notifications/notifications.controller';
 import { PaymentsModule } from './payments/payments.module';
 import { PaymentsController } from './payments/payments.controller';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { PaymentsController } from './payments/payments.controller';
     BidsModule,
     NotificationsModule,
     PaymentsModule,
+    BlogsModule,
   ],
   controllers: [AppController],
   providers: [

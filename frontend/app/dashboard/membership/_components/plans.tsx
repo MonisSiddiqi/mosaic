@@ -140,15 +140,6 @@ export default function Plans() {
                     <span className="ml-1 text-muted-foreground">/month</span>
                   </div>
                   <ul className="space-y-3">
-                    {index > 0 && (
-                      <>
-                        <li className="flex">
-                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
-                          All {plans[index - 1].name} Service Included
-                        </li>
-                      </>
-                    )}
-
                     {plan.Service.map((service, index) => (
                       <li key={index} className="flex items-center">
                         <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />
@@ -199,14 +190,6 @@ export default function Plans() {
                     <span className="ml-1 text-muted-foreground">/year</span>
                   </div>
                   <ul className="space-y-3">
-                    {index > 0 && (
-                      <>
-                        <li className="flex">
-                          <CheckCircle2Icon className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />{" "}
-                          All {plans[index - 1].name} Service Included
-                        </li>
-                      </>
-                    )}
                     {plan.Service.map((service, index) => (
                       <li key={index} className="flex items-center">
                         <Check className="mr-2 h-5 w-5 flex-shrink-0 text-primary" />

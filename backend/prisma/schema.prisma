@@ -14,30 +14,35 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid()) @db.VarChar(36)
-  email           String           @unique
-  password        String
-  isEmailVerified Boolean          @default(false)
-  isActive        Boolean          @default(true)
-  role            UserRole         @default(USER)
-  sameAsAddress   Boolean          @default(false)
-  updatedAt       DateTime         @updatedAt @db.Timestamptz
-  createdAt       DateTime         @default(now()) @db.Timestamptz
-  UserProfile     UserProfile?
-  projects        Project[]
-  reviews         Review[]
-  vendorTags      VendorTag[]
-  vendorServices  VendorService[]
-  Address         Address?
-  Testimonial     Testimonial[]
-  Otp             Otp?
-  LoginHistory    LoginHistory[]
-  Bid             Bid[]
-  ProjectUpdate   ProjectUpdate[]
-  BusinessAddress BusinessAddress?
-  Notification    Notification[]
-  UserPlan        UserPlan[]
-  UserCoupon      UserCoupon[]
+  id               String           @id @default(uuid()) @db.VarChar(36)
+  email            String           @unique
+  password         String
+  isEmailVerified  Boolean          @default(false)
+  phone            String?          @unique
+  isPhoneVerified  Boolean          @default(false)
+  isActive         Boolean          @default(true)
+  role             UserRole         @default(USER)
+  sameAsAddress    Boolean          @default(false)
+  serviceDistance  Int              @default(100)
+  budgetPreference Int              @default(5) // from 0 to 10 higher value means high quality lower value means affordable 5 means no preference
+  updatedAt        DateTime         @updatedAt @db.Timestamptz
+  createdAt        DateTime         @default(now()) @db.Timestamptz
+  UserProfile      UserProfile?
+  projects         Project[]
+  reviews          Review[]
+  vendorTags       VendorTag[]
+  vendorServices   VendorService[]
+  Address          Address?
+  Testimonial      Testimonial[]
+  Otp              Otp?
+  LoginHistory     LoginHistory[]
+  Bid              Bid[]
+  ProjectUpdate    ProjectUpdate[]
+  BusinessAddress  BusinessAddress?
+  Notification     Notification[]
+  UserPlan         UserPlan[]
+  UserCoupon       UserCoupon[]
+  Blog             Blog[]
 }
 
 model UserProfile {
@@ -181,6 +186,18 @@ model Tag {
   VendorTag VendorTag[]
 
   @@index([serviceId])
+}
+
+model Blog {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId    String   @db.VarChar(36)
+  imageUrl    String
+  title       String   @unique
+  description String
+  content     String
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+  createdAt   DateTime @default(now()) @db.Timestamptz
 }
 
 model ProjectTag {

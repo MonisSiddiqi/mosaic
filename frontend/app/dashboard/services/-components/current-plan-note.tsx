@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Crown, ArrowRight } from "lucide-react";
+import { FC } from "react";
+import { Plan } from "@/apis/payments";
 
-export const CurrentPlanNote = () => {
+export const CurrentPlanNote: FC<Plan> = (plan) => {
   return (
-    <div className="relative mb-10 max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div className="relative max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-blue-50 to-purple-100 dark:from-blue-950/20 dark:via-transparent dark:to-purple-950/10" />
 
       <div className="relative p-6">
@@ -17,7 +19,7 @@ export const CurrentPlanNote = () => {
               Current Plan
             </p>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Skilled Trades
+              {plan.name}
             </h3>
           </div>
         </div>

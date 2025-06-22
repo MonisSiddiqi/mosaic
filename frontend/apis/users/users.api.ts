@@ -11,7 +11,6 @@ import {
   ProfileApiResponse,
   User,
 } from "@/apis/users";
-import { headers } from "next/headers";
 import { Address } from "../addresses";
 
 export const getMyProfileApi = async (): Promise<ProfileApiResponse> => {

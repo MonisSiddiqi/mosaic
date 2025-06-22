@@ -18,7 +18,8 @@ export const BottomCta = () => {
         <div className="text-center">
           <h2 className="text-3xl font-bold">Ready to Transform Your Home?</h2>
           <p className="text-lg">
-            Discover the power of mosaic and create a beautiful, modern home.
+            Discover the power of Crafty Future and create a beautiful, modern
+            home.
           </p>
           <Button className="mt-4 rounded-md px-8 py-3 text-white">
             <Link href={"/my-projects/add"}> Start Your Project</Link>

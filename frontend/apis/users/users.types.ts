@@ -8,8 +8,13 @@ export type LoginResponse = {
 export type User = {
   id: string;
   email: string;
-  role: UserRole;
+  isEmailVerified: boolean;
+  phone: string | null;
+  isPhoneVerified: boolean;
   isActive: boolean;
+  role: UserRole;
+  sameAsAddress: boolean;
+  serviceDistance: number;
   updatedAt: string;
   createdAt: string;
 };

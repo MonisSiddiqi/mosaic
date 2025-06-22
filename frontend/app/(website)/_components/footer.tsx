@@ -1,3 +1,4 @@
+import { ContactDetails } from "@/app/-components/contact-details";
 import Link from "next/link";
 
 export function Footer() {
@@ -7,11 +8,12 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Column */}
           <div>
-            <h3 className="mb-4 font-semibold text-white">MOSAIC</h3>
+            <h3 className="mb-4 font-semibold text-white">Crafty Future</h3>
             <p className="text-sm leading-relaxed">
               Connecting homeowners with trusted professionals for all your home
               improvement needs.
             </p>
+            <ContactDetails className="dark mt-4 bg-transparent p-0" />
           </div>
 
           {/* Quick Links */}
@@ -35,14 +37,7 @@ export function Footer() {
                   About Us
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="transition-colors hover:text-white"
-                >
-                  Contact
-                </Link>
-              </li>
+
               <li>
                 <Link
                   href="/my-projects/add"
@@ -104,7 +99,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm">
-          © {new Date().getFullYear()} Mosaic. All rights reserved.
+          © {new Date().getFullYear()} Crafty Future. All rights reserved.
         </div>
       </div>
     </footer>
