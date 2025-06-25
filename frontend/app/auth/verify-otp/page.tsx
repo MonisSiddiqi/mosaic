@@ -10,6 +10,7 @@ import { BackButton } from "@/components/back-button";
 import { UserRole } from "@/apis/users";
 import { useAuth } from "@/hooks/use-auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect } from "react";
 
 export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
@@ -21,13 +22,15 @@ export default function VerifyOtpPage() {
 
   const router = useRouter();
 
-  if (isAuthenticated) {
-    if (user?.role === UserRole.USER) {
-      router.push("/");
-    } else {
-      router.push("/dashboard");
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === UserRole.USER) {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      }
     }
-  }
+  }, []);
 
   return (
     <ScrollArea className="flex h-full w-full flex-col gap-10 scroll-auto p-4">
