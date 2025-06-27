@@ -8,14 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { Phone, Mail, MapPin, AlertTriangle } from "lucide-react";
 
 export type UserDetails = {
   email: string;

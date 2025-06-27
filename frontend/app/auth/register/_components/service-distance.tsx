@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import * as z from "zod";
-import { MapPin, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -69,7 +67,7 @@ export default function ServiceDistance() {
 
                 <FormDescription className="text-sm text-gray-600">
                   Set the maximum distance in miles for service delivery <br />
-                  This determines how far from your location you're willing to
+                  This determines how far from your location you are willing to
                   provide services.
                 </FormDescription>
 

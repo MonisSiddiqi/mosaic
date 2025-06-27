@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCircle2Icon } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -118,7 +118,7 @@ export default function Plans() {
 
         <TabsContent value="monthly" className="space-y-7">
           <div className="grid gap-4 lg:grid-cols-3">
-            {plans?.map((plan, index) => (
+            {plans?.map((plan) => (
               <Card
                 key={plan.id}
                 className={`flex flex-col ${plan.isPopular ? "relative border-primary shadow-lg" : "border-border"}`}
@@ -166,7 +166,7 @@ export default function Plans() {
 
         <TabsContent value="yearly" className="space-y-8">
           <div className="grid gap-4 lg:grid-cols-3">
-            {plans?.map((plan, index) => (
+            {plans?.map((plan) => (
               <Card
                 key={plan.id}
                 className={`flex flex-col ${plan.isPopular ? "relative border-primary shadow-lg" : "border-border"}`}

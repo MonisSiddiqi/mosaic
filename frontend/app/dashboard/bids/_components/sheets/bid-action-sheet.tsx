@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { BidActionForm } from "../forms/bid-action-form";
 import { BidStatus } from "@/apis/bids";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 
 type Props = {
   bidId: string;

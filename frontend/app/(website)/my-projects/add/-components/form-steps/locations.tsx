@@ -221,8 +221,8 @@ export const Location = ({}) => {
                           cities
                             .find((item) => item.name === form.watch("city"))
                             ?.postalCodes.map((item) => ({
-                              label: item,
-                              value: item,
+                              label: String(item),
+                              value: String(item),
                             })) ?? []
                         }
                         open={openPostalCode}
