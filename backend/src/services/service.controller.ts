@@ -13,6 +13,7 @@ import {
   Query,
   ParseFilePipe,
   FileTypeValidator,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
 
@@ -40,12 +41,18 @@ export class ServicesController {
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: false,
-        //todo
-        // validators: [new FileTypeValidator({ fileType: 'image/svg' })],
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1 * 1024 * 1024 }), // 1 MB limit
+        ],
       }),
     )
     icon: Express.Multer.File,
   ) {
+    if (icon) {
+      if (icon.mimetype !== 'image/svg+xml') {
+        throw new Error('Only SVG files are allowed.');
+      }
+    }
     return this.servicesService.create(icon, createServiceDto);
   }
 
@@ -84,11 +91,19 @@ export class ServicesController {
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: false,
-        validators: [new FileTypeValidator({ fileType: 'image/svg' })],
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1 * 1024 * 1024 }), // 1 MB limit
+        ],
       }),
     )
     icon: Express.Multer.File,
   ) {
+    if (icon) {
+      if (icon.mimetype !== 'image/svg+xml') {
+        throw new Error('Only SVG files are allowed.');
+      }
+    }
+
     return this.servicesService.update(id, updateServiceDto, icon);
   }
 

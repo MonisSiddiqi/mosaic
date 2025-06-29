@@ -42,7 +42,6 @@ export class ServicesService {
     };
 
     if (icon) {
-      console.log('hello here');
       try {
         const iconUrl = await this.storageService.uploadSvgFile(
           icon.buffer,

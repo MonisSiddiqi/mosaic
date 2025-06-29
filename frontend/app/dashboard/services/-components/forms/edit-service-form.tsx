@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { RefreshCcwIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { FC } from "react";
+import { FC, useState } from "react";
+import Image from "next/image"; // Import Image for preview rendering
 
 import {
   Select,
@@ -64,6 +65,8 @@ export const EditServiceForm: FC<Props> = ({
 }) => {
   const queryClient = useQueryClient();
 
+  const [preview, setPreview] = useState<string | null>(null);
+
   const { data: plans } = useAllPlansQuery();
 
   const mutation = useEditServiceMutation(id);
@@ -111,13 +114,37 @@ export const EditServiceForm: FC<Props> = ({
                   <Input
                     type="file"
                     accept=".svg"
-                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      field.onChange(file);
+
+                      // Generate preview URL
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = () =>
+                          setPreview(reader.result as string);
+                        reader.readAsDataURL(file);
+                      } else {
+                        setPreview(null);
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormDescription>
                   Upload a .svg icon for the service.
                 </FormDescription>
                 <FormMessage />
+                {preview && (
+                  <div className="mt-2">
+                    <Image
+                      src={preview}
+                      alt="Icon Preview"
+                      width={100}
+                      height={100}
+                      className="rounded border"
+                    />
+                  </div>
+                )}
               </FormItem>
             )}
           />
@@ -171,7 +198,6 @@ export const EditServiceForm: FC<Props> = ({
                     defaultValue={planId || ""}
                     value={field.value}
                     onValueChange={(value) => {
-                      console.log(value, form.getValues("planId"));
                       if (value === "none") {
                         form.setValue("planId", "", { shouldValidate: true });
                       } else {

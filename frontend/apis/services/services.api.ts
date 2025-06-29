@@ -57,8 +57,6 @@ export const addServiceApi = async (
 export const editServiceApi = async (
   values: EditServiceDto,
 ): Promise<Service> => {
-  console.log("Hello 2");
-
   const body = {
     icon: values.icon,
     name: values.title,
@@ -66,18 +64,17 @@ export const editServiceApi = async (
     planId: values.planId,
   };
 
-  try {
-    const response = await httpClient.patch(
-      apiEndpoints.services.edit(values.id),
-      body,
-    );
+  const response = await httpClient.patch(
+    apiEndpoints.services.edit(values.id),
+    body,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
 
-    console.log("hello 3");
-    return response.data.result;
-  } catch (error) {
-    console.error("🔥 API error:", error);
-    throw error;
-  }
+  return response.data.result;
 };
 
 export const addVendorServiceApi = async (
