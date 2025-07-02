@@ -50,20 +50,22 @@ export class AuthService {
       );
     }
 
-    //check if phone is alredy taken by someone else
-    const isPhoneExist = await this.prismaService.user.findFirst({
-      where: {
-        phone,
-        email: {
-          not: email,
+    if (phone) {
+      //check if phone is alredy taken by someone else
+      const isPhoneExist = await this.prismaService.user.findFirst({
+        where: {
+          phone,
+          email: {
+            not: email,
+          },
         },
-      },
-    });
+      });
 
-    if (isPhoneExist) {
-      throw new UnprocessableEntityException(
-        `Phone number (${phone}) is already taken by another user.`,
-      );
+      if (isPhoneExist) {
+        throw new UnprocessableEntityException(
+          `Phone number (${phone}) is already taken by another user.`,
+        );
+      }
     }
 
     //create otp

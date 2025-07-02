@@ -56,7 +56,7 @@ export class MailService {
     const transporter = nodemailer.createTransport({
       host: this.configService.get<string>('smtp.host'),
       port: this.configService.get<number>('smtp.port'),
-      secure: true,
+      secure: false,
       auth: {
         user: this.configService.get<string>('smtp.user'),
         pass: this.configService.get<string>('smtp.password'),
@@ -66,6 +66,7 @@ export class MailService {
       },
     });
 
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent: ', info);
   }
 }
