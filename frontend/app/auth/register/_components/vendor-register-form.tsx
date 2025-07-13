@@ -1,6 +1,12 @@
 "use client";
 
-import { RefreshCcwIcon, LogInIcon, ExternalLinkIcon } from "lucide-react";
+import {
+  RefreshCcwIcon,
+  LogInIcon,
+  ExternalLinkIcon,
+  EyeIcon,
+  EyeOffIcon,
+} from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -169,6 +175,9 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
   const sameAsAddress = form.watch("sameAsAddress");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
     form.setValue("state", "");
     form.setValue("city", "");
@@ -253,10 +262,10 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter name"
+                      placeholder="Enter Full Name"
                       {...field}
                       className="border-gray-400 focus:outline-none"
                     />
@@ -288,15 +297,29 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter Password"
-                      className="border-gray-400 focus:outline-none"
-                      {...field}
-                    />
+                    <div className="relative flex items-center">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        className="border-gray-400 pr-10 focus:outline-none"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        size={"icon"}
+                        className={`absolute right-0.5 top-0.5 h-8 w-8 text-white ${showPassword ? "bg-red-800 hover:bg-red-900" : "bg-blue-900 hover:bg-blue-950"}`}
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="size-5" />
+                        ) : (
+                          <EyeOffIcon className="size-5" />
+                        )}
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -310,12 +333,26 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Confirm password"
-                      className="border-gray-400 focus:outline-none"
-                      {...field}
-                    />
+                    <div className="relative flex items-center">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Enter Password"
+                        className="border-gray-400 pr-10 focus:outline-none"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        size={"icon"}
+                        className={`absolute right-0.5 top-0.5 h-8 w-8 text-white ${showConfirmPassword ? "bg-red-800 hover:bg-red-900" : "bg-blue-900 hover:bg-blue-950"}`}
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeIcon className="size-5" />
+                        ) : (
+                          <EyeOffIcon className="size-5" />
+                        )}
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

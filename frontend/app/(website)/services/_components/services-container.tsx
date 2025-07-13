@@ -19,7 +19,7 @@ export const ServicesContainer = () => {
       <Search query={query} setQuery={setQuery} />
       {query && (
         <div className="mb-8 text-gray-400">
-          Search results for <span className="text-primary">"{query}"</span>
+          Search results for <span className="text-primary"> - {query}</span>
         </div>
       )}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
