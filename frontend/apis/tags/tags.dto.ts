@@ -10,6 +10,7 @@ export type TagsListDto = {
 
 export type AddTagDto = {
   name: string;
+  serviceId: string;
 };
 
-export type EditTagDto = { id: string } & AddTagDto;
+export type EditTagDto = { id: string } & Partial<AddTagDto>;

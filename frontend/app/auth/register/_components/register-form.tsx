@@ -174,10 +174,12 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                   <FormLabel className="mb-1">Dial Code</FormLabel>
                   <FormControl>
                     <Combobox
-                      data={[{ name: "USA", dialCode: "+1" }].map((item) => ({
-                        label: `${item.dialCode} - ${item.name}`,
-                        value: item.dialCode,
-                      }))}
+                      data={[{ name: "USA", dialCode: "+1", flag: "🇺🇸" }].map(
+                        (item) => ({
+                          label: `${item.dialCode} - ${item.name}(${item.flag})`,
+                          value: item.dialCode,
+                        }),
+                      )}
                       className="w-28 min-w-28 max-w-28 border border-gray-400 bg-transparent"
                       fieldName="countryCode"
                       value={field.value as string}
@@ -296,12 +298,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               Register as User
             </Button>
 
-            <Button
-              type="button"
-              className="mt-4 bg-brand-gold hover:bg-brand-gold/90"
-              asChild
-              size={"lg"}
-            >
+            <Button type="button" variant={"link"} asChild size={"lg"}>
               <Link href={"/auth/register/vendor"}>
                 {" "}
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />

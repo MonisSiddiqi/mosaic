@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   icon: z
@@ -34,8 +35,14 @@ const formSchema = z.object({
       message: "Only SVG files are allowed.",
     })
     .optional(),
-  title: z.string().min(2, "Title is required."),
-  description: z.string().min(5, "Description is required."),
+  title: z
+    .string()
+    .min(2, "Title is required.")
+    .max(50, "Title must be less than or equal to 50 characters."),
+  description: z
+    .string()
+    .min(5, "Description is required.")
+    .max(200, "Description must be less than or equal to 200 characters."),
   planId: z.string().optional(),
 });
 
@@ -58,10 +65,12 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
 
   const mutation = useAddServiceMutation();
   const { data: plans } = useAllPlansQuery();
+  const queryClient = useQueryClient();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await mutation.mutateAsync(values);
+      await queryClient.invalidateQueries({ queryKey: ["services"] });
       toast({
         variant: "success",
         title: "Service Added Successfully",
@@ -139,6 +148,9 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
                   />
                 </FormControl>
                 <FormDescription>
+                  <span className="block">
+                    {form.watch("title").length}/{50}
+                  </span>
                   Title that clearly describes the service.
                 </FormDescription>
                 <FormMessage />
@@ -161,6 +173,9 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
                   />
                 </FormControl>
                 <FormDescription>
+                  <span className="block">
+                    {form.watch("description").length}/{200}
+                  </span>
                   Explain the service in a concise and informative manner.
                 </FormDescription>
                 <FormMessage />

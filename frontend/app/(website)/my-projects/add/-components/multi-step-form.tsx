@@ -10,8 +10,26 @@ import { useAddProject } from "@/hooks/use-add-project";
 import { steps } from "@/context/add-project-context";
 import { Progress } from "@/components/ui/progress";
 
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { LoaderComponent } from "@/components/loader-component";
+
 export function MultiStepForm() {
   const { currentStep } = useAddProject();
+
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth?redirect=/my-projects");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return <LoaderComponent />;
+  }
 
   const renderStep = () => {
     switch (currentStep) {

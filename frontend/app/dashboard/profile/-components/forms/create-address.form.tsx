@@ -156,7 +156,7 @@ export const AddAddressForm: FC<Props> = ({ setOpen }) => {
                   <div>
                     <Combobox
                       data={countries.map((item) => ({
-                        label: item.name,
+                        label: `${item.code} - ${item.name}(${item.flag})`,
                         value: item.name,
                       }))}
                       open={countryOpen}

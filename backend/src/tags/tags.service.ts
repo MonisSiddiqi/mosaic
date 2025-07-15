@@ -95,6 +95,7 @@ export class TagsService {
             userId: authUser?.id,
           },
         },
+        service: true,
       },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy,

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tag } from "@/apis/tags";
+import { TagsListItem } from "@/apis/tags";
 import { DeleteTagAlert } from "@/app/dashboard/tags/_components/alerts/delete-tag-alert";
 import { EditTagSheet } from "../sheets/edit-tag-sheet";
 
@@ -24,7 +24,7 @@ export function TagsTableRowActions<TData>({
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
-  const tag = row.original as Tag;
+  const tag = row.original as TagsListItem;
 
   return (
     <>
@@ -56,6 +56,7 @@ export function TagsTableRowActions<TData>({
         id={tag.id}
         name={tag.name}
         open={openEdit}
+        serviceId={tag.service.id}
         setOpen={() => setOpenEdit(false)}
       />
     </>

@@ -1,3 +1,5 @@
+import { Service } from "../services";
+
 export type Tag = {
   id: string;
   name: string;
@@ -5,7 +7,9 @@ export type Tag = {
   updatedAt: string;
 };
 
-export type TagsListItem = Tag & { VendorTag: VendorTag[] };
+export type TagsListItem = Tag & { VendorTag: VendorTag[] } & {
+  service: Service;
+};
 
 export type GetAllTagsApiResponse = {
   total: number;

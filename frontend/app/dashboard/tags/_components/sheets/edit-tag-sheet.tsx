@@ -13,14 +13,21 @@ type Props = {
   id: string;
   name: string;
   open: boolean;
+  serviceId: string;
   setOpen: (value: boolean) => void;
 };
 
-export const EditTagSheet: FC<Props> = ({ id, setOpen, name, open }) => {
+export const EditTagSheet: FC<Props> = ({
+  id,
+  setOpen,
+  name,
+  open,
+  serviceId,
+}) => {
   const handleClose = (status: boolean) => setOpen(status);
 
   return (
-    <Sheet open={open} onOpenChange={() => setOpen(!open)}>
+    <Sheet open={open} onOpenChange={() => setOpen(!open)} modal={false}>
       <SheetContent className="overflow-auto">
         <SheetHeader>
           <SheetTitle>Edit Tag</SheetTitle>
@@ -28,7 +35,12 @@ export const EditTagSheet: FC<Props> = ({ id, setOpen, name, open }) => {
             Make Changes to this Tag. Click save when you are done.
           </SheetDescription>
         </SheetHeader>
-        <EditTagForm handleClose={handleClose} id={id} name={name} />
+        <EditTagForm
+          handleClose={handleClose}
+          id={id}
+          name={name}
+          serviceId={serviceId}
+        />
       </SheetContent>
     </Sheet>
   );

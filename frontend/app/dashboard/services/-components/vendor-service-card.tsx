@@ -56,7 +56,7 @@ export const VendorServiceCard: FC<Props> = ({ service }) => {
           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-md">
             {service.iconUrl ? (
               <Image
-                src={service.iconUrl || "/placeholder.svg"}
+                src={service.iconUrl}
                 alt={service.name}
                 width={64}
                 height={44}

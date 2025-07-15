@@ -2,10 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   logger = new Logger(PaymentsService.name);
 
@@ -69,6 +73,24 @@ export class PaymentsService {
       },
     });
 
-    return new ApiResponse(plan);
+    const plansWithSignedUrl = await Promise.all(
+      plan?.Plan.Service.map(async (service) => {
+        if (service.iconUrl) {
+          const signedUrl = await this.storageService.getSignedFileUrl(
+            service.iconUrl,
+          );
+          return {
+            ...service,
+            iconUrl: signedUrl,
+          };
+        }
+        return service;
+      }),
+    );
+
+    return new ApiResponse(
+      { ...plan, Plan: { ...plan.Plan, Service: plansWithSignedUrl } },
+      'Current plan fetched successfully',
+    );
   }
 }

@@ -5,7 +5,7 @@ import { Header } from "@/app/dashboard/-components/header";
 import { notFound, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function RootLayout({
   children,
@@ -14,6 +14,7 @@ export default function RootLayout({
 }>) {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
+  const [hideSidebar, setHideSidebar] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,9 +27,9 @@ export default function RootLayout({
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-gray-100">
-      <Sidebar />
+      <Sidebar hideSidebar={hideSidebar} setHideSidebar={setHideSidebar} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
+        <Header hideSidebar={hideSidebar} setHideSidebar={setHideSidebar} />
         <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 p-4">
           {children}
         </div>

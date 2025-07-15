@@ -6,7 +6,7 @@ export default function AddProjectPage() {
   return (
     <main className="bg-background-secondary">
       <PageHeader title="Add Project" />
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto min-h-screen px-4 py-10">
         <AddProjectContextProvider>
           <MultiStepForm />
         </AddProjectContextProvider>

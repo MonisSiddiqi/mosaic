@@ -1,7 +1,7 @@
 const COUNTRY_US = "United States";
 const STATE_MI = "Michigan";
 
-export const countries = [{ name: COUNTRY_US }];
+export const countries = [{ code: "+1", name: COUNTRY_US, flag: "🇺🇸" }];
 
 export const states = [{ name: STATE_MI, country: COUNTRY_US }];
 

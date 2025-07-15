@@ -123,8 +123,8 @@ export const Location = ({}) => {
                     <div>
                       <Combobox
                         data={countries.map((item) => ({
-                          label: item.name,
-                          value: item.name,
+                          label: `${item.code} - ${item.name}(${item.flag})`,
+                          value: item.code,
                         }))}
                         open={countryOpen}
                         setOpen={setCountryOpen}

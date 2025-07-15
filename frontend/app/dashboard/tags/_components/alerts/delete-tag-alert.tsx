@@ -33,11 +33,11 @@ export const DeleteTagAlert: FC<Props> = ({ id, open, setOpen }) => {
     try {
       await mutation.mutateAsync(id);
       await queryClient.invalidateQueries({ queryKey: ["tags"] });
-      setOpen(false);
       toast({
         title: "Tag Deleted Successfully",
-        className: "text-green-800 bg-green-200",
+        variant: "success",
       });
+      setOpen(false);
     } catch (e) {
       toast({
         variant: "destructive",
@@ -47,7 +47,7 @@ export const DeleteTagAlert: FC<Props> = ({ id, open, setOpen }) => {
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={() => setOpen(!open)}>
+    <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -57,7 +57,9 @@ export const DeleteTagAlert: FC<Props> = ({ id, open, setOpen }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={() => setOpen(false)}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction disabled={mutation.isPending} onClick={deleteTag}>
             {mutation.isPending && (
               <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />

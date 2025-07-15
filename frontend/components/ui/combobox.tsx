@@ -69,9 +69,16 @@ export const Combobox: React.FC<Props> = ({
               {data.map((item) => (
                 <CommandItem
                   key={item.value}
-                  value={item.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                  value={item.label}
+                  onSelect={(currentLabel) => {
+                    const selectedItem = data.find(
+                      (item) => item.label === currentLabel,
+                    );
+                    setValue(
+                      value === selectedItem?.value
+                        ? ""
+                        : (selectedItem?.value ?? ""),
+                    );
                     setOpen(false);
                   }}
                 >

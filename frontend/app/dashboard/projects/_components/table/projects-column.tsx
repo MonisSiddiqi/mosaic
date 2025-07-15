@@ -7,6 +7,7 @@ import { GetAllProjectApiResponseItem } from "@/apis/projects/projects.type";
 import { ProjectsTableRowActions } from "./projects-table-row-actions";
 import { cn, getStatusConfig } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 type BadgeVariant =
   | "pending"
@@ -23,14 +24,17 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Title"
-        className="my-1 ml-2"
-      />
+      <DataTableColumnHeader column={column} title="Title" className="ml-2" />
     ),
     cell: ({ row }) => {
-      return <div className="ml-2 mt-2">{row.original.title}</div>;
+      return (
+        <Link
+          className="ml-2 w-full py-2 hover:underline"
+          href={`/dashboard/projects/${row.id}`}
+        >
+          {row.original.title}
+        </Link>
+      );
     },
   },
 

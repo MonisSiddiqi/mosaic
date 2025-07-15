@@ -33,11 +33,11 @@ export const DeleteServiceAlert: FC<Props> = ({ id, open, setOpen }) => {
     try {
       await mutation.mutateAsync(id);
       await queryClient.invalidateQueries({ queryKey: ["services"] });
-      setOpen(false);
       toast({
         title: "Service Deleted Successfully",
-        className: "text-green-800 bg-green-200",
+        variant: "success",
       });
+      setOpen(false);
     } catch (e) {
       toast({
         variant: "destructive",

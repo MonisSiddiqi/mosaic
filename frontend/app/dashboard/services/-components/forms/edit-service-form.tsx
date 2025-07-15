@@ -38,13 +38,14 @@ const formSchema = z.object({
       message: "Only SVG files are allowed.",
     })
     .optional(),
-  title: z.string().min(2, "Title is required."),
+  title: z
+    .string()
+    .min(2, "Title is required.")
+    .max(50, "Title must be less than or equal to 50 characters."),
   description: z
     .string()
-    .min(
-      5,
-      "Description is required. Enter some long and meaningful description",
-    ),
+    .min(5, "Description is required.")
+    .max(200, "Description must be less than or equal to 200 characters."),
   planId: z.string().optional(),
 });
 
@@ -159,6 +160,9 @@ export const EditServiceForm: FC<Props> = ({
                   <Input placeholder="Enter title" {...field} />
                 </FormControl>
                 <FormDescription>
+                  <span className="block">
+                    {form.watch("title").length}/{50}
+                  </span>
                   Provide a short and descriptive title.
                 </FormDescription>
                 <FormMessage />
@@ -180,6 +184,9 @@ export const EditServiceForm: FC<Props> = ({
                   />
                 </FormControl>
                 <FormDescription>
+                  <span className="block">
+                    {form.watch("description").length}/{200}
+                  </span>
                   Give a detailed description of the service.
                 </FormDescription>
                 <FormMessage />

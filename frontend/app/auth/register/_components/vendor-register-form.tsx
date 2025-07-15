@@ -368,10 +368,12 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                     <FormLabel className="mb-1">Dial Code</FormLabel>
                     <FormControl>
                       <Combobox
-                        data={[{ name: "USA", dialCode: "+1" }].map((item) => ({
-                          label: `${item.dialCode} - ${item.name}`,
-                          value: item.dialCode,
-                        }))}
+                        data={[{ name: "USA", dialCode: "+1", flag: "🇺🇸" }].map(
+                          (item) => ({
+                            label: `${item.dialCode} - ${item.name}(${item.flag})`,
+                            value: item.dialCode,
+                          }),
+                        )}
                         className="w-28 min-w-28 max-w-28 border border-gray-400 bg-transparent"
                         fieldName="countryCode"
                         value={field.value as string}
@@ -456,7 +458,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                     <div>
                       <Combobox
                         data={countries.map((item) => ({
-                          label: item.name,
+                          label: `${item.code} - ${item.name}(${item.flag})`,
                           value: item.name,
                         }))}
                         open={countryOpen}
@@ -635,7 +637,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                         <div>
                           <Combobox
                             data={countries.map((item) => ({
-                              label: item.name,
+                              label: `${item.code} - ${item.name}(${item.flag})`,
                               value: item.name,
                             }))}
                             open={openOfficeCountry}
@@ -766,7 +768,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
           <BudgetPreferenceField />
 
-          <div className="grid gap-4 bg-white p-6 md:grid-cols-2">
+          <div className="grid gap-4 bg-white p-6">
             <Button
               disabled={form.formState.isSubmitting}
               type="submit"
@@ -779,15 +781,15 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               )}
               Register
             </Button>
-
-            <Button type="button" asChild variant={"outline"} size={"lg"}>
-              <Link href={"/auth/register"}>
-                {" "}
-                <ExternalLinkIcon className="mr-2 h-4 w-4" />
-                Register as User{" "}
-              </Link>
-            </Button>
           </div>
+
+          <Button type="button" asChild variant={"link"} size={"lg"}>
+            <Link href={"/auth/register"}>
+              {" "}
+              <ExternalLinkIcon className="mr-2 h-4 w-4" />
+              Register as User{" "}
+            </Link>
+          </Button>
         </div>
       </form>
     </Form>

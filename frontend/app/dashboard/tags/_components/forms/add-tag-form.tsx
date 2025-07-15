@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { RefreshCcwIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -17,9 +17,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useAddTagMutation } from "@/queries/tags.queries";
+import { useServicesQuery } from "@/queries/services.queries";
+import { Combobox } from "@/components/ui/combobox";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(2, "Title is required."),
+  serviceId: z.string().min(1, "Service is required."),
 });
 
 type Props = {
@@ -31,14 +35,22 @@ export const AddTagForm: FC<Props> = ({ toggleOpen }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      serviceId: "",
     },
   });
 
   const mutation = useAddTagMutation();
 
+  const { data: services } = useServicesQuery();
+  const [openService, setOpenService] = useState(false);
+  const queryClient = useQueryClient();
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await mutation.mutateAsync(values);
+
+      await queryClient.invalidateQueries({ queryKey: ["tags"] });
+
       toast({
         variant: "success",
         title: "Tag Added Successfully",
@@ -68,6 +80,35 @@ export const AddTagForm: FC<Props> = ({ toggleOpen }) => {
                   <Input
                     placeholder="Enter a short and clear title"
                     {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Name that clearly describes the tag.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="serviceId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service</FormLabel>
+                <FormControl>
+                  <Combobox
+                    data={
+                      services?.list.map((service) => ({
+                        value: service.id,
+                        label: service.name,
+                      })) || []
+                    }
+                    value={field.value}
+                    setValue={field.onChange}
+                    open={openService}
+                    setOpen={setOpenService}
+                    fieldName="Service"
                   />
                 </FormControl>
                 <FormDescription>

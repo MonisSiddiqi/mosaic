@@ -33,7 +33,7 @@ export const DeleteProjectUpdateAlert: FC<Props> = ({ id, open, setOpen }) => {
       setOpen(false);
       toast({
         title: "Update Deleted Successfully",
-        className: "text-green-800 bg-green-200",
+        variant: "success",
       });
     } catch (e) {
       toast({

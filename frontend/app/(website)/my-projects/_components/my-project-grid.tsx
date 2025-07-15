@@ -4,8 +4,20 @@ import { useProjectsQuery } from "@/queries/projects.queries";
 import { MyProjectsCard } from "./my-project-card";
 import { EmptyUI } from "@/components/empty-ui";
 
-export function ProjectsGrid() {
-  const { data: projects } = useProjectsQuery();
+type Props = {
+  query: string;
+  setQuery: (value: string) => void;
+};
+
+export function ProjectsGrid({ query }: Props) {
+  const { data: projects } = useProjectsQuery({
+    filter: [
+      {
+        id: "title",
+        value: query,
+      },
+    ],
+  });
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
