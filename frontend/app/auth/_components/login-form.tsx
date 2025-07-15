@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCcwIcon, LogInIcon } from "lucide-react";
+import { RefreshCcwIcon, LogInIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -33,6 +33,8 @@ type Props = {
 export const LoginForm: FC<Props> = ({ className }) => {
   const { login, user, isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const redirect = searchParams.get("redirect");
 
@@ -115,13 +117,26 @@ export const LoginForm: FC<Props> = ({ className }) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Your Password"
-                    autoComplete="password"
-                    type="password"
-                    className="border-gray-400 focus:outline-none"
-                    {...field}
-                  />
+                  <div className="relative flex items-center">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter Password"
+                      className="border-gray-400 pr-10 focus:outline-none"
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      size={"icon"}
+                      className={`absolute right-0.5 top-0.5 h-8 w-8 text-white ${showPassword ? "bg-red-800 hover:bg-red-900" : "bg-blue-900 hover:bg-blue-950"}`}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? (
+                        <EyeIcon className="size-5" />
+                      ) : (
+                        <EyeOffIcon className="size-5" />
+                      )}
+                    </Button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { getFileUrl, getInitials } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { LogOutIcon, UserCircle } from "lucide-react";
+import { Building2Icon, LogOutIcon, UserCircle } from "lucide-react";
 import { UserRole } from "@/apis/users";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -83,17 +83,26 @@ export function UserProfile() {
       </DropdownMenuContent>
     </DropdownMenu>
   ) : (
-    <div className="flex items-center gap-2">
-      <Button asChild variant={"secondary"}>
-        <Link href="/auth/register" className="text-sm font-medium">
-          Register
+    <div className="flex flex-col items-center gap-2 md:flex-row">
+      <Button
+        asChild
+        variant={"outline"}
+        className="border-brand-gold hover:text-brand-gold"
+      >
+        <Link href="/auth/register/vendor">
+          <Building2Icon /> Register as Vendor
         </Link>
       </Button>
-      <Button asChild>
-        <Link href="/auth" className="text-sm font-medium">
-          Login
-        </Link>
-      </Button>{" "}
+      <div className="-order-1 flex items-center gap-2 md:order-1">
+        <Button asChild variant={"outline"}>
+          <Link href="/auth/register">
+            <UserCircle /> Register
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link href="/auth">Login</Link>
+        </Button>
+      </div>
     </div>
   );
 }
