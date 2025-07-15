@@ -94,7 +94,11 @@ export function UserProfile() {
         </Link>
       </Button>
       <div className="-order-1 flex items-center gap-2 md:order-1">
-        <Button asChild variant={"outline"}>
+        <Button
+          asChild
+          variant={"outline"}
+          className="border-brand-primary hover:text-brand-primary"
+        >
           <Link href="/auth/register">
             <UserCircle /> Register
           </Link>
