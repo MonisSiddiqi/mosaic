@@ -21,7 +21,7 @@ type FormData = {
   serviceId?: string;
   budgetPreference?: number;
   preferenceMessage?: string;
-  tags?: string[];
+  tags?: { label: string; value: string; disabled?: boolean }[];
 
   line1?: string;
   line2?: string;

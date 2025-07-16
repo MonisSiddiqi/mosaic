@@ -193,7 +193,6 @@ export const AddServiceForm: FC<Props> = ({ toggleOpen }) => {
                   <Select
                     value={field.value}
                     onValueChange={(value) => {
-                      console.log(value, form.getValues("planId"));
                       if (value === "none") {
                         form.setValue("planId", "", { shouldValidate: true });
                       } else {

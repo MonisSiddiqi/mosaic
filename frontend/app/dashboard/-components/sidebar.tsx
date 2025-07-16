@@ -132,7 +132,6 @@ export function Sidebar({ hideSidebar, setHideSidebar }: Props) {
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log("Current Pathname:", pathname);
     setHideSidebar(true);
   }, [pathname]);
 

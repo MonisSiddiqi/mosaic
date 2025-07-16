@@ -561,5 +561,3 @@ export const tier3Services = [
   'Dumpster Service',
   'Signs & Large Installations',
 ];
-
-console.log(tier1Services.length + tier2Services.length + tier3Services.length);

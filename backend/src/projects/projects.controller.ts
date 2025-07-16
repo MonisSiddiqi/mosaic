@@ -14,6 +14,7 @@ import {
   FileTypeValidator,
   Patch,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -27,6 +28,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AddProjectUpdatesDto } from './dto/add-project-updates.dto';
 import { ProjectsUpdatesService } from './services/projects-updates.service';
 import { EditProjectUpdateDto } from './dto/edit-project-update.dto';
+import { extname } from 'path';
 
 @Controller('projects')
 export class ProjectsController {
@@ -44,7 +46,7 @@ export class ProjectsController {
       { name: 'sampleFiles', maxCount: 10 },
     ]),
   )
-  create(
+  async create(
     @Body() createProjectDto: CreateProjectDto,
     @GetUser() authUser: User,
     @UploadedFiles()
@@ -54,6 +56,29 @@ export class ProjectsController {
       throw new UnprocessableEntityException(
         'At least one project image or video is required',
       );
+    }
+
+    for (const file of [...(files.files || []), ...(files.sampleFiles || [])]) {
+      const isVideo = file.mimetype.startsWith('video/');
+      const isImage = file.mimetype.startsWith('image/');
+
+      if (isVideo) {
+        if (file.size > 20 * 1024 * 1024) {
+          throw new BadRequestException(
+            `Video file ${file.originalname} exceeds 20MB limit`,
+          );
+        }
+      } else if (isImage) {
+        if (file.size > 5 * 1024 * 1024) {
+          throw new BadRequestException(
+            `Image file ${file.originalname} exceeds 5MB limit`,
+          );
+        }
+      } else {
+        throw new BadRequestException(
+          `Invalid file type for ${file.originalname}. Only images and videos are allowed.`,
+        );
+      }
     }
 
     return this.projectsService.create(

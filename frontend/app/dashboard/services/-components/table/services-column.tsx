@@ -17,8 +17,6 @@ export const servicesColumns: ColumnDef<Service>[] = [
     cell: ({ row }) => {
       const icon = row.original.iconUrl;
 
-      console.log(icon);
-
       return (
         <div className="ml-2 mt-2">
           {icon ? (

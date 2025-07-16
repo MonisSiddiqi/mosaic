@@ -8,7 +8,7 @@ import {
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { writeFile } from 'fs-extra';
 import tmp from 'tmp-promise';
 import { readFileSync } from 'fs';

@@ -43,11 +43,7 @@ export const SiteMeasurementCard: React.FC<Props> = ({ measurement }) => {
         )}
         {description && (
           <div className="col-span-2 break-words text-sm text-gray-600">
-            <span className="font-medium">Description:</span> {description}{" "}
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque
-            illo, ipsam voluptatum recusandae amet ex expedita ratione ullam
-            unde alias veniam fuga, inventore aut voluptatibus rem dolores,
-            commodi id illum.
+            <span className="font-medium">Description:</span> {description}
           </div>
         )}
       </div>

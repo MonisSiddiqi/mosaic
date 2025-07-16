@@ -40,8 +40,6 @@ export const getAllUsersApi = async ({
 export const editProfileApi = async (
   values: EditProfileDto,
 ): Promise<EditProfileApiResponse> => {
-  console.log(values);
-
   const response = await httpClient.patch(
     apiEndpoints.users.editProfile,
     values,
@@ -54,13 +52,11 @@ export const editProfileApi = async (
 export const createAddressApi = async (
   createAddressDto: CreateAddressDto,
 ): Promise<Address> => {
-  console.log("I am here");
   const response = await httpClient.post(
     apiEndpoints.users.createAddress,
     createAddressDto,
   );
 
-  console.log("I am here as well");
   return response.data.result;
 };
 

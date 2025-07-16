@@ -292,7 +292,6 @@ export class UsersService {
   }
 
   async toggleActive(id: string) {
-    console.log('request received');
     const user = await this.prismaService.user.findFirst({
       where: {
         id,

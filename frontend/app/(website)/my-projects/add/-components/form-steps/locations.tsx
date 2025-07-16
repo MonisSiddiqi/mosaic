@@ -52,18 +52,24 @@ export const Location = ({}) => {
   });
 
   useEffect(() => {
-    form.setValue("state", "");
-    form.setValue("city", "");
-    form.setValue("postalCode", "");
+    if (formData.country !== form.watch("country")) {
+      form.setValue("state", "");
+      form.setValue("city", "");
+      form.setValue("postalCode", "");
+    }
   }, [form.watch("country")]);
 
   useEffect(() => {
-    form.setValue("city", "");
-    form.setValue("postalCode", "");
+    if (formData.state !== form.watch("state")) {
+      form.setValue("city", "");
+      form.setValue("postalCode", "");
+    }
   }, [form.watch("state")]);
 
   useEffect(() => {
-    form.setValue("postalCode", "");
+    if (formData.city !== form.watch("city")) {
+      form.setValue("postalCode", "");
+    }
   }, [form.watch("city")]);
 
   const onSubmit = async (values: z.infer<typeof locationSchema>) => {
@@ -124,7 +130,7 @@ export const Location = ({}) => {
                       <Combobox
                         data={countries.map((item) => ({
                           label: `${item.code} - ${item.name}(${item.flag})`,
-                          value: item.code,
+                          value: item.name,
                         }))}
                         open={countryOpen}
                         setOpen={setCountryOpen}

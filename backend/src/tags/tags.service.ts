@@ -65,7 +65,7 @@ export class TagsService {
       };
     }
 
-    if (serviceId) {
+    if (serviceId && serviceId.value) {
       const service = await this.prismaService.service.findUnique({
         where: {
           id: serviceId?.value,

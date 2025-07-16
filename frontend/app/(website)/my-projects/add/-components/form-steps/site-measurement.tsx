@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { PlusIcon, XIcon } from "lucide-react";
 import { useAddProject } from "@/hooks/use-add-project";
@@ -24,6 +24,10 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
+
+const MAX_VIDEO_SIZE = 20 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 const measurementsSchema = z.object({
   unit: z.enum([Unit.FEET, Unit.METER, Unit.YARD]),
@@ -42,6 +46,20 @@ export const SiteMeasurements = () => {
     { file: File; url: string }[]
   >([]);
 
+  useEffect(() => {
+    if (formData.files?.length) {
+      const previews = formData.files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+      }));
+      setFilePreviews(previews);
+    }
+
+    return () => {
+      filePreviews.forEach(({ url }) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   const form = useForm<z.infer<typeof measurementsSchema>>({
     resolver: zodResolver(measurementsSchema),
     defaultValues: {
@@ -51,13 +69,40 @@ export const SiteMeasurements = () => {
       height: formData?.height || "",
       area: formData?.area || "",
       siteDescription: formData?.siteDescription || "",
-      files: [],
+      files: formData?.files || [],
     },
   });
 
   const handleFileChange = (files: FileList | null) => {
     if (!files) return;
     const fileArray = Array.from(files);
+
+    for (const file of fileArray) {
+      const isVideo = file.type.startsWith("video/");
+      const isImage = file.type.startsWith("image/");
+
+      if (isVideo && file.size > MAX_VIDEO_SIZE) {
+        toast({
+          title: `Video file ${file.name} exceeds 20MB limit`,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (isImage && file.size > MAX_IMAGE_SIZE) {
+        toast({
+          title: `Image file ${file.name} exceeds 5MB limit`,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!isVideo && !isImage) {
+        toast({
+          title: `Invalid file type for ${file.name}. Only images and videos are allowed.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     const newPreviews = fileArray.map((file) => ({
       file,
@@ -75,6 +120,22 @@ export const SiteMeasurements = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof measurementsSchema>) => {
+    if (!values.files) {
+      toast({
+        title: "Please upload at least one file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (values.files.length === 0) {
+      toast({
+        title: "At least one file is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       length: values.length,
@@ -163,9 +224,9 @@ export const SiteMeasurements = () => {
               name="height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Width ({unit})</FormLabel>
+                  <FormLabel>Height ({unit})</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter width (optional)" {...field} />
+                    <Input placeholder="Enter Height (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -190,16 +251,20 @@ export const SiteMeasurements = () => {
               control={form.control}
               name="siteDescription"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Site description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Tell us more about your site (optional)"
+                      placeholder="Any additional details about the site you would like to share (optional)."
                       {...field}
-                      className="h-32"
+                      className="h-40"
                     />
                   </FormControl>
                   <FormMessage />
+                  <FormDescription>
+                    Any additional details about the site that might help us
+                    understand your requirements better.
+                  </FormDescription>
                 </FormItem>
               )}
             />

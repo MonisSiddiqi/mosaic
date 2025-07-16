@@ -62,12 +62,7 @@ export const ProjectDetails = ({}) => {
       title: formData?.title || "",
       serviceId: formData?.serviceId || "",
       description: formData?.description || "",
-      tags:
-        formData?.tags?.map((item) => ({
-          disable: false,
-          label: item,
-          value: item,
-        })) || [],
+      tags: formData.tags,
     },
   });
 
@@ -79,7 +74,19 @@ export const ProjectDetails = ({}) => {
       },
     ],
   });
+
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const serviceId = form.watch("serviceId");
+    if (serviceId !== formData?.serviceId) {
+      form.setValue("tags", []);
+      setFormData((prev) => ({
+        ...prev,
+        tags: [],
+      }));
+    }
+  }, [form.watch("serviceId"), formData?.serviceId]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setFormData((prev) => ({
@@ -87,13 +94,11 @@ export const ProjectDetails = ({}) => {
       title: values.title,
       description: values.description,
       serviceId: values.serviceId,
-      tags: values.tags.map((item) => item.value),
+      tags: values.tags,
     }));
 
     handleNext();
   };
-
-  useEffect(() => console.log(formData), [formData]);
 
   return (
     <Form {...form}>

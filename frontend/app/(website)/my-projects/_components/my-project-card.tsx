@@ -29,8 +29,6 @@ export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
   const isImage = isImageUrl(firstFile?.url);
   const isVideo = isVideoUrl(firstFile?.url);
 
-  console.log(statusConfig);
-
   return (
     <Link href={`/my-projects/${id}`} className="w-full">
       <Card className="w-full overflow-hidden transition-shadow hover:shadow-lg">

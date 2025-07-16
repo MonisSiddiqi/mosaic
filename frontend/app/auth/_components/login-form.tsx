@@ -68,8 +68,6 @@ export const LoginForm: FC<Props> = ({ className }) => {
         title: "Login Successfully",
       });
 
-      console.log(user?.role, UserRole.ADMIN);
-
       if (user?.role === UserRole.ADMIN) {
         router.push(redirect || "/dashboard");
       } else {

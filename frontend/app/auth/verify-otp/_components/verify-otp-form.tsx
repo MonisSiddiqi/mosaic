@@ -69,8 +69,6 @@ export const VerifyOtpForm: FC<Props> = ({ type, email, className }) => {
 
       setUser(user);
 
-      console.log(user);
-
       toast({
         variant: "success",
         title: "Verified Successfully",

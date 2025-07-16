@@ -59,7 +59,6 @@ export const useAddVendorServiceMutation = () => {
 };
 
 export const useEditServiceMutation = (id: string) => {
-  console.log("Hello");
   return useMutation({
     mutationKey: [`editService`],
     mutationFn: editServiceApi,

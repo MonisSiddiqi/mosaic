@@ -38,7 +38,7 @@ export const useProjectsQuery = (getProjectDto?: {
 
       return getAllProjectsApi({
         sortField: field?.id,
-        sortValue: field?.desc ? "desc" : "asc",
+        sortValue: field ? (field?.desc ? "desc" : "asc") : "desc",
         page: pagination?.pageIndex,
         limit: pagination?.pageSize,
         filter: filter,

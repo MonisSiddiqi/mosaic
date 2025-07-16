@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
 import { useAddProjectMutation } from "@/queries/projects.queries";
@@ -12,6 +12,7 @@ import { useAddProject } from "@/hooks/use-add-project";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +22,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { PlusIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import { AddProjectDto } from "@/apis/projects";
+
+const MAX_VIDEO_SIZE = 20 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 const budgetSchema = z.object({
   budgetPreference: z.number(),
@@ -35,12 +39,26 @@ export const BudgetStep = () => {
     { file: File; url: string }[]
   >([]);
 
+  useEffect(() => {
+    if (formData.files?.length) {
+      const previews = formData.sampleFiles?.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+      }));
+      setFilePreviews(previews || []);
+    }
+
+    return () => {
+      filePreviews.forEach(({ url }) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   const [selectedValue, setSelectedValue] = useState<number>(0);
 
   const form = useForm<z.infer<typeof budgetSchema>>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
-      budgetPreference: undefined,
+      budgetPreference: 5,
     },
   });
 
@@ -58,7 +76,10 @@ export const BudgetStep = () => {
     setFormData(updatedFormData);
 
     try {
-      await mutation.mutateAsync(updatedFormData as AddProjectDto);
+      await mutation.mutateAsync({
+        ...updatedFormData,
+        tags: updatedFormData.tags?.map((item) => item.value),
+      } as AddProjectDto);
       toast({
         title: "Project Added Successfully",
         variant: "success",
@@ -75,6 +96,33 @@ export const BudgetStep = () => {
   const handleFileChange = (files: FileList | null) => {
     if (!files) return;
     const fileArray = Array.from(files);
+
+    for (const file of fileArray) {
+      const isVideo = file.type.startsWith("video/");
+      const isImage = file.type.startsWith("image/");
+
+      if (isVideo && file.size > MAX_VIDEO_SIZE) {
+        toast({
+          title: `Video file ${file.name} exceeds 20MB limit`,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (isImage && file.size > MAX_IMAGE_SIZE) {
+        toast({
+          title: `Image file ${file.name} exceeds 5MB limit`,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!isVideo && !isImage) {
+        toast({
+          title: `Invalid file type for ${file.name}. Only images and videos are allowed.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     const newPreviews = fileArray.map((file) => ({
       file,
@@ -107,6 +155,7 @@ export const BudgetStep = () => {
               min={0}
               max={10}
               step={1}
+              value={[form.watch("budgetPreference")]}
               onValueChange={(value) => {
                 const preference = value[0] as number;
                 setSelectedValue(preference);
@@ -143,16 +192,20 @@ export const BudgetStep = () => {
           control={form.control}
           name="preferenceMessage"
           render={({ field }) => (
-            <FormItem className="mt-6 md:w-1/2">
+            <FormItem className="mt-6">
               <FormLabel>Budget Description (Optional)</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us more about your site (optional)"
+                  placeholder="Any additional details about the budget you would like to share (optional)."
                   {...field}
-                  className="h-32"
+                  className="h-40"
                 />
               </FormControl>
               <FormMessage />
+              <FormDescription>
+                Any additional details about the budget that might help us serve
+                you better.
+              </FormDescription>
             </FormItem>
           )}
         />
@@ -217,7 +270,7 @@ export const BudgetStep = () => {
             Previous
           </Button>
 
-          <Button type="submit">
+          <Button disabled={mutation.isPending} type="submit">
             {mutation.isPending && (
               <RefreshCwIcon className="size-4 animate-spin" />
             )}
