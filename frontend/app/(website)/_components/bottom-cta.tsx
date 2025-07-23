@@ -1,10 +1,21 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
 import TreeBackground from "@/app/assets/tree-background.webp";
+import { usePathname } from "next/navigation";
+
+const hide = ["/homeowners", "/vendors"];
 
 export const BottomCta = () => {
+  const pathname = usePathname();
+
+  const shouldHide = hide.some((path) => pathname === path);
+
+  if (shouldHide) return null;
+
   return (
     <div className="relative h-72 w-full">
       <Image

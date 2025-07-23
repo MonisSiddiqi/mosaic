@@ -16,7 +16,8 @@ export class MailService {
 
   async sendRegisterOtpMail(email: string, name: string, otp: string) {
     const mailOptions = {
-      from: this.configService.get<string>('smtp.user'),
+      // from: this.configService.get<string>('smtp.user'),
+      from: 'no-reply@craftyfuture.com',
       to: email,
       subject: 'Your OTP for Crafty Future Registration',
       html: `
