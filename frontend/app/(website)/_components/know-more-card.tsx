@@ -10,10 +10,10 @@ export function KnowMoreCard() {
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
           <Info className="h-6 w-6 text-blue-600" />
         </div>
-        <CardTitle className="text-xl font-bold text-gray-900">
+        <CardTitle className="text-xl font-bold text-gray-100">
           Know More
         </CardTitle>
-        <p className="text-sm text-gray-900">Choose your path to get started</p>
+        <p className="text-sm text-gray-100">Choose your path to get started</p>
       </CardHeader>
       <CardContent className="space-y-3">
         <Link href="/homeowners" className="block">
