@@ -17,12 +17,12 @@ export const ContactDetails: FC<Props> = ({ className }) => {
     >
       <div className="flex items-center gap-3 dark:text-gray-400">
         <MailIcon className="size-5" />
-        <span>info@craftyfuture.com</span>
+        <a href="mailto:info@craftyfuture.com">info@craftyfuture.com</a>
         <Copy textToCopy="info@craftyfuture.com" label="email" />
       </div>
       <div className="flex items-center gap-3 dark:text-gray-400">
         <PhoneIcon className="size-5" />
-        <span>+1 586-665-6670</span>
+        <a href="tel:+15866656670">+1 586-665-6670</a>
         <Copy textToCopy="+1 586-665-6670" label="phone number" />
       </div>
     </div>

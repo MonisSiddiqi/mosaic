@@ -42,7 +42,7 @@ export const Header = ({ className }: { className?: string }) => {
   return (
     <header
       className={cn(
-        "container relative mx-auto flex h-16 items-center justify-center",
+        "container relative z-50 mx-auto flex h-16 items-center justify-center",
         className,
       )}
     >

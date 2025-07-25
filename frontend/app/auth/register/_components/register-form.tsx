@@ -180,7 +180,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                           value: item.dialCode,
                         }),
                       )}
-                      className="w-28 min-w-28 max-w-28 border border-gray-400 bg-transparent"
+                      className="w-32 min-w-32 max-w-32 border border-gray-400 bg-transparent"
                       fieldName="countryCode"
                       value={field.value as string}
                       open={open}
