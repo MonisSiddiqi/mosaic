@@ -35,3 +35,17 @@ export type VerifyOtpDto = {
   otp: string;
   type: OtpType;
 };
+
+export type ResendOtpDto = {
+  email: string;
+  type: OtpType;
+};
+
+export type ForgotPasswordDto = {
+  email: string;
+};
+
+export type CreatePasswordDto = {
+  email: string;
+  password: string;
+};

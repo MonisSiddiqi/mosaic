@@ -20,6 +20,7 @@ import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { MailService } from 'src/mail/mail.service';
 import { Prisma } from '@prisma/client';
 import { VendorRegisterDto } from './dto/vendor-register.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -436,8 +437,6 @@ export class AuthService {
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log(otp);
-
     await this.prismaService.otp.upsert({
       where: {
         userId: user.id,
@@ -512,6 +511,50 @@ export class AuthService {
     return new ApiResponse(null, 'OTP verified successfully');
   }
 
+  async resendOtp(resendOtpDto: ResendOtpDto) {
+    const { email, type } = resendOtpDto;
+    const otp = await this.prismaService.otp.findFirst({
+      where: {
+        user: {
+          email,
+        },
+        type,
+      },
+      include: { user: { include: { UserProfile: true } } },
+    });
+
+    if (!otp) {
+      throw new UnprocessableEntityException('No OTP found for this user.');
+    }
+
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await this.prismaService.otp.update({
+      where: {
+        id: otp.id,
+      },
+      data: {
+        oneTimePassword: await this.createPassword(newOtp),
+      },
+    });
+
+    if (type === 'REGISTRATION') {
+      await this.mailService.sendRegisterOtpMail(
+        email,
+        otp.user.UserProfile.name,
+        newOtp,
+      );
+    } else if (type === 'FORGOT_PASSWORD') {
+      await this.mailService.sendForgotPasswordMail(
+        email,
+        otp.user.UserProfile.name,
+        newOtp,
+      );
+    }
+
+    return new ApiResponse(null, `OTP resent successfully to (${email})`);
+  }
+
   async createNewPassword(createNewPasswordDto: CreateNewPasswordDto) {
     const { password, email } = createNewPasswordDto;
     const user = await this.prismaService.user.findUnique({
@@ -536,7 +579,7 @@ export class AuthService {
     }
 
     if (!otpTable.isVerified) {
-      throw new UnprocessableEntityException('OTP is not verified');
+      throw new UnprocessableEntityException('OTP is not verified yet');
     }
 
     await this.prismaService.user.update({

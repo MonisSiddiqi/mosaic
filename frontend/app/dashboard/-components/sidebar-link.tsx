@@ -3,7 +3,7 @@
 import { useListenNotifications } from "@/hooks/use-listen-notifications";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-//TODO: use humanformat
+import humanFormat from "human-format";
 
 export function SidebarLink({
   href,
@@ -34,7 +34,7 @@ export function SidebarLink({
         <div className="rounded-full bg-red-200 p-1">
           <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
             <p className="text-basf-red whitespace-nowrap text-sm">
-              {unreadCount}
+              {humanFormat(unreadCount)}
             </p>
           </div>
         </div>

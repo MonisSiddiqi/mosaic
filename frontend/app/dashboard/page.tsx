@@ -9,6 +9,7 @@ import { SignupTrend } from "./-components/signup-trend";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { BidStats } from "./bids/_components/bid-stats";
+import Link from "next/link";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();
@@ -26,37 +27,45 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 p-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatisticsCard
-          value={data?.homeOwners}
-          title="Home Owners"
-          description="Total number of home owners"
-          icon={UsersIcon}
-          isLoading={isLoading}
-        />
+        <Link href={"/dashboard/users"}>
+          <StatisticsCard
+            value={data?.homeOwners}
+            title="Home Owners"
+            description="Total number of home owners"
+            icon={UsersIcon}
+            isLoading={isLoading}
+          />
+        </Link>
 
-        <StatisticsCard
-          value={data?.vendors}
-          title="Trade Professionals"
-          description="Total number of trade professionals"
-          icon={LayersIcon}
-          isLoading={isLoading}
-        />
+        <Link href={"/dashboard/users"}>
+          <StatisticsCard
+            value={data?.vendors}
+            title="Trade Professionals"
+            description="Total number of trade professionals"
+            icon={LayersIcon}
+            isLoading={isLoading}
+          />
+        </Link>
 
-        <StatisticsCard
-          value={data?.projects}
-          title="Total Projects"
-          description="Total number of projects submitted"
-          icon={GridIcon}
-          isLoading={isLoading}
-        />
+        <Link href={"/dashboard/projects"}>
+          <StatisticsCard
+            value={data?.projects}
+            title="Total Projects"
+            description="Total number of projects submitted"
+            icon={GridIcon}
+            isLoading={isLoading}
+          />
+        </Link>
 
-        <StatisticsCard
-          title="Open Bids"
-          value={data?.openBids}
-          icon={Gavel}
-          description="Total number of open bids"
-          isLoading={isLoading}
-        />
+        <Link href={"/dashboard/bids"}>
+          <StatisticsCard
+            title="Open Bids"
+            value={data?.openBids}
+            icon={Gavel}
+            description="Total number of open bids"
+            isLoading={isLoading}
+          />
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

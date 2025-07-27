@@ -15,15 +15,18 @@ import { Button } from "@/components/ui/button";
 import { LogOutIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const BottomSidebar = () => {
   const { user, logout } = useAuth();
 
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+
   const onLogout = async () => {
-    console.log("trying logout...");
     try {
+      queryClient.clear();
       await logout();
       toast({
         variant: "success",

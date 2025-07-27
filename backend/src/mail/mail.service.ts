@@ -14,10 +14,12 @@ type MailOptions = {
 export class MailService {
   constructor(private readonly configService: ConfigService) {}
 
+  fromList = ['no-reply@craftyfuture.com'];
+
   async sendRegisterOtpMail(email: string, name: string, otp: string) {
     const mailOptions = {
       // from: this.configService.get<string>('smtp.user'),
-      from: 'no-reply@craftyfuture.com',
+      from: this.fromList[0],
       to: email,
       subject: 'Your OTP for Crafty Future Registration',
       html: `
@@ -36,7 +38,7 @@ export class MailService {
 
   async sendForgotPasswordMail(email: string, name: string, otp: string) {
     const mailOptions = {
-      from: this.configService.get<string>('smtp.user'),
+      from: this.fromList[0],
       to: email,
       subject: 'Your OTP for forgot password',
       html: `
@@ -68,6 +70,5 @@ export class MailService {
     });
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: ', info);
   }
 }

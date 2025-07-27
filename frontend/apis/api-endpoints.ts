@@ -20,6 +20,9 @@ export const apiEndpoints = {
     register: `/api/v1/auth/register`,
     vendorRegister: `/api/v1/auth/vendor-register`,
     verifyOtp: `/api/v1/auth/verify-otp`,
+    resendOtp: `/api/v1/auth/resend-otp`,
+    forgotPasssword: `/api/v1/auth/forgot-password`,
+    createPassword: `/api/v1/auth/create-password`,
   },
   users: {
     me: `/api/v1/users/me`,

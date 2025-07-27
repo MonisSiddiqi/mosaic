@@ -1,7 +1,10 @@
 import {
+  CreatePasswordDto,
+  ForgotPasswordDto,
   LoginDto,
   LoginResponse,
   RegisterDto,
+  ResendOtpDto,
   VendorRegisterDto,
   VerifyOtpDto,
 } from "@/apis/auth";
@@ -47,6 +50,34 @@ export const vendorRegisterApi = async (
 
 export const verifyOtpApi = async (values: VerifyOtpDto): Promise<null> => {
   const response = await httpClient.post(apiEndpoints.auth.verifyOtp, values);
+
+  return response.data.result;
+};
+
+export const resendOtpApi = async (payload: ResendOtpDto): Promise<null> => {
+  const response = await httpClient.patch(apiEndpoints.auth.resendOtp, payload);
+
+  return response.data.result;
+};
+
+export const forgotPasswordApi = async (
+  payload: ForgotPasswordDto,
+): Promise<null> => {
+  const response = await httpClient.post(
+    apiEndpoints.auth.forgotPasssword,
+    payload,
+  );
+
+  return response.data.result;
+};
+
+export const createPasswordApi = async (
+  payload: CreatePasswordDto,
+): Promise<null> => {
+  const response = await httpClient.post(
+    apiEndpoints.auth.createPassword,
+    payload,
+  );
 
   return response.data.result;
 };

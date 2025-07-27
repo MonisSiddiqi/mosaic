@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  RefreshCcwIcon,
-  LogInIcon,
-  ExternalLinkIcon,
-  EyeIcon,
-  EyeOffIcon,
-} from "lucide-react";
+import { RefreshCcwIcon, LogInIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -24,29 +18,13 @@ import { Button } from "@/components/ui/button";
 import { FC, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { useRegisterMutation } from "@/queries/auth.queries";
-import { OtpType } from "@/apis/auth";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCreatePasswordMutation } from "@/queries/auth.queries";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { Combobox } from "@/components/ui/combobox";
-
-import validator from "validator";
 
 const formSchema = z
   .object({
-    name: z.string().min(1, { message: "Name is required" }),
-    email: z.string().email({ message: "Please enter a valid email address." }),
-    countryCode: z.string().min(1, { message: "Dial code." }),
-    phone: z.string().refine(
-      (val) => {
-        if (validator.isMobilePhone(val)) {
-          return true;
-        } else return false;
-      },
-      { message: "Please enter a valid phone number." },
-    ),
     password: z
       .string()
       .min(8, "Password must be at least 8 character")
@@ -67,21 +45,16 @@ const formSchema = z
 type Props = {
   className?: string;
 };
-export const RegisterForm: FC<Props> = ({ className }) => {
-  const [open, setOpen] = useState(false);
+export const CreatePasswordForm: FC<Props> = ({ className }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
       password: "",
       confirmPassword: "",
-      countryCode: "",
-      phone: "",
     },
   });
 
-  const registerMutation = useRegisterMutation();
+  const mutation = useCreatePasswordMutation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -89,6 +62,10 @@ export const RegisterForm: FC<Props> = ({ className }) => {
   const { isAuthenticated, user } = useAuth();
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const email = searchParams.get("email") as string;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -102,19 +79,14 @@ export const RegisterForm: FC<Props> = ({ className }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await registerMutation.mutateAsync({
-        ...values,
-        phone: values.countryCode + values.phone?.trim().replace(/^0+/, ""),
-      });
+      await mutation.mutateAsync({ email, password: values.password });
 
       toast({
         variant: "success",
-        title: "Otp sent successfully",
+        title: "Password Created Successfully, redirecting you...",
       });
 
-      router.push(
-        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${form.getValues("email")}`,
-      );
+      router.push(`/auth`);
     } catch (err) {
       toast({
         variant: "destructive",
@@ -130,96 +102,6 @@ export const RegisterForm: FC<Props> = ({ className }) => {
         className={cn("", className)}
       >
         <div className="grid w-full items-center gap-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Full Name"
-                    {...field}
-                    className="border-gray-400 focus:outline-none"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Your email address"
-                    autoComplete="email"
-                    className="border-gray-400 focus:outline-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="flex items-baseline">
-            <FormField
-              control={form.control}
-              name="countryCode"
-              render={({ field }) => (
-                <FormItem className="flex max-h-10 flex-col">
-                  <FormLabel className="mb-1">Dial Code</FormLabel>
-                  <FormControl>
-                    <Combobox
-                      data={[{ name: "USA", dialCode: "+1", flag: "🇺🇸" }].map(
-                        (item) => ({
-                          label: `${item.dialCode} - ${item.name}(${item.flag})`,
-                          value: item.dialCode,
-                        }),
-                      )}
-                      className="w-32 min-w-32 max-w-32 border border-gray-400 bg-transparent"
-                      fieldName="countryCode"
-                      value={field.value as string}
-                      open={open}
-                      setOpen={setOpen}
-                      setValue={field.onChange}
-                      placeHolder="Dial code"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem className="mt-2 w-full">
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Your phone number"
-                      autoComplete="phone"
-                      className="w-full border-gray-400 focus:outline-none"
-                      {...field}
-                      onBlur={() => {
-                        if (field.value) {
-                          field.onChange(field.value.trim().replace(/^0+/, ""));
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
           <FormField
             control={form.control}
             name="password"
@@ -287,7 +169,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
           />
           <div className="grid items-center gap-4">
             <Button
-              disabled={form.formState.isSubmitting}
+              disabled={mutation.isPending}
               type="submit"
               className="mt-4"
               size={"lg"}
@@ -297,15 +179,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               ) : (
                 <LogInIcon className="mr-2 h-4 w-4" />
               )}
-              Register as User
-            </Button>
-
-            <Button type="button" variant={"link"} asChild size={"lg"}>
-              <Link href={"/auth/register/vendor"}>
-                {" "}
-                <ExternalLinkIcon className="mr-2 h-4 w-4" />
-                Register as Vendor{" "}
-              </Link>
+              Submit
             </Button>
           </div>
         </div>

@@ -6,6 +6,8 @@ import { GetAllBidsApiResponseItem } from "@/apis/bids";
 import { TableRowActions } from "./table-row-actions";
 import { Attachment } from "../attachment";
 import { StatusBadge } from "../status-badge";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {
@@ -18,7 +20,13 @@ export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
       />
     ),
     cell: ({ row }) => {
-      return <div className="ml-2 mt-2">{row.original.project.title}</div>;
+      return (
+        <Button asChild variant={"link"} className="p-0">
+          <Link href={`/dashboard/bids/${row.original.projectId}`}>
+            <div className="ml-2 mt-2">{row.original.project.title}</div>
+          </Link>
+        </Button>
+      );
     },
     enableSorting: false,
   },
@@ -37,7 +45,7 @@ export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {
     accessorKey: "vendorStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Your Response" />
+      <DataTableColumnHeader column={column} title="Vendor Response" />
     ),
     cell: ({ row }) => <StatusBadge status={row.original.vendorStatus} />,
   },
@@ -45,7 +53,7 @@ export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {
     accessorKey: "userStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Home Owner's Response" />
+      <DataTableColumnHeader column={column} title="Home Owner Response" />
     ),
     cell: ({ row }) =>
       row.original.vendorStatus === "REJECTED" ? (
