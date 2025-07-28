@@ -5,6 +5,7 @@ import {
   getLoginHistoryApi,
   GetLoginHistoryDto,
   getMyProfileApi,
+  getUserApi,
 } from "@/apis/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -82,5 +83,13 @@ export const useLoginHistoryQuery = ({
         filter: filter,
       });
     },
+  });
+};
+
+export const useUserQuery = (userId?: string) => {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => (userId ? getUserApi(userId) : null),
+    enabled: !!userId,
   });
 };

@@ -7,6 +7,7 @@ import {
   GetAllUsersApiResponse,
   GetLoginHistoryApiResponse,
   GetLoginHistoryDto,
+  GetUserApiResponse,
   GetUsersDto,
   ProfileApiResponse,
   User,
@@ -34,6 +35,14 @@ export const getAllUsersApi = async ({
       sortValue,
     },
   });
+  return response.data.result;
+};
+
+export const getUserApi = async (
+  userId: string,
+): Promise<GetUserApiResponse> => {
+  const response = await httpClient.get(apiEndpoints.users.get(userId));
+
   return response.data.result;
 };
 

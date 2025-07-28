@@ -5,6 +5,8 @@ import { DataTableColumnHeader } from "@/components/table";
 import { GetAllUsersApiResponseItem } from "@/apis/users";
 import { Badge } from "@/components/ui/badge";
 import UserActiveSwitch from "../switch/user-active-switch";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
   {
@@ -13,7 +15,15 @@ export const usersColumns: ColumnDef<GetAllUsersApiResponseItem>[] = [
       <DataTableColumnHeader column={column} title="Email" className="ml-2" />
     ),
     cell: ({ row }) => {
-      return <div className="ml-2 py-2">{row.original.email}</div>;
+      return (
+        <Button variant={"link"}>
+          {" "}
+          <Link href={`/dashboard/users/${row.original.id}`}>
+            {" "}
+            {row.original.email}{" "}
+          </Link>
+        </Button>
+      );
     },
   },
 

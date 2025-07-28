@@ -28,6 +28,7 @@ export const apiEndpoints = {
     me: `/api/v1/users/me`,
     editProfile: `/api/v1/users/me`,
     getAll: `/api/v1/users`,
+    get: (id: string) => `/api/v1/users/${id}`,
     createAddress: `/api/v1/addresses`,
     loginHistory: `/api/v1/users/login-history`,
     toggleActive: (id: string) => `/api/v1/users/toggle-active/${id}`,

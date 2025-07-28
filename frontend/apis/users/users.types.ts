@@ -65,6 +65,10 @@ export type GetLoginHistoryApiResponseItem = LoginHistory & {
   user: User & { UserProfile: UserProfile };
 };
 
+export type GetUserApiResponse = User & {
+  UserProfile: UserProfile | null;
+} & { LoginHistory: LoginHistory[] } & { Address: Address | null };
+
 export type GetLoginHistoryApiResponse = {
   total: number;
   list: GetLoginHistoryApiResponseItem[];
