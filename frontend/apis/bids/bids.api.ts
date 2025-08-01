@@ -1,10 +1,13 @@
-import httpClient from "..";
-import { apiEndpoints } from "../api-endpoints";
-import { BidActionDto, GetAllBidsDto } from "./bids.dto";
+import httpClient from "@/apis";
+import { apiEndpoints } from "@/apis/api-endpoints";
 import {
+  AssignBidDto,
+  BidActionDto,
+  GetAllBidsDto,
   GetAllBidsApiResponse,
   GetBidsStatisticsApiResponse,
-} from "./bids.type";
+  Bid,
+} from "@/apis/bids";
 
 export const getAllBidsApi = async (
   getAllBidsDto: GetAllBidsDto,
@@ -44,3 +47,9 @@ export const getBidsStatisticsApi =
 
     return response.data.result;
   };
+
+export const assignBidApi = async (payload: AssignBidDto): Promise<Bid> => {
+  const response = await httpClient.post(apiEndpoints.bids.assign, payload);
+
+  return response.data.result;
+};

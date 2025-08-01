@@ -15,3 +15,8 @@ export type BidActionDto = {
   message?: string;
   attachment?: File;
 };
+
+export type AssignBidDto = {
+  projectId: string;
+  vendorId: string;
+};

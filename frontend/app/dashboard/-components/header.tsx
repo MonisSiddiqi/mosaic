@@ -16,7 +16,10 @@ type Props = {
 export function Header({ setHideSidebar }: Props) {
   const pathname = usePathname();
 
-  const title = routes.find((route) => route.href === pathname)?.text;
+  const title =
+    pathname === "/dashboard"
+      ? "Dashboard"
+      : routes.slice(1).find((route) => pathname.includes(route.href))?.text;
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   return (

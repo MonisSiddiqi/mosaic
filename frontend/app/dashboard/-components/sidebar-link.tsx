@@ -18,7 +18,8 @@ export function SidebarLink({
 
   const { unreadCount } = useListenNotifications();
 
-  const isActive = pathname === href;
+  const isActive =
+    href === "/dashboard" ? pathname === href : pathname.includes(href);
 
   return (
     <Link

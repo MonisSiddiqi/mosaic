@@ -1,5 +1,4 @@
 import { logoutApi } from "@/apis/auth";
-import { API_URL } from "@/config";
 import { toast } from "@/hooks/use-toast";
 import axios, { AxiosError } from "axios";
 

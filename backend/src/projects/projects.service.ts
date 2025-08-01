@@ -205,7 +205,12 @@ export class ProjectsService {
 
     const projects = await this.prismaService.project.findMany({
       where: projectWhereInput,
-      include: { ProjectFile: true, Service: true },
+      include: {
+        ProjectFile: true,
+        Service: true,
+        Bid: { include: { vendor: true } },
+        user: { omit: { password: true } },
+      },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy: {
         [sortField]: sortValue,
@@ -239,11 +244,8 @@ export class ProjectsService {
       Address: true,
       ProjectTag: { include: { tag: true } },
       ProjectUpdate: true,
+      user: { include: { UserProfile: true } },
       Bid: {
-        where: {
-          vendorStatus: 'ACCEPTED',
-          userStatus: 'PENDING',
-        },
         include: {
           vendor: {
             omit: {
@@ -253,6 +255,9 @@ export class ProjectsService {
               UserProfile: true,
             },
           },
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       },
       Service: true,

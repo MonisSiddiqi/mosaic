@@ -6,6 +6,17 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useUserQuery } from "@/queries/users.queries";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { CheckCircle, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { formatDate } from "date-fns";
+import { Separator } from "@/components/ui/separator";
+import { BackButton } from "@/components/back-button";
 
 export default () => {
   const { userId } = useParams();
@@ -14,6 +25,7 @@ export default () => {
 
   return (
     <div className="flex flex-col gap-4 rounded bg-white p-5 py-6">
+      <BackButton href="/dashboard/users" className="w-fit" />
       <div className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-6">
@@ -99,6 +111,45 @@ export default () => {
           </div>
         </div>
       )}{" "}
+      <Card className="shadow-none lg:col-span-2">
+        <CardHeader>
+          <CardTitle>Recent Login History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {user?.LoginHistory.length
+              ? user?.LoginHistory.map((login, index) => (
+                  <div key={login.id}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        {login.status ? (
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircleIcon className="h-4 w-4 text-red-500" />
+                        )}
+                        <div>
+                          <p className="text-sm font-medium">{login.message}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDate(
+                              login.createdAt,
+                              "EEEE, MMMM do yyyy, h:mm:ss a",
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant={login.status ? "default" : "destructive"}>
+                        {login.status ? "Success" : "Failed"}
+                      </Badge>
+                    </div>
+                    {index < user?.LoginHistory.length - 1 && (
+                      <Separator className="mt-4" />
+                    )}
+                  </div>
+                ))
+              : "No login history available."}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

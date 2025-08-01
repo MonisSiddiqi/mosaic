@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, ProjectStatus, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -12,6 +12,7 @@ import { GetBidsDto } from './dto/get-bids.dto';
 import { BidActionDto } from './dto/bid-action.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
+import { AssignBidDto } from './dto/assign-bid.dto';
 
 @Injectable()
 export class BidsService implements OnModuleInit {
@@ -141,6 +142,8 @@ export class BidsService implements OnModuleInit {
           vendorMessage: message,
         },
       });
+
+      let status = bid.project.status as ProjectStatus;
 
       await this.prismaService.project.update({
         where: {
@@ -315,5 +318,54 @@ export class BidsService implements OnModuleInit {
         this.logger.debug(`No vendors available for project ${project.id}`);
       }
     }
+  }
+
+  async assignBid(assignBidDto: AssignBidDto) {
+    const { projectId, vendorId } = assignBidDto;
+
+    const project = await this.prismaService.project.findUnique({
+      where: { id: projectId },
+      include: { Bid: true },
+    });
+
+    if (!project) {
+      throw new UnprocessableEntityException('Project not found');
+    }
+
+    if (project.status !== 'IN_PROGRESS') {
+      throw new UnprocessableEntityException(
+        'Project is not in a state to assign a bid',
+      );
+    }
+
+    const vendor = await this.prismaService.user.findUnique({
+      where: { id: vendorId },
+    });
+
+    if (!vendor) {
+      throw new UnprocessableEntityException('Vendor not found');
+    }
+
+    if (vendor.role !== 'VENDOR') {
+      throw new UnprocessableEntityException(
+        'Only vendor can be assigned to bids',
+      );
+    }
+
+    const bid = await this.prismaService.bid.create({
+      data: {
+        projectId,
+        vendorId,
+        userStatus: 'PENDING',
+        vendorStatus: 'PENDING',
+      },
+    });
+
+    await this.prismaService.project.update({
+      where: { id: projectId },
+      data: { status: 'VENDOR_FOUND' },
+    });
+
+    return new ApiResponse(bid, 'Bid assigned successfully');
   }
 }
