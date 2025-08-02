@@ -3,7 +3,22 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-async function main() {}
+async function main() {
+  const plan = 'High-Value Trades';
+
+  const services = await prisma.service.findMany({
+    where:{
+      Plan:{
+        name:plan
+      }
+    },
+    select:{
+      name:true
+    }
+  })
+
+  console.log(services)
+}
 
 main()
   .then(async () => {
