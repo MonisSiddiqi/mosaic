@@ -1,4 +1,9 @@
-import { bidActionApi, getAllBidsApi, getBidsStatisticsApi } from "@/apis/bids";
+import {
+  assignBidApi,
+  bidActionApi,
+  getAllBidsApi,
+  getBidsStatisticsApi,
+} from "@/apis/bids";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ColumnFiltersState,
@@ -37,5 +42,12 @@ export const useBidsStatisticsQuery = () => {
   return useQuery({
     queryKey: ["bisStatistics"],
     queryFn: getBidsStatisticsApi,
+  });
+};
+
+export const useAssignBidMutation = () => {
+  return useMutation({
+    mutationKey: ["assignBid"],
+    mutationFn: assignBidApi,
   });
 };

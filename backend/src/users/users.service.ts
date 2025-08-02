@@ -102,6 +102,13 @@ export class UsersService {
       },
       include: {
         UserProfile: true,
+        LoginHistory: {
+          take: 5,
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        Address: true,
       },
       omit: {
         password: true,

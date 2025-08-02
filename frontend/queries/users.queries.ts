@@ -3,8 +3,7 @@ import {
   editProfileApi,
   getAllUsersApi,
   getLoginHistoryApi,
-  GetLoginHistoryDto,
-  getMyProfileApi,
+  getUserApi,
 } from "@/apis/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -13,35 +12,33 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 
-export const useUsersQuery = ({
-  sorting,
-  pagination,
-  filter,
-}: {
-  sorting: SortingState;
-  pagination: PaginationState;
-  filter: ColumnFiltersState;
-}) => {
+export const useUsersQuery = (
+  params: {
+    sorting?: SortingState;
+    pagination?: PaginationState;
+    filter?: ColumnFiltersState;
+  } = {},
+) => {
   return useQuery({
-    queryKey: ["users", { sorting, pagination, filter }],
+    queryKey: ["users", params],
     queryFn: ({ queryKey }) => {
       const { sorting, pagination, filter } = queryKey[1] as {
-        sorting: SortingState;
-        pagination: PaginationState;
-        filter: ColumnFiltersState;
+        sorting?: SortingState;
+        pagination?: PaginationState;
+        filter?: ColumnFiltersState;
       };
 
       let field;
 
-      if (sorting) {
+      if (sorting?.length) {
         [field] = sorting;
       }
 
       return getAllUsersApi({
         sortField: field?.id,
         sortValue: field?.desc ? "desc" : "asc",
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+        page: pagination?.pageIndex ? pagination.pageIndex + 1 : 1,
+        limit: pagination?.pageSize || 10,
         filter: filter,
       });
     },
@@ -82,5 +79,13 @@ export const useLoginHistoryQuery = ({
         filter: filter,
       });
     },
+  });
+};
+
+export const useUserQuery = (userId?: string) => {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => (userId ? getUserApi(userId) : null),
+    enabled: !!userId,
   });
 };

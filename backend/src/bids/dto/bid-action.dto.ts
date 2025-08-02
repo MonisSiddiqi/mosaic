@@ -20,6 +20,6 @@ export class BidActionDto {
 
   @IsOptional()
   @IsString()
-  @Length(3)
+  @Length(0, 256)
   message: string;
 }

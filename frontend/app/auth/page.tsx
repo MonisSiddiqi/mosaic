@@ -23,6 +23,10 @@ export default function AuthPage() {
             <Link href="/auth/register">Register</Link>
           </Button>
         </div>
+
+        <Button type="button" variant={"link"}>
+          <Link href="/auth/forgot-password">Forgot Password?</Link>
+        </Button>
       </div>
     </div>
   );

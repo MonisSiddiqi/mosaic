@@ -14,7 +14,7 @@ export const BackButton: FC<Props> = ({ href, className }) => {
     <Button
       variant={"outline"}
       asChild
-      className={cn(`items-center gap-2`, className)}
+      className={cn(`w-fit items-center gap-2`, className)}
     >
       <Link href={href}>
         <ArrowLeft /> Back

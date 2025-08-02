@@ -156,6 +156,8 @@ model Address {
   state      String
   city       String
   postalCode String
+  lat        Float     @default(0.000000)
+  lng        Float     @default(0.000000)
   updatedAt  DateTime  @updatedAt @db.Timestamptz
   createdAt  DateTime  @default(now()) @db.Timestamptz
   Project    Project[]

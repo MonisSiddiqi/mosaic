@@ -18,6 +18,7 @@ import { BidActionDto } from './dto/bid-action.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AssignBidDto } from './dto/assign-bid.dto';
 
 @Controller('bids')
 export class BidsController {
@@ -54,5 +55,12 @@ export class BidsController {
   @Get('statistics')
   getBidsStatistics(@GetUser() authUser: User) {
     return this.bidsService.bidsStatistics(authUser);
+  }
+
+  @Post('assign')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  assignBid(@Body() assignBidDto: AssignBidDto) {
+    return this.bidsService.assignBid(assignBidDto);
   }
 }

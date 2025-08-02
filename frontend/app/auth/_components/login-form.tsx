@@ -65,10 +65,10 @@ export const LoginForm: FC<Props> = ({ className }) => {
 
       toast({
         variant: "success",
-        title: "Login Successfully",
+        title: "Login Successfully, redirecting you...",
       });
 
-      if (user?.role === UserRole.ADMIN) {
+      if (user?.role === UserRole.ADMIN || user?.role === UserRole.VENDOR) {
         router.push(redirect || "/dashboard");
       } else {
         router.push(redirect || "/");

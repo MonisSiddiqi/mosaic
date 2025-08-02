@@ -8,6 +8,7 @@ import {
   UnauthorizedException,
   Res,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -24,6 +25,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { VendorRegisterDto } from './dto/vendor-register.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -59,7 +61,9 @@ export class AuthController {
         ? await this.authService.verifyOtp(verifyOtpDto)
         : await this.authService.verifyForgotPasswordOtp(verifyOtpDto);
 
-    response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
+    if (verifyOtpDto.type === 'REGISTRATION') {
+      response.cookie(Cookies.auth, result.data.access_token, cookieOptions);
+    }
 
     return result;
   }
@@ -122,5 +126,11 @@ export class AuthController {
   ): Promise<ApiResponse<null>> {
     response.clearCookie(Cookies.auth);
     return new ApiResponse(null, 'Log-out successfully.');
+  }
+
+  @SkipAuth()
+  @Patch('resend-otp')
+  resendOtp(@Body() resendOtpDto: ResendOtpDto): Promise<ApiResponse> {
+    return this.authService.resendOtp(resendOtpDto);
   }
 }

@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { LogInIcon, RefreshCcwIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ResendOtp } from "../../_components/resend-otp";
 
 const formSchema = z.object({
   otp: z.string().min(6, {
@@ -65,21 +66,24 @@ export const VerifyOtpForm: FC<Props> = ({ type, email, className }) => {
     try {
       await verifyMutation.mutateAsync({ type, otp: data.otp, email });
 
-      const user = await profileMutation.mutateAsync();
-
-      setUser(user);
-
       toast({
+        title: "Verified successfully",
         variant: "success",
-        title: "Verified Successfully",
       });
 
-      if (user.role === UserRole.ADMIN) {
-        router.push("/dashboard");
-      } else if (user.role === UserRole.VENDOR) {
-        router.push("/vendor");
-      } else {
-        router.push("/");
+      if (type === OtpType.REGISTRATION) {
+        const user = await profileMutation.mutateAsync();
+
+        setUser(user);
+        if (user.role === UserRole.ADMIN) {
+          router.push("/dashboard");
+        } else if (user.role === UserRole.VENDOR) {
+          router.push("/dashboard");
+        } else {
+          router.push("/");
+        }
+      } else if (type === OtpType.FORGOT_PASSWORD) {
+        router.push(`/auth/create-password?email=${email}`);
       }
     } catch (err) {
       toast({
@@ -127,7 +131,7 @@ export const VerifyOtpForm: FC<Props> = ({ type, email, className }) => {
             </FormItem>
           )}
         />
-        <div className="flex w-full">
+        <div className="flex w-full gap-4">
           <Button
             size={"lg"}
             disabled={form.formState.isSubmitting}
@@ -140,6 +144,7 @@ export const VerifyOtpForm: FC<Props> = ({ type, email, className }) => {
             )}
             Submit
           </Button>
+          <ResendOtp email={email} type={type} compact />
         </div>
       </form>
     </Form>

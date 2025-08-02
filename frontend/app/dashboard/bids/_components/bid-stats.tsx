@@ -5,6 +5,7 @@ import { PageHeader } from "./bids-page-header";
 import { Roboto } from "next/font/google";
 import { useBidsStatisticsQuery } from "@/queries/bids.queries";
 import { LoaderComponent } from "@/components/loader-component";
+import Link from "next/link";
 
 const font = Roboto({ subsets: ["latin"], weight: "500" });
 
@@ -53,37 +54,38 @@ export function BidStats() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         {stats.map((stat, index) => (
-          <Card
-            key={stat.title}
-            className={cn("border-none bg-muted shadow-none", stat.className)}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              {stat.icon}
-            </CardHeader>
-            <CardContent className={font.className}>
-              <div className="flex h-14 items-center">
-                {isLoading ? (
-                  <LoaderComponent showText={false} className="my-auto" />
-                ) : (
-                  <div className="text-5xl font-bold">
-                    {index === 0
-                      ? data?.totolBids
-                      : index === 1
-                        ? data?.pendingBids
-                        : index === 2
-                          ? data?.acceptedBids
-                          : data?.rejectedBids}
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {stat.description}
-              </p>
-            </CardContent>
-          </Card>
+          <Link href={"/dashboard/bids"} key={stat.title}>
+            <Card
+              className={cn("border-none bg-muted shadow-none", stat.className)}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {stat.title}
+                </CardTitle>
+                {stat.icon}
+              </CardHeader>
+              <CardContent className={font.className}>
+                <div className="flex h-14 items-center">
+                  {isLoading ? (
+                    <LoaderComponent showText={false} className="my-auto" />
+                  ) : (
+                    <div className="text-5xl font-bold">
+                      {index === 0
+                        ? data?.totolBids
+                        : index === 1
+                          ? data?.pendingBids
+                          : index === 2
+                            ? data?.acceptedBids
+                            : data?.rejectedBids}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {stat.description}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

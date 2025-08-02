@@ -11,15 +11,12 @@ import { UserPlusIcon } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-
-const signupData = {
-  daily: { users: 0, vendors: 0 },
-  weekly: { users: 0, vendors: 0 },
-  monthly: { users: 2, vendors: 1 },
-};
+import { useDashboardQuery } from "@/queries/dashboard.queries";
 
 export const SignUpStatisticsCard = () => {
   const [, setTimeframe] = useState("weekly");
+
+  const { data } = useDashboardQuery();
 
   return (
     <Card>
@@ -39,34 +36,40 @@ export const SignUpStatisticsCard = () => {
           </TabsList>
           <TabsContent value="daily" className="mt-4 space-y-4">
             <div className="flex gap-4">
+              <Item title="Total" value={data?.signups.today.total || 0} />
               <Item
-                title="Total"
-                value={signupData.daily.users + signupData.daily.vendors}
+                title="Home Owners"
+                value={data?.signups.today.homeowners || 0}
               />
-              <Item title="Home Owners" value={signupData.daily.users} />
-              <Item title="Vendors" value={signupData.daily.vendors} />
+              <Item title="Vendors" value={data?.signups.today.vendors || 0} />
             </div>
             <p className="text-sm text-muted-foreground">New users today</p>
           </TabsContent>
           <TabsContent value="weekly" className="mt-4 space-y-4">
             <div className="flex gap-4">
+              <Item title="Total" value={data?.signups.thisWeek.total || 0} />
               <Item
-                title="Total"
-                value={signupData.weekly.users + signupData.weekly.vendors}
+                title="Home Owners"
+                value={data?.signups.thisWeek.homeowners || 0}
               />
-              <Item title="Home Owners" value={signupData.weekly.users} />
-              <Item title="Vendors" value={signupData.weekly.vendors} />
+              <Item
+                title="Vendors"
+                value={data?.signups.thisWeek.vendors || 0}
+              />
             </div>
             <p className="text-sm text-muted-foreground">New users this week</p>
           </TabsContent>
           <TabsContent value="monthly" className="mt-4 space-y-4">
             <div className="flex gap-4">
+              <Item title="Total" value={data?.signups.thisMonth.total || 0} />
               <Item
-                title="Total"
-                value={signupData.monthly.users + signupData.monthly.vendors}
+                title="Home Owners"
+                value={data?.signups.thisMonth.homeowners || 0}
               />
-              <Item title="Home Owners" value={signupData.monthly.users} />
-              <Item title="Vendors" value={signupData.monthly.vendors} />
+              <Item
+                title="Vendors"
+                value={data?.signups.thisMonth.vendors || 0}
+              />
             </div>
             <p className="text-sm text-muted-foreground">
               New users this month

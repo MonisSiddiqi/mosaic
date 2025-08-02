@@ -8,16 +8,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useDashboardQuery } from "@/queries/dashboard.queries";
 import { CreditCardIcon } from "lucide-react";
 
-const subscriptionData = {
-  active: 2105,
-  trialing: 843,
-  expired: 412,
-  unpaid: 164,
-};
-
 export const SubscriptionStatisticsCard = () => {
+  const { data } = useDashboardQuery();
+
+  // Calculate total subscriptions
+  const total = data?.subscriptions.total || 0;
+  const active = data?.subscriptions.active || 0;
+  const expired = data?.subscriptions.expired || 0;
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +26,9 @@ export const SubscriptionStatisticsCard = () => {
           <CardTitle>Subscription Status</CardTitle>
           <CreditCardIcon className="h-5 w-5 text-emerald-500" />
         </div>
-        <CardDescription>Active, trialing, expired, unpaid</CardDescription>
+        <CardDescription>
+          Active, expired, and inactive subscriptions
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -34,41 +37,11 @@ export const SubscriptionStatisticsCard = () => {
               <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
               <span>Active</span>
             </div>
-            <span className="font-medium">
-              {subscriptionData.active.toLocaleString()}
-            </span>
+            <span className="font-medium">{active.toLocaleString()}</span>
           </div>
           <Progress
-            value={
-              (subscriptionData.active /
-                (subscriptionData.active +
-                  subscriptionData.trialing +
-                  subscriptionData.expired +
-                  subscriptionData.unpaid)) *
-              100
-            }
+            value={(active / total) * 100}
             className="h-2 bg-gray-100"
-          />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-blue-400"></div>
-              <span>Trialing</span>
-            </div>
-            <span className="font-medium">
-              {subscriptionData.trialing.toLocaleString()}
-            </span>
-          </div>
-          <Progress
-            value={
-              (subscriptionData.trialing /
-                (subscriptionData.active +
-                  subscriptionData.trialing +
-                  subscriptionData.expired +
-                  subscriptionData.unpaid)) *
-              100
-            }
-            className="h-2 bg-gray-100 text-blue-400"
           />
 
           <div className="flex items-center justify-between">
@@ -76,42 +49,19 @@ export const SubscriptionStatisticsCard = () => {
               <div className="h-3 w-3 rounded-full bg-amber-400"></div>
               <span>Expired</span>
             </div>
-            <span className="font-medium">
-              {subscriptionData.expired.toLocaleString()}
-            </span>
+            <span className="font-medium">{expired.toLocaleString()}</span>
           </div>
           <Progress
-            value={
-              (subscriptionData.expired /
-                (subscriptionData.active +
-                  subscriptionData.trialing +
-                  subscriptionData.expired +
-                  subscriptionData.unpaid)) *
-              100
-            }
+            value={(expired / total) * 100}
             className="h-2 bg-gray-100 text-amber-400"
           />
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-red-400"></div>
-              <span>Unpaid</span>
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Total Subscriptions</span>
+              <span className="font-semibold">{total.toLocaleString()}</span>
             </div>
-            <span className="font-medium">
-              {subscriptionData.unpaid.toLocaleString()}
-            </span>
           </div>
-          <Progress
-            value={
-              (subscriptionData.unpaid /
-                (subscriptionData.active +
-                  subscriptionData.trialing +
-                  subscriptionData.expired +
-                  subscriptionData.unpaid)) *
-              100
-            }
-            className="h-2 bg-gray-100 text-red-400"
-          />
         </div>
       </CardContent>
     </Card>

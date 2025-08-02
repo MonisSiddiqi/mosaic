@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { useCurrentPlanQuery } from "@/queries/payments.queries";
+import { useAuth } from "@/hooks/use-auth";
 
 export function ExpiredPlanNotice() {
   const { data, isLoading } = useCurrentPlanQuery();
+
+  const { user } = useAuth();
 
   if (isLoading) {
     return null;

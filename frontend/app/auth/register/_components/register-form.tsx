@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -90,13 +90,15 @@ export const RegisterForm: FC<Props> = ({ className }) => {
 
   const router = useRouter();
 
-  if (isAuthenticated) {
-    if (user?.role === UserRole.USER) {
-      router.push("/");
-    } else {
-      router.push("/dashboard");
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === UserRole.USER) {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      }
     }
-  }
+  }, [isAuthenticated]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -304,10 +306,6 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
                 Register as Vendor{" "}
               </Link>
-            </Button>
-
-            <Button type="button" variant={"link"}>
-              <Link href="/auth/forgot-password">Forgot Password?</Link>
             </Button>
           </div>
         </div>

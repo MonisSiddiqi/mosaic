@@ -35,14 +35,14 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
     case ProjectStatusEnum.IN_PROGRESS:
       return {
         label: "Searching Vendor",
-        className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+        className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-0",
         variant: "pending",
         icon: ClockIcon,
       };
     case ProjectStatusEnum.VENDOR_FOUND:
       return {
         label: "Vendor Found",
-        className: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+        className: "bg-blue-100 text-blue-800 hover:bg-blue-100 border-0",
         variant: "success",
         icon: TrafficConeIcon,
       };
@@ -50,14 +50,14 @@ export const getStatusConfig = (status: ProjectStatusEnum) => {
     case ProjectStatusEnum.AWARDED:
       return {
         label: "Awarded",
-        className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
+        className: "bg-purple-100 text-purple-800 hover:bg-purple-100 border-0",
         variant: "success",
         icon: HandshakeIcon,
       };
     case ProjectStatusEnum.COMPLETED:
       return {
         label: "Completed",
-        className: "bg-green-100 text-green-800 hover:bg-green-100",
+        className: "bg-green-100 text-green-800 hover:bg-green-100 border-0",
         variant: "success",
         icon: CheckCircleIcon,
       };

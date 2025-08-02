@@ -8,8 +8,9 @@ import { ProjectsTableRowActions } from "./projects-table-row-actions";
 import { cn, getStatusConfig } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-type BadgeVariant =
+export type BadgeVariant =
   | "pending"
   | "success"
   | "default"
@@ -45,6 +46,22 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
     ),
     cell: ({ row }) => {
       return <div> {row.original.description}</div>;
+    },
+  },
+
+  {
+    accessorKey: "bid-history",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Bid History" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <Button variant={"secondary"} asChild size={"sm"}>
+          <Link href={`/dashboard/projects/${row.id}/bid-history`}>
+            View Bid History
+          </Link>
+        </Button>
+      );
     },
   },
 
