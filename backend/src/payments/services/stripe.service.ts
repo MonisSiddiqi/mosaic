@@ -22,7 +22,7 @@ export class StripeService implements OnModuleInit {
 
   private stripe = new Stripe(
     this.configService.get('payments.stripe.secretKey'),
-    { apiVersion: '2025-03-31.basil' },
+    { apiVersion: '2025-07-30.basil' },
   );
 
   private prices = {};
@@ -95,7 +95,7 @@ export class StripeService implements OnModuleInit {
     const { planName, userId, interval } = createCheckoutDto;
     const plan = this.prices[planName];
 
-    let priceId;
+    let priceId: string;
 
     if (interval === 'month') {
       priceId = plan?.monthly;
@@ -107,13 +107,40 @@ export class StripeService implements OnModuleInit {
       throw new Error(`Plan "${planName}" not initialized.`);
     }
 
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: {
+        UserPlan: {
+          where: {
+            endDate: {
+              lte: new Date(),
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new UnprocessableEntityException('User not found');
+    }
+
+    if (user.UserPlan.length > 0) {
+      throw new UnprocessableEntityException('User already has an active plan');
+    }
+
+    if (user.role !== 'VENDOR') {
+      throw new UnprocessableEntityException(
+        'Only vendors can subscribe to plans',
+      );
+    }
+
     const frontendUrl = this.configService.get('frontendUrl');
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${frontendUrl}/success?plan=${planName}`,
+      success_url: `${frontendUrl}/dashboard/success?plan=${planName}`,
       cancel_url: `${frontendUrl}/dashboard/membership`,
       metadata: {
         userId,
@@ -127,14 +154,18 @@ export class StripeService implements OnModuleInit {
 
   async handleWebhook(req: Request) {
     const sig = req.headers['stripe-signature'];
-    const webhookSecret = this.configService.get(
+    const stripeWebhookSecret = this.configService.get(
       'payments.stripe.webhookSecret',
     );
 
     let event;
 
     try {
-      event = this.stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+      event = this.stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        stripeWebhookSecret,
+      );
     } catch (err) {
       throw new Error(
         `Webhook signature verification failed: ${(err as Error).message}`,
@@ -162,14 +193,23 @@ export class StripeService implements OnModuleInit {
         throw new UnprocessableEntityException('User not found');
       }
 
+      const startDate = new Date();
+      const endDate = new Date();
+
+      if (interval === 'year') {
+        endDate.setFullYear(startDate.getFullYear() + 1);
+      } else if (interval === 'month') {
+        endDate.setMonth(startDate.getMonth() + 1);
+      }
+
       await this.prismaService.userPlan.create({
         data: {
           userId: user.id,
           planId: plan.id,
-          startDate: '',
-          endDate: '',
+          startDate: startDate,
+          endDate: endDate,
           type: interval === 'year' ? 'YEARLY' : 'MONTHLY',
-          paymentId: '',
+          paymentId: session.id,
           mode: 'PAID',
           amount: plan.amount,
         },

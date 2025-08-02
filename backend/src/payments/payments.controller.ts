@@ -1,12 +1,22 @@
-import { Body, Controller, Get, Header, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { CreateCheckoutDto } from './dto/create-checkout.dto';
 import { Response } from 'express';
 import { StripeService } from './services/stripe.service';
 import { Request } from 'express';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('payments')
 export class PaymentsController {
@@ -25,6 +35,8 @@ export class PaymentsController {
     return this.stripeService.createCheckoutSession(createCheckoutDto);
   }
 
+  @Roles(UserRole.VENDOR)
+  @UseGuards(RolesGuard)
   @Get('current-plan')
   getCurrentPlan(@GetUser() authUser: User) {
     return this.paymentsService.currentPlan(authUser);

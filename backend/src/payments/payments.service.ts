@@ -73,6 +73,10 @@ export class PaymentsService {
       },
     });
 
+    if (!plan) {
+      return new ApiResponse(null, 'No active plan found');
+    }
+
     const plansWithSignedUrl = await Promise.all(
       plan?.Plan.Service.map(async (service) => {
         if (service.iconUrl) {
