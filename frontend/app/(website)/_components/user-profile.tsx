@@ -13,10 +13,12 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { getFileUrl, getInitials } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { Building2Icon, LogOutIcon, UserCircle } from "lucide-react";
+import { BellIcon, Building2Icon, LogOutIcon, UserCircle } from "lucide-react";
 import { UserRole } from "@/apis/users";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useListenNotifications } from "@/hooks/use-listen-notifications";
+import humanFormat from "human-format";
 
 export function UserProfile() {
   const { user, logout } = useAuth();
@@ -37,6 +39,8 @@ export function UserProfile() {
   };
 
   const router = useRouter();
+
+  const { unreadCount } = useListenNotifications();
 
   useEffect(() => {
     if (user && user.role !== UserRole.USER) {
@@ -70,6 +74,22 @@ export function UserProfile() {
           <Link href="/profile" className="hover:cursor-pointer">
             {" "}
             <UserCircle /> Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link href="/notifications" className="hover:cursor-pointer">
+            <BellIcon /> Notifications{" "}
+            {unreadCount > 0 && (
+              <div className="rounded-full p-1">
+                <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
+                  <p className="text-basf-red whitespace-nowrap text-sm">
+                    {humanFormat(unreadCount)}
+                  </p>
+                </div>
+              </div>
+            )}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

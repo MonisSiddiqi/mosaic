@@ -8,6 +8,7 @@ import { Attachment } from "../attachment";
 import { StatusBadge } from "../status-badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ArrowRightIcon, EyeIcon } from "lucide-react";
 
 export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {
@@ -53,7 +54,7 @@ export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {
     accessorKey: "userStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Home Owner Response" />
+      <DataTableColumnHeader column={column} title="Homeowner Response" />
     ),
     cell: ({ row }) =>
       row.original.vendorStatus === "REJECTED" ? (

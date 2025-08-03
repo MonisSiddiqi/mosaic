@@ -15,6 +15,7 @@ import { EditUpdateSheet } from "./sheets/edit-update-sheet";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil2Icon } from "@radix-ui/react-icons";
+import { EmptyUI } from "@/components/empty-ui";
 import { DeleteProjectUpdateAlert } from "./alerts/delete-project-update.alert";
 
 export const ProjectUpdatesContainer = ({
@@ -66,10 +67,13 @@ const ProjectUpdates = ({ title, updates, isOwner, projectId }: Props) => {
         <p>{title}</p>
       </div>
       <ScrollArea className="flex h-[35rem] flex-col gap-4 pr-3" type="auto">
-        {updates.length > 0 &&
+        {updates.length > 0 ? (
           updates.map((item) => (
             <Updates key={item.id} {...item} isOwner={isOwner} />
-          ))}
+          ))
+        ) : (
+          <EmptyUI text="No updates yet" className="mt-72" />
+        )}
       </ScrollArea>
 
       {isOwner && (

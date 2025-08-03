@@ -12,7 +12,7 @@ export default function RootLayout({
     <div className="flex max-h-screen min-h-screen flex-1 flex-col justify-between overflow-hidden">
       <Header />
       <ScrollArea className="h-screen w-screen">
-        {children}
+        <div className="min-h-screen">{children}</div>
         <BottomCta />
         <Footer />
       </ScrollArea>

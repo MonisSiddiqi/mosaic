@@ -19,6 +19,10 @@ import { ProjectUpdatesContainer } from "./project-updates";
 import { ProjectStatusEnum } from "@/apis/projects";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
+import { BidHistoryContainer } from "@/app/dashboard/projects/[id]/bid-history/_components/bid-history-container";
+import { BidStatus } from "@/apis/bids";
+import { ContactDetailsContainer } from "./contact-details-container";
+import { MarkProjectCompleteContainer } from "./mark-project-complete-container";
 
 export const ProjectDetails = () => {
   const params = useParams();
@@ -47,104 +51,139 @@ export const ProjectDetails = () => {
     backButtonHref = "/dashboard/projects";
   }
 
+  const acceptedBid = data?.Bid.find(
+    (item) =>
+      item.vendorStatus === BidStatus.ACCEPTED &&
+      item.userStatus === BidStatus.ACCEPTED,
+  );
+
   if (data) {
     return (
-      <div className="flex min-h-screen flex-col gap-6 rounded bg-white p-6">
+      <div className="flex min-h-screen flex-col gap-6 rounded border border-gray-200 bg-white p-6">
         <BackButton className="w-fit" href={backButtonHref} />
 
         {user?.role === UserRole.USER && (
           <ProjectDetailsAlert status={data.status} />
         )}
 
-        {data.Bid && data.Bid.length > 0 && user?.role === UserRole.USER && (
-          <VendorProposal {...data.Bid[0]} />
+        {(data.status === ProjectStatusEnum.AWARDED ||
+          data.status === ProjectStatusEnum.COMPLETED) && (
+          <MarkProjectCompleteContainer project={data} />
         )}
+
+        {data.status === ProjectStatusEnum.AWARDED && acceptedBid && (
+          <ContactDetailsContainer
+            homeowner={data.user}
+            vendor={acceptedBid.vendor}
+          />
+        )}
+
+        {data.Bid &&
+          data.Bid.length > 0 &&
+          data.status === ProjectStatusEnum.VENDOR_FOUND &&
+          data.Bid[0].userStatus === BidStatus.PENDING &&
+          data.Bid[0].vendorStatus === BidStatus.ACCEPTED &&
+          user?.role === UserRole.USER && <VendorProposal {...data.Bid[0]} />}
 
         {data.status !== ProjectStatusEnum.IN_PROGRESS &&
           data.status !== ProjectStatusEnum.VENDOR_FOUND && (
             <ProjectUpdatesContainer projectId={data.id} />
           )}
 
-        <div>
-          <H3 className="text-lg">{data.title}</H3>
-          <P3>{data.description}</P3>
-        </div>
+        <BidHistoryContainer
+          bids={data.Bid}
+          homeowner={data.user}
+          project={data}
+        />
 
-        <div className="flex flex-col gap-5 rounded-md bg-muted p-6">
+        <div className="flex flex-col gap-4 rounded border border-gray-200 p-4">
+          <p className="text-sm text-gray-500">Project details</p>
+
           <div>
-            <p className="text-lg font-semibold text-gray-800">Project Files</p>
-            <p className="text-gray-600">
-              Project pictures or videos added by the home owner
-            </p>
+            <H3 className="text-lg">{data.title}</H3>
+            <P3>{data.description}</P3>
           </div>
 
-          <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
-            {data.ProjectFile.length === 0 && <div>No files</div>}
-
-            {data.ProjectFile?.map((file) => (
-              <ShowFile key={file.id} url={file.url} />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-5 rounded-md bg-muted p-6">
-          <div>
-            <p className="text-lg font-semibold text-gray-800">Sample Files</p>
-            <p className="text-gray-600">
-              User has given us some picture for reference of what they desire
-              from us.
-            </p>
-          </div>
-
-          <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
-            {data.ProjectFile.length === 0 && <div>No files</div>}
-
-            {data.SampleFile?.map((file) => (
-              <ShowFile key={file.id} url={file.url} />
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
-            <div className="flex items-center gap-2">
-              <MapPinnedIcon className="size-5 text-red-500" />{" "}
-              <p className="text-lg">Location</p>{" "}
+          <div className="flex flex-col gap-5 rounded-md bg-muted p-6">
+            <div>
+              <p className="text-lg font-semibold text-gray-800">
+                Project Files
+              </p>
+              <p className="text-gray-600">
+                Project pictures or videos added by the home owner
+              </p>
             </div>
 
-            <AddressCard address={data.Address} />
+            <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+              {data.ProjectFile.length === 0 && <div>No files</div>}
+
+              {data.ProjectFile?.map((file) => (
+                <ShowFile key={file.id} url={file.url} />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5 rounded-md bg-muted p-6">
+            <div>
+              <p className="text-lg font-semibold text-gray-800">
+                Sample Files
+              </p>
+              <p className="text-gray-600">
+                User has given us some picture for reference of what they desire
+                from us.
+              </p>
+            </div>
+
+            <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+              {data.ProjectFile.length === 0 && <div>No files</div>}
+
+              {data.SampleFile?.map((file) => (
+                <ShowFile key={file.id} url={file.url} />
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
+              <div className="flex items-center gap-2">
+                <MapPinnedIcon className="size-5 text-red-500" />{" "}
+                <p className="text-lg">Location</p>{" "}
+              </div>
+
+              <AddressCard address={data.Address} />
+            </div>
+
+            <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
+              <div className="flex items-center gap-2">
+                <RulerIcon className="size-5 text-blue-700" />{" "}
+                <p className="text-lg">Site Measurement</p>{" "}
+              </div>
+
+              <SiteMeasurementCard measurement={data.SiteMeasurement} />
+            </div>
           </div>
 
           <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
             <div className="flex items-center gap-2">
-              <RulerIcon className="size-5 text-blue-700" />{" "}
-              <p className="text-lg">Site Measurement</p>{" "}
+              <Building2Icon className="size-5 text-yellow-400" />{" "}
+              <p className="text-lg">Budget Preference</p>{" "}
             </div>
-
-            <SiteMeasurementCard measurement={data.SiteMeasurement} />
+            <BudgetPreferenceCard
+              budgetPreference={data.budgetPreference}
+              preferenceMessage={data.preferenceMessage}
+            />
           </div>
-        </div>
 
-        <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
-          <div className="flex items-center gap-2">
-            <Building2Icon className="size-5 text-yellow-400" />{" "}
-            <p className="text-lg">Budget Preference</p>{" "}
-          </div>
-          <BudgetPreferenceCard
-            budgetPreference={data.budgetPreference}
-            preferenceMessage={data.preferenceMessage}
-          />
-        </div>
-
-        {(data.Service || data.ProjectTag.length > 0) && (
-          <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
-            <div className="flex items-center gap-2">
-              <CubeIcon className="size-5 text-lime-600" />{" "}
-              <p className="text-lg">Service and Tags</p>{" "}
+          {(data.Service || data.ProjectTag.length > 0) && (
+            <div className="flex flex-col gap-5 rounded-md bg-muted p-5">
+              <div className="flex items-center gap-2">
+                <CubeIcon className="size-5 text-lime-600" />{" "}
+                <p className="text-lg">Service and Tags</p>{" "}
+              </div>
+              <ProjectTags tags={data.ProjectTag} service={data.Service} />
             </div>
-            <ProjectTags tags={data.ProjectTag} service={data.Service} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }

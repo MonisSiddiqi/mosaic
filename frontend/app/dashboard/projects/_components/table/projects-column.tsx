@@ -58,11 +58,12 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
       return (
         <Button variant={"secondary"} asChild size={"sm"}>
           <Link href={`/dashboard/projects/${row.id}/bid-history`}>
-            View Bid History
+            Bid History
           </Link>
         </Button>
       );
     },
+    enableSorting: false,
   },
 
   {
@@ -77,9 +78,10 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
       return (
         <Badge
           variant={statusConfig.variant as BadgeVariant}
-          className={statusConfig.className}
+          className={cn(statusConfig.className, "flex items-center gap-2")}
         >
-          <Icon className={cn("h-3 w-3 min-w-3")} /> {statusConfig.label}
+          <Icon className={cn("h-3 w-3 min-w-3")} />{" "}
+          <p className="whitespace-nowrap"> {statusConfig.label} </p>
         </Badge>
       );
     },

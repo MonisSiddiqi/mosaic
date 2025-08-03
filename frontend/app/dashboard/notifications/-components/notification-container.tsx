@@ -18,6 +18,8 @@ import Link from "next/link";
 import { markAsReadApi } from "@/apis/notifications/notification.api";
 import { useNotificationsSuspenseQuery } from "@/queries/notifications.queries";
 import { EmptyUI } from "@/components/empty-ui";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const range = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, index) => index + start);
@@ -52,8 +54,18 @@ const getPaginationItems = (currentPage: number, totalPages: number) => {
 export const NotificationsContainer = () => {
   const queryClient = useQueryClient();
 
-  const page =
-    Number(new URLSearchParams(window.location.search).get("page")) || 1;
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const goToPage = (page: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page);
+
+    router.push(`?${params.toString()}`);
+  };
+
+  const page = Number(searchParams.get("page")) || 1;
 
   const { mutate } = useMutation({
     mutationKey: ["notifications-mark-as-read"],
@@ -89,31 +101,37 @@ export const NotificationsContainer = () => {
         <Pagination className="w-full">
           <PaginationContent>
             {page > 1 && (
-              <Link href={`/notifications?page=${page - 1}`}>
-                <PaginationItem>
-                  <PaginationPrevious className="cursor-pointer" />
-                </PaginationItem>
-              </Link>
+              <PaginationItem
+                key={page - 1}
+                className="cursor-pointer"
+                onClick={() => goToPage(String(page - 1))}
+              >
+                <PaginationPrevious className="cursor-pointer" />
+              </PaginationItem>
             )}
             {paginationItems.map((item, index) => {
               if (typeof item === "string")
                 return <PaginationEllipsis key={index} />;
               return (
-                <Link key={item} href={`/notifications?page=${item}`}>
-                  <PaginationItem>
-                    <PaginationLink isActive={item === page}>
-                      {item}
-                    </PaginationLink>
-                  </PaginationItem>
-                </Link>
+                <PaginationItem
+                  key={item}
+                  className="cursor-pointer"
+                  onClick={() => goToPage(String(item))}
+                >
+                  <PaginationLink isActive={item === page}>
+                    {item}
+                  </PaginationLink>
+                </PaginationItem>
               );
             })}
             {page < totalPages && (
-              <Link href={`/notifications?page=${page + 1}`}>
-                <PaginationItem>
-                  <PaginationNext className="cursor-pointer" />
-                </PaginationItem>
-              </Link>
+              <PaginationItem
+                key={page + 1}
+                className="cursor-pointer"
+                onClick={() => goToPage(String(page + 1))}
+              >
+                <PaginationNext className="cursor-pointer" />
+              </PaginationItem>
             )}
           </PaginationContent>
         </Pagination>

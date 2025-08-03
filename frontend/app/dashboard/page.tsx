@@ -57,7 +57,7 @@ export default function Dashboard() {
           />
         </Link>
 
-        <Link href={"/dashboard/bids"}>
+        <Link href={"/dashboard/projects"}>
           <StatisticsCard
             title="Open Bids"
             value={data?.openBids}

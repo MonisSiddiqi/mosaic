@@ -4,30 +4,25 @@ import { Observable, Subject } from 'rxjs';
 import { SaveNotificationDto } from './dto/save-notification.dto';
 import { ApiResponse } from '../common/dto/api-response.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from '@prisma/client';
+import { BidStatus, Project, User, UserProfile } from '@prisma/client';
 
 @Injectable()
 export class NotificationsService {
   private notificationsSubject: Subject<string> = new Subject<string>();
 
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async saveNotification(saveNotificationDto: SaveNotificationDto) {
-    const { userId, heading, message, data, isGlobal, projectId } =
+    const { userIds, heading, message, data, isGlobal, projectId } =
       saveNotificationDto;
-
-    const nodeEnv = this.configService.get<'production' | 'development'>(
-      'nodeEnv',
-    );
 
     if (isGlobal) {
       const users = await this.prismaService.user.findMany({
         where: {
           NOT: {
-            id: userId,
+            id: {
+              in: userIds || [],
+            },
           },
         },
       });
@@ -43,18 +38,26 @@ export class NotificationsService {
         });
       }
     } else {
-      await this.prismaService.notification.create({
-        data: {
-          userId,
-          projectId,
-          heading,
-          message,
-          data: data || undefined,
+      const users = await this.prismaService.user.findMany({
+        where: {
+          id: {
+            in: userIds || [],
+          },
         },
       });
-    }
 
-    //TODO: SEND IN APP NOTIFICATION.
+      for (const user of users) {
+        await this.prismaService.notification.create({
+          data: {
+            userId: user.id,
+            projectId,
+            heading,
+            message,
+            data: data || undefined,
+          },
+        });
+      }
+    }
 
     this.notificationsSubject.next(JSON.stringify(saveNotificationDto));
 
@@ -120,5 +123,70 @@ export class NotificationsService {
 
   getNotificationObservable(): Observable<string> {
     return this.notificationsSubject.asObservable();
+  }
+
+  async sendNewProjectNotification(
+    project: Project,
+    user: User & { UserProfile: UserProfile },
+  ) {
+    const admins = await this.prismaService.user.findMany({
+      where: {
+        role: 'ADMIN',
+      },
+    });
+
+    const saveNotificationDto: SaveNotificationDto = {
+      userIds: admins.map((admin) => admin.id),
+      heading: '🔔 New Project Created',
+      message: `📁 A new project "${project.title}" has been created by "${user.UserProfile.name} (${user.email})".`,
+      isGlobal: false,
+      projectId: project.id,
+    };
+
+    return this.saveNotification(saveNotificationDto);
+  }
+
+  async sendBidAssignedNotifications(vendor: User, project: Project) {
+    const saveNotificationDto: SaveNotificationDto = {
+      userIds: [vendor.id],
+      heading: '🔔 Vendor Assigned',
+      message: `📌 You have been received the project "${project.title}" as bid. Kindly Take necessary actions.`,
+      isGlobal: false,
+      projectId: project.id,
+    };
+
+    return this.saveNotification(saveNotificationDto);
+  }
+
+  async sendBidActionNotification(
+    recipient: User,
+    project: Project,
+    action: BidStatus,
+  ) {
+    const icon = action === BidStatus.ACCEPTED ? '✅' : '❌';
+
+    if (recipient.role === 'USER' && action === BidStatus.ACCEPTED) {
+      const saveNotificationDto: SaveNotificationDto = {
+        userIds: [recipient.id],
+        heading: '🔔 Bid Action',
+        message: `${icon} Your bid on the project "${project.title}" has been ${action}. Kindly take necessary actions.`,
+        isGlobal: false,
+        projectId: project.id,
+      };
+
+      return this.saveNotification(saveNotificationDto);
+    }
+
+    if (recipient.role === 'VENDOR') {
+      const saveNotificationDto: SaveNotificationDto = {
+        userIds: [recipient.id],
+        heading: '🔔 Bid Action',
+        message: `${icon} Your bid on the project "${project.title}" has been ${action}. Kindly take necessary actions.`,
+        isGlobal: false,
+        projectId: project.id,
+      };
+
+      return this.saveNotification(saveNotificationDto);
+    }
   }
 }

@@ -53,7 +53,9 @@ export const ProjectDetailsAlert: FC<Props> = ({ status }) => {
   const Icon = alert?.icon;
 
   return (
-    <Alert className={`${statusConfig.className} w-full md:max-w-screen-md`}>
+    <Alert
+      className={`${statusConfig.className} w-full rounded md:max-w-screen-md`}
+    >
       {Icon && <Icon className={`h-4 w-4`} />}
       <AlertTitle>{alert?.title}</AlertTitle>
       <AlertDescription>{alert?.description}</AlertDescription>

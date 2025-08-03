@@ -503,10 +503,45 @@ export const services = [
   },
 ];
 
-export const plans: { name: string; amount: number }[] = [
-  { name: 'Essential Trades', amount: 50 },
-  { name: 'Skilled Trades', amount: 80 },
-  { name: 'High-Value Trades', amount: 99 },
+export const plans: { name: string; amount: number, services:{name:string}[] }[] = [
+  { name: 'Essential Trades', amount: 50, services:[
+    { name: 'Waterproofing' },
+    { name: 'Drywall' },
+    { name: 'Painting' },
+    { name: 'Windows Installation & Repair' },
+    { name: 'Garage Doors' },
+    { name: 'Epoxy Flooring' },
+    { name: 'Drop Ceilings' },
+    { name: 'Tree Service' },
+    { name: 'Signs & Signage Installation' }
+  ] },
+  { name: 'Skilled Trades', amount: 80, services:[
+    { name: 'Plumbing' },
+    { name: 'Electrical' },
+    { name: 'Demolition' },
+    { name: 'Tile Install' },
+    { name: 'Roofing' },
+    { name: 'HVAC' },
+    { name: 'Concrete' },
+    { name: 'Fireplace Services' },
+    { name: 'Masonry' },
+    { name: 'Insulation' },
+    { name: 'Staging Services' },
+    { name: 'Finish Carpentry' },
+    { name: 'Irrigation System' },
+    { name: 'Exterior Carpentry' }
+  ] },
+  { name: 'High-Value Trades', amount: 99, services:[
+    { name: 'Underground Tap' },
+    { name: 'Commercial Construction' },
+    { name: 'Septic System' },
+    { name: 'Engineering Services' },
+    { name: 'Custom Work' },
+    { name: 'Dumpster Services' },
+    { name: 'Property Management' },
+    { name: 'Materials Suppliers' },
+    { name: 'Well Installation & Repair' }
+  ] },
 ];
 
 export const tier1Services = [
@@ -561,3 +596,4 @@ export const tier3Services = [
   'Dumpster Service',
   'Signs & Large Installations',
 ];
+

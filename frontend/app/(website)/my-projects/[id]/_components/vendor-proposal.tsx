@@ -44,7 +44,7 @@ export default function VendorProposal({
   };
 
   return (
-    <Card className="max-w-screen-md overflow-hidden rounded-md">
+    <Card className="max-w-screen-md overflow-hidden rounded shadow-none">
       <CardHeader className="bg-green-50 p-4">
         <div className="flex gap-4">
           <Avatar className="size-14">

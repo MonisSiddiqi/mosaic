@@ -13,6 +13,7 @@ import { BidActionDto } from './dto/bid-action.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 import { AssignBidDto } from './dto/assign-bid.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class BidsService implements OnModuleInit {
@@ -25,6 +26,7 @@ export class BidsService implements OnModuleInit {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
+    private readonly notificationService: NotificationsService,
   ) {}
 
   async findAll(getBidsDto: GetBidsDto, authUser: User) {
@@ -59,7 +61,7 @@ export class BidsService implements OnModuleInit {
     const bids = await this.prismaService.bid.findMany({
       where: bidWhereInput,
       orderBy: {
-        vendorStatus: 'desc',
+        [sortField]: sortValue,
       },
       ...(page > 0
         ? {
@@ -112,6 +114,26 @@ export class BidsService implements OnModuleInit {
       throw new UnprocessableEntityException('Bid not found');
     }
 
+    if (authUser.role === 'VENDOR') {
+      if (bid.vendorStatus !== 'PENDING') {
+        throw new UnprocessableEntityException(
+          `You have already taken action on this bid`,
+        );
+      }
+    } else {
+      if (bid.userStatus !== 'PENDING') {
+        throw new UnprocessableEntityException(
+          `You have already taken action on this bid`,
+        );
+      }
+    }
+
+    if (authUser.role === 'USER' && bid.vendorStatus === 'PENDING') {
+      throw new UnprocessableEntityException(
+        `You cannot take action on this bid as vendor has not taken action yet`,
+      );
+    }
+
     //actions for vendor
     if (action === 'ACCEPTED' && authUser.role === 'VENDOR') {
       if (!attachment) {
@@ -143,8 +165,6 @@ export class BidsService implements OnModuleInit {
         },
       });
 
-      let status = bid.project.status as ProjectStatus;
-
       await this.prismaService.project.update({
         where: {
           id: bid.projectId,
@@ -153,12 +173,18 @@ export class BidsService implements OnModuleInit {
           status: 'VENDOR_FOUND',
         },
       });
-
-      return new ApiResponse(null, 'Bid accepted successfully');
     }
 
     if (action === 'REJECTED' && authUser.role === 'VENDOR') {
-      const bid = await this.prismaService.bid.update({
+      if (bid.project.status === 'AWARDED') {
+        throw new UnprocessableEntityException('Project has already accepted');
+      }
+
+      if (bid.project.status === 'COMPLETED') {
+        throw new UnprocessableEntityException('Project has already completed');
+      }
+
+      await this.prismaService.bid.update({
         where: { id: bidId },
         data: {
           vendorStatus: 'REJECTED',
@@ -173,16 +199,12 @@ export class BidsService implements OnModuleInit {
           status: 'IN_PROGRESS',
         },
       });
-
-      return new ApiResponse(null, 'Bid rejected successfully');
     }
 
     //actions for user
     if (action === 'ACCEPTED' && authUser.role === 'USER') {
       if (bid.project.status === 'AWARDED') {
-        throw new UnprocessableEntityException(
-          'Project has already assinged to some vendor',
-        );
+        throw new UnprocessableEntityException('Project has already accepted');
       }
 
       if (bid.project.status === 'COMPLETED') {
@@ -204,12 +226,18 @@ export class BidsService implements OnModuleInit {
           status: 'AWARDED',
         },
       });
-
-      return new ApiResponse(null, 'Project awarded successfully');
     }
 
     if (action === 'REJECTED' && authUser.role === 'USER') {
-      const bid = await this.prismaService.bid.update({
+      if (bid.project.status === 'AWARDED') {
+        throw new UnprocessableEntityException('Project has already accepted');
+      }
+
+      if (bid.project.status === 'COMPLETED') {
+        throw new UnprocessableEntityException('Project has already completed');
+      }
+
+      await this.prismaService.bid.update({
         where: { id: bidId },
         data: {
           userStatus: 'REJECTED',
@@ -224,9 +252,36 @@ export class BidsService implements OnModuleInit {
           status: 'IN_PROGRESS',
         },
       });
-
-      return new ApiResponse(null, 'Bid rejected successfully');
     }
+
+    //Sending notifications
+    if (authUser.role === 'USER') {
+      const recipient = await this.prismaService.user.findUnique({
+        where: {
+          id: bid.vendorId,
+        },
+      });
+
+      await this.notificationService.sendBidActionNotification(
+        recipient,
+        bid.project,
+        action,
+      );
+    } else if (authUser.role === 'VENDOR') {
+      const recipient = await this.prismaService.user.findUnique({
+        where: {
+          id: bid.project.userId,
+        },
+      });
+
+      await this.notificationService.sendBidActionNotification(
+        recipient,
+        bid.project,
+        action,
+      );
+    }
+
+    return new ApiResponse(null, `Bid ${action} successfully`);
   }
 
   async bidsStatistics(authUser: User) {
@@ -314,6 +369,11 @@ export class BidsService implements OnModuleInit {
             status: 'VENDOR_FOUND',
           },
         });
+
+        await this.notificationService.sendBidAssignedNotifications(
+          vendor,
+          project,
+        );
       } else {
         this.logger.debug(`No vendors available for project ${project.id}`);
       }
@@ -348,7 +408,17 @@ export class BidsService implements OnModuleInit {
 
     if (vendor.role !== 'VENDOR') {
       throw new UnprocessableEntityException(
-        'Only vendor can be assigned to bids',
+        'Only vendor can be assigned to projects',
+      );
+    }
+
+    const isPreviouslyAssigned = project.Bid.some(
+      (item) => item.vendorId === vendorId,
+    );
+
+    if (isPreviouslyAssigned) {
+      throw new UnprocessableEntityException(
+        'Vendor was previously assigned to this project',
       );
     }
 
@@ -365,6 +435,11 @@ export class BidsService implements OnModuleInit {
       where: { id: projectId },
       data: { status: 'VENDOR_FOUND' },
     });
+
+    await this.notificationService.sendBidAssignedNotifications(
+      vendor,
+      project,
+    );
 
     return new ApiResponse(bid, 'Bid assigned successfully');
   }

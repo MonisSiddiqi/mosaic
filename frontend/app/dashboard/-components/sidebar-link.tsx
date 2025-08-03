@@ -32,7 +32,7 @@ export function SidebarLink({
       </div>
 
       {text === "Notifications" && unreadCount > 0 && (
-        <div className="rounded-full bg-red-200 p-1">
+        <div className="rounded-full p-1">
           <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
             <p className="text-basf-red whitespace-nowrap text-sm">
               {humanFormat(unreadCount)}

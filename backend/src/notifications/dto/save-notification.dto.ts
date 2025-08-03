@@ -1,11 +1,10 @@
 export class SaveNotificationDto {
-  userId: string;
+  userIds: string[];
   heading: string;
   message: string;
-  data?: {
-    link?: string;
-    [key: string]: any;
-  };
   isGlobal: boolean;
   projectId?: string;
+  data?: {
+    [key: string]: any;
+  };
 }

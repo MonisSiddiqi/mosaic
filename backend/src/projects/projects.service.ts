@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class ProjectsService {
@@ -17,6 +18,7 @@ export class ProjectsService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
+    private readonly notificationService: NotificationsService,
   ) {}
 
   async create(
@@ -134,6 +136,18 @@ export class ProjectsService {
     await this.prismaService.projectTag.createMany({
       data: tags.map((item) => ({ tagId: item, projectId: project.id })),
     });
+
+    // Notify admins about the new project
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        id: authUser.id,
+      },
+      include: {
+        UserProfile: true,
+      },
+    });
+
+    await this.notificationService.sendNewProjectNotification(project, user);
 
     return new ApiResponse(project);
   }
