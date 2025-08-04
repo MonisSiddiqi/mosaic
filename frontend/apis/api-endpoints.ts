@@ -70,5 +70,7 @@ export const apiEndpoints = {
     action: `/api/v1/bids/action`,
     statistics: `/api/v1/bids/statistics`,
     assign: `/api/v1/bids/assign`,
+    markProjectAsComplete: (bidId: string) =>
+      `/api/v1/bids/${bidId}/mark-as-complete`,
   },
 };

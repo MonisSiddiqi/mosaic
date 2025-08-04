@@ -51,10 +51,16 @@ export const ProjectDetails = () => {
     backButtonHref = "/dashboard/projects";
   }
 
-  const acceptedBid = data?.Bid.find(
+  const awardedBid = data?.Bid.find(
     (item) =>
       item.vendorStatus === BidStatus.ACCEPTED &&
       item.userStatus === BidStatus.ACCEPTED,
+  );
+
+  const vendorProposalBid = data?.Bid.find(
+    (item) =>
+      item.vendorStatus === BidStatus.ACCEPTED &&
+      item.userStatus === BidStatus.PENDING,
   );
 
   if (data) {
@@ -67,27 +73,31 @@ export const ProjectDetails = () => {
         )}
 
         {(data.status === ProjectStatusEnum.AWARDED ||
-          data.status === ProjectStatusEnum.COMPLETED) && (
-          <MarkProjectCompleteContainer project={data} />
-        )}
+          data.status === ProjectStatusEnum.COMPLETED) &&
+          awardedBid && (
+            <MarkProjectCompleteContainer
+              project={data}
+              awardedBid={awardedBid}
+            />
+          )}
 
-        {data.status === ProjectStatusEnum.AWARDED && acceptedBid && (
+        {awardedBid && (
           <ContactDetailsContainer
             homeowner={data.user}
-            vendor={acceptedBid.vendor}
+            vendor={awardedBid.vendor}
           />
         )}
 
-        {data.Bid &&
-          data.Bid.length > 0 &&
+        {vendorProposalBid &&
           data.status === ProjectStatusEnum.VENDOR_FOUND &&
-          data.Bid[0].userStatus === BidStatus.PENDING &&
-          data.Bid[0].vendorStatus === BidStatus.ACCEPTED &&
-          user?.role === UserRole.USER && <VendorProposal {...data.Bid[0]} />}
+          user?.role === UserRole.USER && (
+            <VendorProposal {...vendorProposalBid} />
+          )}
 
         {data.status !== ProjectStatusEnum.IN_PROGRESS &&
-          data.status !== ProjectStatusEnum.VENDOR_FOUND && (
-            <ProjectUpdatesContainer projectId={data.id} />
+          data.status !== ProjectStatusEnum.VENDOR_FOUND &&
+          awardedBid && (
+            <ProjectUpdatesContainer project={data} awardedBid={awardedBid} />
           )}
 
         <BidHistoryContainer

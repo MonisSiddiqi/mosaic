@@ -19,17 +19,23 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useListenNotifications } from "@/hooks/use-listen-notifications";
 import humanFormat from "human-format";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function UserProfile() {
   const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const onLogout = async () => {
     try {
+      queryClient.clear();
       await logout();
       toast({
         title: "Logout Successfully",
         variant: "success",
       });
+      router.push("/");
     } catch (e) {
       toast({
         title: e instanceof Error ? e.message : "Could not logout",
@@ -37,8 +43,6 @@ export function UserProfile() {
       });
     }
   };
-
-  const router = useRouter();
 
   const { unreadCount } = useListenNotifications();
 

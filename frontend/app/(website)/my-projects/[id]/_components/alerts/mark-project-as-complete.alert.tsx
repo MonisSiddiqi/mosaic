@@ -16,10 +16,12 @@ import { toast } from "@/hooks/use-toast";
 import { useDeleteProjectUpdateMutation } from "@/queries/projects.queries";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useMarkProjectAsCompleteMutation } from "@/queries/bids.queries";
 
 type Props = {
   id: string;
   open: boolean;
+  projectId: string;
   setOpen: (value: boolean) => void;
 };
 
@@ -27,24 +29,30 @@ export const MarkProjectAsCompleteAlert: FC<Props> = ({
   id,
   open,
   setOpen,
+  projectId,
 }) => {
   const queryClient = useQueryClient();
 
-  const mutation = useDeleteProjectUpdateMutation();
+  const mutation = useMarkProjectAsCompleteMutation();
 
-  const deleteService = async () => {
+  const handleClick = async () => {
     try {
       await mutation.mutateAsync(id);
-      await queryClient.invalidateQueries({ queryKey: ["getProjectUpdates"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["project", projectId],
+      });
       setOpen(false);
       toast({
-        title: "Update Deleted Successfully",
+        title: "Project marked as completed successfully",
         variant: "success",
       });
     } catch (e) {
       toast({
         variant: "destructive",
-        title: e instanceof Error ? e.message : "Could not delete",
+        title:
+          e instanceof Error
+            ? e.message
+            : "Could not mark project as completed",
       });
     }
   };
@@ -76,7 +84,7 @@ export const MarkProjectAsCompleteAlert: FC<Props> = ({
           </AlertDialogCancel>
           <AlertDialogAction
             disabled={mutation.isPending}
-            onClick={deleteService}
+            onClick={handleClick}
           >
             {mutation.isPending && (
               <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />

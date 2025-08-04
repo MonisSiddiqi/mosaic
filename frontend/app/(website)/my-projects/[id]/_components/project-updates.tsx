@@ -3,6 +3,8 @@
 import {
   GetProjectUpdatesApiResponse,
   GetProjectUpdatesApiResponseItem,
+  Project,
+  ProjectStatusEnum,
 } from "@/apis/projects";
 import { useGetProjectUpdatesQuery } from "@/queries/projects.queries";
 import { MilestoneIcon, Trash2Icon } from "lucide-react";
@@ -17,13 +19,16 @@ import { Button } from "@/components/ui/button";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import { EmptyUI } from "@/components/empty-ui";
 import { DeleteProjectUpdateAlert } from "./alerts/delete-project-update.alert";
+import { Bid } from "@/apis/bids";
 
 export const ProjectUpdatesContainer = ({
-  projectId,
+  project,
+  awardedBid,
 }: {
-  projectId: string;
+  project: Project;
+  awardedBid: Bid;
 }) => {
-  const { data } = useGetProjectUpdatesQuery(projectId);
+  const { data } = useGetProjectUpdatesQuery(project.id);
 
   const { user } = useAuth();
 
@@ -36,16 +41,16 @@ export const ProjectUpdatesContainer = ({
         <ProjectUpdates
           title="Updates From Home Owner"
           updates={userUpdates}
-          projectId={projectId}
-          isOwner={user?.role === UserRole.USER}
+          project={project}
+          isOwner={project.userId === user?.id}
         />
       )}
       {vendorUpdates && (
         <ProjectUpdates
           title="Updates From Vendor"
           updates={vendorUpdates}
-          projectId={projectId}
-          isOwner={user?.role === UserRole.VENDOR}
+          project={project}
+          isOwner={user?.id === awardedBid.vendorId}
         />
       )}
     </div>
@@ -56,10 +61,10 @@ type Props = {
   updates: GetProjectUpdatesApiResponse;
   title: string;
   isOwner?: boolean;
-  projectId: string;
+  project: Project;
 };
 
-const ProjectUpdates = ({ title, updates, isOwner, projectId }: Props) => {
+const ProjectUpdates = ({ title, updates, isOwner, project }: Props) => {
   return (
     <div className="flex flex-col gap-5 rounded-md bg-white p-5 pr-2">
       <div className="flex gap-2">
@@ -72,13 +77,13 @@ const ProjectUpdates = ({ title, updates, isOwner, projectId }: Props) => {
             <Updates key={item.id} {...item} isOwner={isOwner} />
           ))
         ) : (
-          <EmptyUI text="No updates yet" className="mt-72" />
+          <EmptyUI text="No updates" className="mt-72" />
         )}
       </ScrollArea>
 
-      {isOwner && (
+      {isOwner && project.status === ProjectStatusEnum.AWARDED && (
         <div className="mr-2 flex justify-end">
-          <AddUpdateSheet projectId={projectId} />{" "}
+          <AddUpdateSheet projectId={project.id} />{" "}
         </div>
       )}
     </div>
@@ -91,7 +96,9 @@ const Updates = ({
   createdAt,
   isOwner,
   id,
-}: GetProjectUpdatesApiResponseItem & { isOwner?: boolean }) => {
+}: GetProjectUpdatesApiResponseItem & {
+  isOwner?: boolean;
+}) => {
   const beforeImage = ProjectUpdateFile.find((item) => item.type === "BEFORE");
   const afterImage = ProjectUpdateFile.find((item) => item.type === "AFTER");
 
@@ -118,7 +125,7 @@ const Updates = ({
         <p className="text-sm text-gray-700">{description}</p>
       </div>
 
-      {isOwner && (
+      {isOwner && status === ProjectStatusEnum.AWARDED && (
         <div className="col-span-2 flex justify-end gap-4">
           <Button
             className="bg-white"

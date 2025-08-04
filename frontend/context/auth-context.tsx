@@ -1,7 +1,7 @@
 "use client";
 
 import { checkSessionApi, loginApi, LoginDto, logoutApi } from "@/apis/auth";
-import { getMyProfileApi, ProfileApiResponse } from "@/apis/users";
+import { getMyProfileApi, ProfileApiResponse, UserRole } from "@/apis/users";
 import { GlobalPending } from "@/components/global-loader";
 import { useProfileMutation } from "@/queries/auth.queries";
 

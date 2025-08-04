@@ -3,6 +3,7 @@
 import { useProjectsQuery } from "@/queries/projects.queries";
 import { MyProjectsCard } from "./my-project-card";
 import { EmptyUI } from "@/components/empty-ui";
+import { LoaderComponent } from "@/components/loader-component";
 
 type Props = {
   query: string;
@@ -10,7 +11,7 @@ type Props = {
 };
 
 export function ProjectsGrid({ query }: Props) {
-  const { data: projects } = useProjectsQuery({
+  const { data: projects, isLoading } = useProjectsQuery({
     filter: [
       {
         id: "title",
@@ -25,6 +26,8 @@ export function ProjectsGrid({ query }: Props) {
         projects?.list.map((project) => {
           return <MyProjectsCard {...project} key={project.id} />;
         })
+      ) : isLoading ? (
+        <LoaderComponent />
       ) : (
         <EmptyUI
           text="No Project added"

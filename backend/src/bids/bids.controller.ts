@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -62,5 +64,12 @@ export class BidsController {
   @UseGuards(RolesGuard)
   assignBid(@Body() assignBidDto: AssignBidDto) {
     return this.bidsService.assignBid(assignBidDto);
+  }
+
+  @Roles(UserRole.VENDOR)
+  @UseGuards(RolesGuard)
+  @Patch(':id/mark-as-complete')
+  markProjectAsComplete(@Param('id') bidId: string, @GetUser() authUser: User) {
+    return this.bidsService.markProjectComplete(bidId, authUser);
   }
 }

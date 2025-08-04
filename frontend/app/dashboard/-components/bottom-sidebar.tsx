@@ -28,11 +28,11 @@ export const BottomSidebar = () => {
     try {
       queryClient.clear();
       await logout();
+      router.push("/");
       toast({
         variant: "success",
         title: "Logout successfully",
       });
-      router.push("/auth");
     } catch (err) {
       toast({
         variant: "destructive",

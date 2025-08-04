@@ -443,4 +443,42 @@ export class BidsService implements OnModuleInit {
 
     return new ApiResponse(bid, 'Bid assigned successfully');
   }
+
+  async markProjectComplete(bidId: string, authUser: User) {
+    const bid = await this.prismaService.bid.findUnique({
+      where: { id: bidId },
+      include: {
+        project: true,
+      },
+    });
+
+    if (!bid) {
+      throw new UnprocessableEntityException('Bid not found');
+    }
+
+    if (bid.vendorId !== authUser.id) {
+      throw new UnprocessableEntityException(
+        'You are not authorized to mark this project complete or this bid does not belong to you',
+      );
+    }
+
+    if (bid.vendorStatus !== 'ACCEPTED') {
+      throw new UnprocessableEntityException('You have not accepted this bid');
+    }
+
+    if (bid.project.status === 'COMPLETED') {
+      throw new UnprocessableEntityException('Project is already completed');
+    }
+
+    if (bid.project.status !== 'AWARDED') {
+      throw new UnprocessableEntityException('Project is not awarded');
+    }
+
+    await this.prismaService.project.update({
+      where: { id: bid.projectId },
+      data: { status: ProjectStatus.COMPLETED },
+    });
+
+    return new ApiResponse(null, 'Project marked as completed successfully');
+  }
 }

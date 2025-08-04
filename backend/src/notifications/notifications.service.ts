@@ -149,7 +149,7 @@ export class NotificationsService {
   async sendBidAssignedNotifications(vendor: User, project: Project) {
     const saveNotificationDto: SaveNotificationDto = {
       userIds: [vendor.id],
-      heading: '🔔 Vendor Assigned',
+      heading: '🔔 Bid Received',
       message: `📌 You have been received the project "${project.title}" as bid. Kindly Take necessary actions.`,
       isGlobal: false,
       projectId: project.id,

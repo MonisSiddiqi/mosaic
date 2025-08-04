@@ -3,6 +3,7 @@ import {
   bidActionApi,
   getAllBidsApi,
   getBidsStatisticsApi,
+  martProjectAsCompleteApi,
 } from "@/apis/bids";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -49,5 +50,12 @@ export const useAssignBidMutation = () => {
   return useMutation({
     mutationKey: ["assignBid"],
     mutationFn: assignBidApi,
+  });
+};
+
+export const useMarkProjectAsCompleteMutation = () => {
+  return useMutation({
+    mutationKey: ["markProjectAsComplete"],
+    mutationFn: martProjectAsCompleteApi,
   });
 };

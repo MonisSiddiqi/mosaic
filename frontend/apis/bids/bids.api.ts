@@ -53,3 +53,11 @@ export const assignBidApi = async (payload: AssignBidDto): Promise<Bid> => {
 
   return response.data.result;
 };
+
+export const martProjectAsCompleteApi = async (bidId: string) => {
+  const response = await httpClient.patch(
+    apiEndpoints.bids.markProjectAsComplete(bidId),
+  );
+
+  return response.data.result;
+};

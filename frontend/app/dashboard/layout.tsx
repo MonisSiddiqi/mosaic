@@ -18,7 +18,7 @@ export default function RootLayout({
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/auth");
+      router.push("/auth?redirect=/dashboard");
     }
     if (user?.role === UserRole.USER) {
       notFound();

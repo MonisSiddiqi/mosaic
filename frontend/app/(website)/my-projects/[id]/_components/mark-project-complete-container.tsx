@@ -3,16 +3,22 @@
 import { Project, ProjectStatusEnum } from "@/apis/projects";
 import { FC, useState } from "react";
 import { MarkProjectAsCompleteAlert } from "./alerts/mark-project-as-complete.alert";
-import { CheckCircleIcon } from "lucide-react";
+import { CheckCircleIcon, ClockIcon, UserIcon, WrenchIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { ContactDetails } from "@/app/-components/contact-details";
+import { Bid } from "@/apis/bids";
+import { AddProjectButton } from "@/app/(website)/_components/add-project-button";
 
 type Props = {
   project: Project;
+  awardedBid: Bid;
 };
 
-export const MarkProjectCompleteContainer: FC<Props> = ({ project }) => {
+export const MarkProjectCompleteContainer: FC<Props> = ({
+  project,
+  awardedBid,
+}) => {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
 
@@ -66,12 +72,12 @@ export const MarkProjectCompleteContainer: FC<Props> = ({ project }) => {
                 </div>
                 {user?.role === UserRole.USER && (
                   <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-4">
-                    <p className="text-sm font-medium text-blue-800">
-                      In case of queries
+                    <p className="mt-1 text-sm text-blue-700">
+                      This project is completed you can add more projects.
                     </p>
                     <p className="mt-1 text-sm text-blue-700">
-                      If you have some queries you can contact the venodr if
-                      they are not responding, you can contact us.
+                      If you have some queries you can directly contact the
+                      vendor, if they are not responding, you can contact us.
                     </p>
                     <div className="mt-4 w-fit rounded border border-gray-200 bg-white p-4 pt-0">
                       <ContactDetails className="mt-4 bg-transparent p-0" />
@@ -81,21 +87,28 @@ export const MarkProjectCompleteContainer: FC<Props> = ({ project }) => {
               </>
             )}
           </div>
-        ) : (
+        ) : user?.role === UserRole.VENDOR ? (
           <div>
             <p className="text-gray-800">
               Before marking as complete, please ensure:
             </p>
             <ul className="mb-4 list-disc pl-5 text-sm text-gray-600">
               <li className="mt-1">All work has been completed as agreed</li>
-              <li>The client has reviewed the final results</li>
-              <li>Any necessary documentation has been provided</li>
             </ul>
             <MarkProjectAsCompleteAlert
               open={open}
               setOpen={setOpen}
-              id={project.id}
+              id={awardedBid.id}
+              projectId={project.id}
             />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <UserIcon />
+            <p className="text-gray-600">
+              Vendor is working on this project, we'll inform you when he marks
+              this project as complete.
+            </p>
           </div>
         )}
       </div>
