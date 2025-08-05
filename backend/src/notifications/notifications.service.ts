@@ -146,11 +146,25 @@ export class NotificationsService {
     return this.saveNotification(saveNotificationDto);
   }
 
-  async sendBidAssignedNotifications(vendor: User, project: Project) {
+  async sendVendorFoundNotifications(user: User, project: Project) {
+    let heading = '';
+    let message = '';
+
+    if (user.role === 'USER') {
+      heading = '🔔 Vendor Found';
+      message = `📌 A vendor has been found for your project "${project.title}". Kindly take necessary actions.`;
+    } else if (user.role === 'VENDOR') {
+      heading = '🔔 Bid Received';
+      message = `📌 You have been received the project "${project.title}" as bid. Kindly Take necessary actions.`;
+    } else if (user.role === 'ADMIN') {
+      heading = '🔔 Vendor Found';
+      message = `📌 A vendor has been found for the project "${project.title}".`;
+    }
+
     const saveNotificationDto: SaveNotificationDto = {
-      userIds: [vendor.id],
-      heading: '🔔 Bid Received',
-      message: `📌 You have been received the project "${project.title}" as bid. Kindly Take necessary actions.`,
+      userIds: [user.id],
+      heading,
+      message,
       isGlobal: false,
       projectId: project.id,
     };
@@ -188,5 +202,27 @@ export class NotificationsService {
 
       return this.saveNotification(saveNotificationDto);
     }
+  }
+
+  async sendProjectCompleteNotification(user: User, project: Project) {
+    let message = '';
+
+    if (user.role === 'USER') {
+      message = `🎉 Congratulations! Your project "${project.title}" has been successfully completed. Thank you for using our platform!`;
+    } else if (user.role === 'VENDOR') {
+      message = `🎉 Congratulations! You have successfully completed the project "${project.title}". Thank you for your hard work!`;
+    } else if (user.role === 'ADMIN') {
+      message = `🎉 Congratulations! The project "${project.title}" has been successfully completed.`;
+    }
+
+    const saveNotificationDto: SaveNotificationDto = {
+      userIds: [user.id],
+      heading: '🔔 Project Completed',
+      message,
+      isGlobal: false,
+      projectId: project.id,
+    };
+
+    return this.saveNotification(saveNotificationDto);
   }
 }

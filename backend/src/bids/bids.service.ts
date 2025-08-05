@@ -14,11 +14,12 @@ import { StorageService } from 'src/storage/storage.service';
 import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 import { AssignBidDto } from './dto/assign-bid.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { getDistanceMiles } from 'src/common/helpers/utils';
 
 @Injectable()
 export class BidsService implements OnModuleInit {
   onModuleInit() {
-    this.bidInvite();
+    this.automaticBidInvite();
   }
 
   logger = new Logger(BidsService.name);
@@ -312,8 +313,19 @@ export class BidsService implements OnModuleInit {
   }
 
   @Cron(CronExpression.EVERY_30_MINUTES)
-  async bidInvite() {
-    this.logger.debug('Running bid invite cron job');
+  async automaticBidInvite() {
+    this.logger.debug('Running bid automatic invite cron job');
+
+    /*
+    Points to consider
+    1. Projects should be IN_PROGRESS
+    2. Vendor should have active plan.
+    3. Vendor should not have any bid assigned to this project before.
+    4. Vendor should not have any project in AWARDED state.
+    5. Vendor must have verified their email.
+    6. Project distance must not exceed vendor's service area.
+    7. Select the vendor who did not receive bid from long time meaning older bids first.  
+    */
 
     const projects = await this.prismaService.project.findMany({
       where: {
@@ -321,61 +333,128 @@ export class BidsService implements OnModuleInit {
       },
       include: {
         Bid: true,
+        Address: true,
+        user: true,
       },
     });
 
     if (projects.length === 0) {
       this.logger.debug('All Projects have assigned bid');
+      return;
+    }
+
+    const vendors = await this.prismaService.user.findMany({
+      where: {
+        role: 'VENDOR',
+        UserPlan: {
+          some: {
+            endDate: {
+              gte: new Date(),
+            },
+          },
+        },
+        isEmailVerified: true,
+        Bid: {
+          none: {
+            project: {
+              status: 'AWARDED',
+            },
+          },
+        },
+      },
+      include: {
+        Address: true,
+        Bid: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+    });
+
+    if (vendors.length === 0) {
+      this.logger.debug('No vendors found for bid invite');
+      return;
     }
 
     for (const project of projects) {
-      //get all vendors which did not get bid of this project before and which was not got the bid before
-      const vendor = await this.prismaService.user.findFirst({
-        where: {
-          AND: [
-            {
-              role: 'VENDOR',
-            },
-            {
-              id: {
-                notIn: project.Bid.map((bid) => bid.vendorId),
-              },
-            },
+      this.logger.debug(`Vendors before filter: ${vendors.length}`);
+      //filter those vendors who are out of service area
+      //filter previously assigned vendors to this project
+      const eligibleVendors = vendors.filter((vendor) => {
+        const distance = getDistanceMiles(
+          vendor.Address.lat,
+          vendor.Address.lng,
+          project.Address.lat,
+          project.Address.lng,
+        );
+        const isUnderDistance = distance <= vendor.serviceDistance;
+        const isPreviouslyAssigned = project.Bid.some(
+          (bid) => bid.vendorId === vendor.id,
+        );
 
-            {
-              projects: { none: { status: 'AWARDED' } },
-            },
-          ],
+        return isUnderDistance && !isPreviouslyAssigned;
+      });
+
+      this.logger.debug(`Vendors after filter: ${vendors.length}`);
+
+      //sort vendors older bids first
+      eligibleVendors.sort((a, b) => {
+        const lastBidA = a.Bid[0];
+        if (!lastBidA) return -1;
+        const lastBidB = b.Bid[0];
+        if (!lastBidB) return 1;
+        return lastBidA.createdAt.getTime() - lastBidB.createdAt.getTime();
+      });
+
+      if (eligibleVendors.length === 0) {
+        this.logger.debug(
+          `No eligible vendors found for project "${project.title}".`,
+        );
+        continue;
+      }
+
+      const vendor = eligibleVendors[0]; // Select the first vendor after filtering
+      this.logger.debug(
+        `Assigning project "${project.title}" to vendor "${vendor.email}"`,
+      );
+
+      await this.prismaService.bid.create({
+        data: {
+          projectId: project.id,
+          vendorId: vendor.id,
+          userStatus: 'PENDING',
+          vendorStatus: 'PENDING',
         },
       });
 
-      if (vendor) {
-        this.logger.debug(
-          `Inviting vendor ${vendor.email} for project ${project.id}`,
-        );
-        await this.prismaService.bid.create({
-          data: {
-            projectId: project.id,
-            vendorId: vendor.id,
-            userStatus: 'PENDING',
-            vendorStatus: 'PENDING',
-          },
-        });
-        await this.prismaService.project.update({
-          where: {
-            id: project.id,
-          },
-          data: {
-            status: 'VENDOR_FOUND',
-          },
-        });
+      await this.prismaService.project.update({
+        where: { id: project.id },
+        data: {
+          status: 'VENDOR_FOUND',
+        },
+      });
 
-        await this.notificationService.sendBidAssignedNotifications(
-          vendor,
+      //sending notifications
+      await this.notificationService.sendVendorFoundNotifications(
+        vendor,
+        project,
+      );
+
+      await this.notificationService.sendVendorFoundNotifications(
+        project.user,
+        project,
+      );
+
+      const admins = await this.prismaService.user.findMany({
+        where: { role: 'ADMIN' },
+      });
+
+      for (const admin of admins) {
+        await this.notificationService.sendVendorFoundNotifications(
+          admin,
           project,
         );
-      } else {
-        this.logger.debug(`No vendors available for project ${project.id}`);
       }
     }
   }
@@ -385,7 +464,7 @@ export class BidsService implements OnModuleInit {
 
     const project = await this.prismaService.project.findUnique({
       where: { id: projectId },
-      include: { Bid: true },
+      include: { Bid: true, user: true },
     });
 
     if (!project) {
@@ -436,10 +515,26 @@ export class BidsService implements OnModuleInit {
       data: { status: 'VENDOR_FOUND' },
     });
 
-    await this.notificationService.sendBidAssignedNotifications(
+    //sending notifications
+    await this.notificationService.sendVendorFoundNotifications(
       vendor,
       project,
     );
+
+    await this.notificationService.sendVendorFoundNotifications(
+      project.user,
+      project,
+    );
+
+    const admins = await this.prismaService.user.findMany({
+      where: { role: 'ADMIN' },
+    });
+    for (const admin of admins) {
+      await this.notificationService.sendVendorFoundNotifications(
+        admin,
+        project,
+      );
+    }
 
     return new ApiResponse(bid, 'Bid assigned successfully');
   }
@@ -448,7 +543,12 @@ export class BidsService implements OnModuleInit {
     const bid = await this.prismaService.bid.findUnique({
       where: { id: bidId },
       include: {
-        project: true,
+        project: {
+          include: {
+            user: true,
+          },
+        },
+        vendor: true,
       },
     });
 
@@ -478,6 +578,27 @@ export class BidsService implements OnModuleInit {
       where: { id: bid.projectId },
       data: { status: ProjectStatus.COMPLETED },
     });
+
+    //notify user, admin and vendor
+    await this.notificationService.sendProjectCompleteNotification(
+      bid.project.user,
+      bid.project,
+    );
+    await this.notificationService.sendProjectCompleteNotification(
+      bid.vendor,
+      bid.project,
+    );
+
+    const admins = await this.prismaService.user.findMany({
+      where: { role: 'ADMIN' },
+    });
+
+    for (const admin of admins) {
+      await this.notificationService.sendProjectCompleteNotification(
+        admin,
+        bid.project,
+      );
+    }
 
     return new ApiResponse(null, 'Project marked as completed successfully');
   }
