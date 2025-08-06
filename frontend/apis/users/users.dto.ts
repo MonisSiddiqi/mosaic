@@ -25,6 +25,8 @@ export type CreateAddressDto = {
   state: string;
   city: string;
   postalCode: string;
+  lat: number;
+  lng: number;
 };
 
 export type GetLoginHistoryDto = {

@@ -21,8 +21,8 @@ export const CreateAddressSheet: FC<Props> = ({ isEdit }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={() => setOpen(!open)}>
-      <SheetTrigger asChild>
+    <Sheet open={open} modal={false} onOpenChange={(data) => setOpen(data)}>
+      <SheetTrigger asChild onClick={() => setOpen(true)}>
         <Button variant={"secondary"} className="gap-2">
           {isEdit ? (
             <PencilIcon className="size-5" />
@@ -32,7 +32,12 @@ export const CreateAddressSheet: FC<Props> = ({ isEdit }) => {
           Address
         </Button>
       </SheetTrigger>
-      <SheetContent className="overflow-auto">
+      <SheetContent
+        className="overflow-auto"
+        onPointerDownOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle>{isEdit ? "Edit Address" : "Create Address"}</SheetTitle>
           <SheetDescription>

@@ -8,7 +8,8 @@ import { ApiResponse } from 'src/common/dto/api-response.dto';
 export class AddressesService {
   constructor(private readonly prismaService: PrismaService) {}
   async create(createAddressDto: CreateAddressDto, authUser: User) {
-    const { line1, line2, city, state, country, postalCode } = createAddressDto;
+    const { line1, line2, city, state, country, postalCode, lat, lng } =
+      createAddressDto;
 
     const address = await this.prismaService.address.upsert({
       where: {
@@ -21,6 +22,8 @@ export class AddressesService {
         state,
         country,
         postalCode,
+        lat,
+        lng,
       },
       create: {
         line1,
@@ -30,6 +33,8 @@ export class AddressesService {
         country,
         postalCode,
         userId: authUser.id,
+        lat,
+        lng,
       },
     });
 

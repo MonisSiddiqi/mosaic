@@ -23,7 +23,7 @@ export function MultiStepForm() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/auth?redirect=/my-projects");
+      router.push("/auth?redirect=/my-projects/add");
     }
   }, [isAuthenticated, router]);
 

@@ -22,6 +22,8 @@ export type AddProjectDto = {
   state: string;
   city: string;
   postalCode: string;
+  lat: number;
+  lng: number;
 
   length?: string;
   width?: string;

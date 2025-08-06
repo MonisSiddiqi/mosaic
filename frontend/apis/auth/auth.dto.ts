@@ -17,6 +17,8 @@ export type VendorRegisterDto = RegisterDto & {
   state: string;
   city: string;
   postalCode: string;
+  lat: number;
+  lng: number;
   sameAsAddress: boolean;
   serviceDistance: number;
   budgetPreference: number;

@@ -356,8 +356,12 @@ export class BidsService implements OnModuleInit {
         isEmailVerified: true,
         Bid: {
           none: {
+            vendorStatus: 'ACCEPTED',
+            userStatus: 'ACCEPTED',
             project: {
-              status: 'AWARDED',
+              status: {
+                not: 'COMPLETED',
+              },
             },
           },
         },

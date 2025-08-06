@@ -29,6 +29,8 @@ type FormData = {
   state?: string;
   city?: string;
   postalCode?: string;
+  lat?: number;
+  lng?: number;
 
   length?: string;
   width?: string;

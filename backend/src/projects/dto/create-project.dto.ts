@@ -68,6 +68,14 @@ export class CreateProjectDto {
   @IsString()
   postalCode: string;
 
+  @IsNotEmpty()
+  @IsNumber({ allowNaN: false })
+  lat: number;
+
+  @IsNotEmpty()
+  @IsNumber({ allowNaN: false })
+  lng: number;
+
   //site measurements
 
   @IsOptional()
