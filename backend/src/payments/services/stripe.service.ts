@@ -113,7 +113,7 @@ export class StripeService implements OnModuleInit {
         UserPlan: {
           where: {
             endDate: {
-              lte: new Date(),
+              gte: new Date(),
             },
           },
         },
