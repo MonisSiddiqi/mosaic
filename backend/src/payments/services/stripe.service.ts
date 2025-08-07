@@ -140,8 +140,8 @@ export class StripeService implements OnModuleInit {
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${frontendUrl}/dashboard/success?plan=${planName}`,
-      cancel_url: `${frontendUrl}/dashboard/membership`,
+      success_url: `${frontendUrl}/dashboard/membership/success?plan=${planName}`,
+      cancel_url: `${frontendUrl}/dashboard/membership/cancel?plan=${planName}`,
       metadata: {
         userId,
         planName,
