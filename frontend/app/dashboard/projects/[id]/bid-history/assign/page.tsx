@@ -4,11 +4,9 @@ import { useParams } from "next/navigation";
 import AssignBidForm from "./_components/forms/assign-bid-form";
 import { BackButton } from "@/components/back-button";
 
-export default () => {
+const AssignBidPage = () => {
   const params = useParams();
-
   const projectId = params.id as string;
-
   const backUrl = `/dashboard/projects/${projectId}/bid-history`;
 
   return (
@@ -18,3 +16,5 @@ export default () => {
     </div>
   );
 };
+
+export default AssignBidPage;

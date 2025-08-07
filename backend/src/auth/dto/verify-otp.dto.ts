@@ -1,4 +1,5 @@
 import { OtpType } from '@prisma/client';
+import { Transform } from 'class-transformer';
 import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
 
 export class VerifyOtpDto {
@@ -7,6 +8,7 @@ export class VerifyOtpDto {
   otp: string;
 
   @IsEmail()
+  @Transform(({ value }) => value.toLowerCase().trim())
   email: string;
 
   @IsEnum(OtpType, {

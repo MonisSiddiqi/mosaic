@@ -266,7 +266,12 @@ export const BudgetStep = () => {
         />
 
         <div className="mt-8 flex w-full justify-between">
-          <Button type="button" variant="outline" onClick={handlePrev}>
+          <Button
+            disabled={mutation.isPending}
+            type="button"
+            variant="outline"
+            onClick={handlePrev}
+          >
             Previous
           </Button>
 

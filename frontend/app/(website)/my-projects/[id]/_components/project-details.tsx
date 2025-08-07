@@ -124,7 +124,7 @@ export const ProjectDetails = () => {
               </p>
             </div>
 
-            <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+            <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {data.ProjectFile.length === 0 && <div>No files</div>}
 
               {data.ProjectFile?.map((file) => (
@@ -144,7 +144,7 @@ export const ProjectDetails = () => {
               </p>
             </div>
 
-            <div className="grid h-56 gap-5 md:grid-cols-3 lg:grid-cols-5">
+            <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {data.ProjectFile.length === 0 && <div>No files</div>}
 
               {data.SampleFile?.map((file) => (

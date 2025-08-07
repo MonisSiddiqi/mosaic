@@ -103,5 +103,5 @@ export class VendorRegisterDto extends RegisterDto {
   @ValidateIf((data) => data.sameAsAddress === false)
   @IsNotEmpty()
   @IsNumber({ allowNaN: false })
-  officelng: number;
+  officeLng: number;
 }

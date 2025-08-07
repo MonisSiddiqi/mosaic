@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { useLoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  useLoadScript,
+  StandaloneSearchBox,
+  Libraries,
+} from "@react-google-maps/api";
 import { Address } from "@/apis/addresses";
 
 const libraries = ["places"];
@@ -23,7 +27,7 @@ export default function GoogleMapAddressSearchBox({
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: libraries as any,
+    libraries: libraries as Libraries,
   });
 
   const extractAddressFields = (

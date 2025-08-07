@@ -3,12 +3,11 @@
 import { Project, ProjectStatusEnum } from "@/apis/projects";
 import { FC, useState } from "react";
 import { MarkProjectAsCompleteAlert } from "./alerts/mark-project-as-complete.alert";
-import { CheckCircleIcon, ClockIcon, UserIcon, WrenchIcon } from "lucide-react";
+import { CheckCircleIcon, UserIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { ContactDetails } from "@/app/-components/contact-details";
 import { Bid } from "@/apis/bids";
-import { AddProjectButton } from "@/app/(website)/_components/add-project-button";
 
 type Props = {
   project: Project;
@@ -55,11 +54,11 @@ export const MarkProjectCompleteContainer: FC<Props> = ({
                 </div>
                 <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-4">
                   <p className="text-sm font-medium text-blue-800">
-                    What's next?
+                    {"What's next?"}
                   </p>
                   <p className="mt-1 text-sm text-blue-700">
-                    Keep an eye out for new project opportunities. We'll notify
-                    you when new bids become available.
+                    Keep an eye out for new project opportunities. {"We'll"}{" "}
+                    notify you when new bids become available.
                   </p>
                 </div>{" "}
               </>
@@ -106,8 +105,8 @@ export const MarkProjectCompleteContainer: FC<Props> = ({
           <div className="flex items-center gap-2">
             <UserIcon />
             <p className="text-gray-600">
-              Vendor is working on this project, we'll inform you when he marks
-              this project as complete.
+              Vendor is working on this project, {"we'll"} inform you when he
+              marks this project as complete.
             </p>
           </div>
         )}

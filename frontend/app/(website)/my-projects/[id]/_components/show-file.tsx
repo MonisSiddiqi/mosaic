@@ -13,7 +13,7 @@ export const ShowFile = ({ url }: { url: string }) => {
   const isVideo = isVideoUrl(url);
 
   return (
-    <div className="h-56 w-full">
+    <div className="h-56 w-full overflow-hidden rounded border border-gray-200 bg-white p-4">
       {!isLoaded && (
         <Skeleton className="flex size-full items-center justify-center">
           <LoaderComponent showText={false} />
@@ -30,7 +30,7 @@ export const ShowFile = ({ url }: { url: string }) => {
         <img
           src={url}
           alt={"Proect Image"}
-          className={`h-full w-full object-cover transition-opacity duration-300 ${
+          className={`h-full w-full object-contain transition-opacity duration-300 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoad={() => setIsLoaded(true)}

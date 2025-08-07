@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCcwIcon, LogInIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { RefreshCcwIcon, LogInIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";

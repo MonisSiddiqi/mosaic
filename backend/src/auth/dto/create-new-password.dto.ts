@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
 
 export class CreateNewPasswordDto {
@@ -6,5 +7,6 @@ export class CreateNewPasswordDto {
   password: string;
 
   @IsEmail()
+  @Transform(({ value }) => value.toLowerCase().trim())
   email: string;
 }

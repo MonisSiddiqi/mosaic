@@ -5,10 +5,12 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'react'],
   extends: [
     'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
     'plugin:prettier/recommended',
+    'next/core-web-vitals'
   ],
   root: true,
   env: {
@@ -21,5 +23,11 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'react/no-unescaped-entities': 'off'
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

@@ -69,10 +69,12 @@ export class CreateProjectDto {
   postalCode: string;
 
   @IsNotEmpty()
+  @Transform(({ value }) => parseFloat(value))
   @IsNumber({ allowNaN: false })
   lat: number;
 
   @IsNotEmpty()
+  @Transform(({ value }) => parseFloat(value))
   @IsNumber({ allowNaN: false })
   lng: number;
 

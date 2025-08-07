@@ -15,6 +15,7 @@ export type User = {
   role: UserRole;
   sameAsAddress: boolean;
   serviceDistance: number;
+  isAvailable: boolean;
   updatedAt: string;
   createdAt: string;
 };

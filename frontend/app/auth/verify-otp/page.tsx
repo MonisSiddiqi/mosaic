@@ -11,7 +11,6 @@ import { UserRole } from "@/apis/users";
 import { useAuth } from "@/hooks/use-auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect } from "react";
-import { ResendOtp } from "../_components/resend-otp";
 
 export default function VerifyOtpPage() {
   const searchParams = useSearchParams();

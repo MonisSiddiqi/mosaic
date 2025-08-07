@@ -1,6 +1,6 @@
 import { OtpType } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum } from 'class-validator';
 
 export class ResendOtpDto {
   @IsEmail()

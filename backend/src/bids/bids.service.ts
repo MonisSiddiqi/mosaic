@@ -192,6 +192,13 @@ export class BidsService implements OnModuleInit {
         },
       });
 
+      await this.prismaService.user.update({
+        where: { id: authUser.id },
+        data: {
+          isAvailable: true,
+        },
+      });
+
       await this.prismaService.project.update({
         where: {
           id: bid.projectId,
@@ -242,6 +249,13 @@ export class BidsService implements OnModuleInit {
         where: { id: bidId },
         data: {
           userStatus: 'REJECTED',
+        },
+      });
+
+      await this.prismaService.user.update({
+        where: { id: bid.vendorId },
+        data: {
+          isAvailable: true,
         },
       });
 
@@ -320,11 +334,11 @@ export class BidsService implements OnModuleInit {
     Points to consider
     1. Projects should be IN_PROGRESS
     2. Vendor should have active plan.
-    3. Vendor should not have any bid assigned to this project before.
-    4. Vendor should not have any project in AWARDED state.
-    5. Vendor must have verified their email.
-    6. Project distance must not exceed vendor's service area.
-    7. Select the vendor who did not receive bid from long time meaning older bids first.  
+    3. Vendor should be available.
+    4. Vendor must have verified their email.
+    5. Project distance must not exceed vendor's service area.
+    6. Prioritize the vendor who did not receive bid from long time meaning older bids first.  
+    7. Users must not have rejected 3 vendors.
     */
 
     const projects = await this.prismaService.project.findMany({
@@ -338,7 +352,14 @@ export class BidsService implements OnModuleInit {
       },
     });
 
-    if (projects.length === 0) {
+    const filteredProjects = projects.filter((project) => {
+      const rejectedBidsCount = project.Bid.filter(
+        (bid) => bid.userStatus === 'REJECTED',
+      ).length;
+      return rejectedBidsCount < 3;
+    });
+
+    if (filteredProjects.length === 0) {
       this.logger.debug('All Projects have assigned bid');
       return;
     }
@@ -354,17 +375,7 @@ export class BidsService implements OnModuleInit {
           },
         },
         isEmailVerified: true,
-        Bid: {
-          none: {
-            vendorStatus: 'ACCEPTED',
-            userStatus: 'ACCEPTED',
-            project: {
-              status: {
-                not: 'COMPLETED',
-              },
-            },
-          },
-        },
+        isAvailable: true,
       },
       include: {
         Address: true,
@@ -381,7 +392,7 @@ export class BidsService implements OnModuleInit {
       return;
     }
 
-    for (const project of projects) {
+    for (const project of filteredProjects) {
       this.logger.debug(`Vendors before filter: ${vendors.length}`);
       //filter those vendors who are out of service area
       //filter previously assigned vendors to this project
@@ -400,7 +411,7 @@ export class BidsService implements OnModuleInit {
         return isUnderDistance && !isPreviouslyAssigned;
       });
 
-      this.logger.debug(`Vendors after filter: ${vendors.length}`);
+      this.logger.debug(`Vendors after filter: ${eligibleVendors.length}`);
 
       //sort vendors older bids first
       eligibleVendors.sort((a, b) => {
@@ -429,6 +440,13 @@ export class BidsService implements OnModuleInit {
           vendorId: vendor.id,
           userStatus: 'PENDING',
           vendorStatus: 'PENDING',
+        },
+      });
+
+      await this.prismaService.user.update({
+        where: { id: vendor.id },
+        data: {
+          isAvailable: false,
         },
       });
 
@@ -505,6 +523,12 @@ export class BidsService implements OnModuleInit {
       );
     }
 
+    if (!vendor.isAvailable) {
+      throw new UnprocessableEntityException(
+        'Vendor is not available to take new projects, they are currently busy with another project or they have marked themselves as unavailable',
+      );
+    }
+
     const bid = await this.prismaService.bid.create({
       data: {
         projectId,
@@ -517,6 +541,11 @@ export class BidsService implements OnModuleInit {
     await this.prismaService.project.update({
       where: { id: projectId },
       data: { status: 'VENDOR_FOUND' },
+    });
+
+    await this.prismaService.user.update({
+      where: { id: vendorId },
+      data: { isAvailable: false },
     });
 
     //sending notifications
@@ -581,6 +610,11 @@ export class BidsService implements OnModuleInit {
     await this.prismaService.project.update({
       where: { id: bid.projectId },
       data: { status: ProjectStatus.COMPLETED },
+    });
+
+    await this.prismaService.user.update({
+      where: { id: bid.vendorId },
+      data: { isAvailable: true },
     });
 
     //notify user, admin and vendor

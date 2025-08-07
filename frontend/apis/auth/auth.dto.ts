@@ -30,6 +30,8 @@ export type VendorRegisterDto = RegisterDto & {
   officeState?: string;
   officeCity?: string;
   officePostalCode?: string;
+  officeLat?: number;
+  officeLng?: number;
 };
 
 export type VerifyOtpDto = {

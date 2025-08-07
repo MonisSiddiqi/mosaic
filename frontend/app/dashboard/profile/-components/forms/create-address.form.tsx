@@ -1,7 +1,6 @@
 "use client";
-import { z } from "zod";
 
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -11,15 +10,6 @@ import { useAuth } from "@/hooks/use-auth";
 
 import GoogleMapAddressSearchBox from "@/components/google-map-address-search-box";
 import { Address } from "@/apis/addresses";
-
-const formSchema = z.object({
-  line1: z.string().min(2, "Address Line 1 is required."),
-  line2: z.string().optional(),
-  city: z.string().min(1, "City is required."),
-  state: z.string().min(1, "State is required."),
-  country: z.string().min(1, "Country is required."),
-  postalCode: z.string().min(4, "Postal code is required."),
-});
 
 type Props = {
   setOpen: Dispatch<SetStateAction<boolean>>;

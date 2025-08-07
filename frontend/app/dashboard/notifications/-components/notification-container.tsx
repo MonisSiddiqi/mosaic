@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/pagination";
 import { ScrollBar } from "@/components/ui/scroll-area";
 import { NotificationItem } from "./notification-item";
-import Link from "next/link";
 import { markAsReadApi } from "@/apis/notifications/notification.api";
 import { useNotificationsSuspenseQuery } from "@/queries/notifications.queries";
 import { EmptyUI } from "@/components/empty-ui";

@@ -6,19 +6,13 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useUserQuery } from "@/queries/users.queries";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { CheckCircle, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { formatDate } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { BackButton } from "@/components/back-button";
 
-export default () => {
+export default function UserDetailsPage() {
   const { userId } = useParams();
 
   const { data: user } = useUserQuery(userId as string);
@@ -152,4 +146,4 @@ export default () => {
       </Card>
     </div>
   );
-};
+}

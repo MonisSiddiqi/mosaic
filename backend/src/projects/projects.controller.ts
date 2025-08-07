@@ -15,10 +15,10 @@ import {
   Patch,
   Delete,
   BadRequestException,
+  NotAcceptableException,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { GetProjectsDto } from './dto/get-projects.dto';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User, UserRole } from '@prisma/client';
@@ -28,7 +28,6 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AddProjectUpdatesDto } from './dto/add-project-updates.dto';
 import { ProjectsUpdatesService } from './services/projects-updates.service';
 import { EditProjectUpdateDto } from './dto/edit-project-update.dto';
-import { extname } from 'path';
 
 @Controller('projects')
 export class ProjectsController {

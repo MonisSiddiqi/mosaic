@@ -8,7 +8,6 @@ import { Attachment } from "../attachment";
 import { StatusBadge } from "../status-badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon, EyeIcon } from "lucide-react";
 
 export const columns: ColumnDef<GetAllBidsApiResponseItem>[] = [
   {

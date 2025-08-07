@@ -4,7 +4,7 @@ import { ProjectDetails } from "@/app/(website)/my-projects/[id]/_components/pro
 import { DefaultErrorPage } from "@/components/default-error-page";
 import { ErrorBoundary } from "react-error-boundary";
 
-const Page = () => {
+const BidHistory = () => {
   return (
     <ErrorBoundary FallbackComponent={DefaultErrorPage}>
       <ProjectDetails />
@@ -12,4 +12,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default BidHistory;

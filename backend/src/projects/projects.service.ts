@@ -297,7 +297,7 @@ export class ProjectsService {
         })),
       ),
       SampleFile: await Promise.all(
-        project.ProjectFile.map(async (item) => ({
+        project.SampleFile.map(async (item) => ({
           ...item,
           url: await this.storageService.getSignedFileUrl(item.url),
         })),

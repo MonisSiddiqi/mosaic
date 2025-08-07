@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FormLabel } from "@/components/ui/form";
 
 import { useAddProject } from "@/hooks/use-add-project";
 
 import GoogleAddressSearchBox from "@/components/google-map-address-search-box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Address } from "@/apis/addresses";
 import { toast } from "@/hooks/use-toast";
 
@@ -48,6 +47,19 @@ export const Location = ({}) => {
 
     handleNext();
   };
+
+  useEffect(() => {
+    setAddress({
+      line1: formData?.line1 || "",
+      line2: formData?.line2,
+      country: formData?.country || "",
+      state: formData?.state || "",
+      city: formData?.city || "",
+      postalCode: formData?.postalCode || "",
+      lat: formData?.lat || 0,
+      lng: formData?.lng || 0,
+    });
+  }, []);
 
   return (
     <div className="mt-4 grid w-full gap-4">

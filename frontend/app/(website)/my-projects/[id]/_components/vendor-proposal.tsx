@@ -110,10 +110,13 @@ export default function VendorProposal({
         <div>
           <p className="mb-6 bg-yellow-50 p-4 text-sm text-gray-600">
             Note: If you agree with the proposal, click Accept. Otherwise, you
-            can choose to Reject, and we&apos;ll notify the next vendor. Please
-            note, you can reject up to 3 vendors per project. If you reject more
-            than 3 vendors, you&apos;ll need to review and adjust your project
-            details and resubmit the project.
+            can choose to Reject, and we&apos;ll notify the next vendor.
+            <br />
+            Please note, you can reject up to 3 vendors per project. If you
+            reject more than 3 vendors, you&apos;ll need to delete this project,
+            review your requirements and adjust your project details then you
+            can resubmit a new project with the updated requirements and
+            details.
           </p>
 
           <div className="flex justify-end gap-4">

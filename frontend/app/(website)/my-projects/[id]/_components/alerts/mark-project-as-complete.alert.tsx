@@ -13,7 +13,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
-import { useDeleteProjectUpdateMutation } from "@/queries/projects.queries";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useMarkProjectAsCompleteMutation } from "@/queries/bids.queries";

@@ -6,6 +6,8 @@ import {
   ExternalLinkIcon,
   EyeIcon,
   EyeOffIcon,
+  ChevronsUpDown,
+  Check,
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,14 +23,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Combobox } from "@/components/ui/combobox";
-import { cities, countries, states } from "./address-data";
 import { useVendorRegisterMutation } from "@/queries/auth.queries";
 import { OtpType } from "@/apis/auth";
 import { UserRole } from "@/apis/users";
@@ -37,6 +37,25 @@ import ServiceDistance from "./service-distance";
 
 import validator from "validator";
 import BudgetPreferenceField from "./budget-preference-field";
+import GoogleMapAddressSearchBox from "@/components/google-map-address-search-box";
+import { Address } from "@/apis/addresses";
+
+import CountryList from "country-list-with-dial-code-and-flag";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+const countries = CountryList.getAll();
 
 export const formSchema = z
   .object({
@@ -62,18 +81,6 @@ export const formSchema = z
           "Please enter a valid distance less than or equal to 20,000 km",
       }),
     budgetPreference: z.number().default(5),
-    line1: z.string().min(1, "Line 1 is required."),
-    line2: z.string().optional(),
-    country: z.string().min(1, "Country is required."),
-    state: z.string().min(1, "State is required."),
-    city: z.string().min(1, "City is required."),
-    postalCode: z.string().min(1, "Postal code is required."),
-    officeLine1: z.string().optional(),
-    officeLine2: z.string().optional(),
-    officeCountry: z.string().optional(),
-    officeState: z.string().optional(),
-    officeCity: z.string().optional(),
-    officePostalCode: z.string().optional(),
     sameAsAddress: z.boolean(),
     password: z
       .string()
@@ -90,45 +97,6 @@ export const formSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password and confirm password does not match.",
     path: ["confirmPassword"],
-  })
-  .superRefine((data, ctx) => {
-    if (!data.sameAsAddress) {
-      if (!data.officeLine1) {
-        ctx.addIssue({
-          path: ["officeLine1"],
-          message: "Line 1 is required.",
-          code: z.ZodIssueCode.custom,
-        });
-      }
-      if (!data.officeCountry) {
-        ctx.addIssue({
-          path: ["officeCountry"],
-          message: "Country is required.",
-          code: z.ZodIssueCode.custom,
-        });
-      }
-      if (!data.officeState) {
-        ctx.addIssue({
-          path: ["officeState"],
-          message: "State is required.",
-          code: z.ZodIssueCode.custom,
-        });
-      }
-      if (!data.officeCity) {
-        ctx.addIssue({
-          path: ["officeCity"],
-          message: "City is required.",
-          code: z.ZodIssueCode.custom,
-        });
-      }
-      if (!data.officePostalCode) {
-        ctx.addIssue({
-          path: ["officePostalCode"],
-          message: "Postal code is required.",
-          code: z.ZodIssueCode.custom,
-        });
-      }
-    }
   });
 
 type Props = {
@@ -145,68 +113,22 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
       phone: "",
       password: "",
       confirmPassword: "",
-      line1: "",
-      line2: "",
-      country: "",
-      state: "",
-      city: "",
-      postalCode: "",
-      officeLine1: "",
-      officeLine2: "",
-      officeCountry: "",
-      officeState: "",
-      officeCity: "",
-      officePostalCode: "",
       sameAsAddress: false,
       serviceDistance: "100",
       budgetPreference: 5,
     },
   });
 
-  const [countryOpen, setCountryOpen] = useState(false);
-  const [stateOpen, setStateOpen] = useState(false);
-  const [cityOpen, setCityOpen] = useState(false);
-  const [openPostalCode, setOpenPostalCode] = useState(false);
-
-  const [openOfficeCountry, setOpenOfficeCountry] = useState(false);
-  const [openOfficeState, setOpenOfficeState] = useState(false);
-  const [openOfficeCity, setOpenOfficeCity] = useState(false);
-  const [openOfficePostalCode, setOpenOfficePostalCode] = useState(false);
-
   const sameAsAddress = form.watch("sameAsAddress");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    form.setValue("state", "");
-    form.setValue("city", "");
-    form.setValue("postalCode", "");
-  }, [form.watch("country")]);
+  const [address, setAddress] =
+    useState<Omit<Address, "id" | "userId" | "createdAt" | "updatedAt">>();
 
-  useEffect(() => {
-    form.setValue("city", "");
-    form.setValue("postalCode", "");
-  }, [form.watch("state")]);
-
-  useEffect(() => {
-    form.setValue("postalCode", "");
-  }, [form.watch("city")]);
-
-  useEffect(() => {
-    form.setValue("officeState", "");
-    form.setValue("officeCity", "");
-    form.setValue("officePostalCode", "");
-  }, [form.watch("officeCountry")]);
-
-  useEffect(() => {
-    form.setValue("officeCity", "");
-    form.setValue("officePostalCode", "");
-  }, [form.watch("officeState")]);
-
-  useEffect(() => {
-    form.setValue("officePostalCode", "");
-  }, [form.watch("officeCity")]);
+  const [officeAddress, setofficeAddress] =
+    useState<Omit<Address, "id" | "userId" | "createdAt" | "updatedAt">>();
 
   const mutation = useVendorRegisterMutation();
 
@@ -223,9 +145,54 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (
+      !address ||
+      !address.line1 ||
+      !address.city ||
+      !address.state ||
+      !address.country ||
+      !address.postalCode ||
+      !address.lat ||
+      !address.lng
+    ) {
+      toast({
+        title: "Please select your address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!values.sameAsAddress) {
+      if (
+        !officeAddress ||
+        !officeAddress.line1 ||
+        !officeAddress.city ||
+        !officeAddress.state ||
+        !officeAddress.country ||
+        !officeAddress.postalCode ||
+        !officeAddress.lat ||
+        !officeAddress.lng
+      ) {
+        toast({
+          title: "Please select your office address",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     try {
       await mutation.mutateAsync({
         ...values,
+        ...address,
+        officeLine1: officeAddress?.line1,
+        officeLine2: officeAddress?.line2,
+        officeCity: officeAddress?.city,
+        officeState: officeAddress?.state,
+        officeCountry: officeAddress?.country,
+        officePostalCode: officeAddress?.postalCode,
+        officeLat: officeAddress?.lat,
+        officeLng: officeAddress?.lng,
         serviceDistance: Number(values.serviceDistance),
         phone: values.countryCode + values.phone?.trim().replace(/^0+/, ""),
       });
@@ -359,54 +326,81 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
               )}
             />
 
-            <div className="flex items-baseline">
+            <div className="flex w-full">
               <FormField
                 control={form.control}
                 name="countryCode"
                 render={({ field }) => (
-                  <FormItem className="flex max-h-10 flex-col">
-                    <FormLabel className="mb-1">Dial Code</FormLabel>
-                    <FormControl>
-                      <Combobox
-                        data={[{ name: "USA", dialCode: "+1", flag: "🇺🇸" }].map(
-                          (item) => ({
-                            label: `${item.dialCode} - ${item.name}(${item.flag})`,
-                            value: item.dialCode,
-                          }),
-                        )}
-                        className="w-32 min-w-32 max-w-32 border border-gray-400 bg-transparent"
-                        fieldName="countryCode"
-                        value={field.value as string}
-                        open={open}
-                        setOpen={setOpen}
-                        setValue={field.onChange}
-                        placeHolder="Dial code"
-                      />
-                    </FormControl>
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Phone Number</FormLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-[150px] justify-between",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            {field.value || "Dial Code"}
+                            <ChevronsUpDown className="opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[350px] p-0" align="start">
+                        <Command>
+                          <CommandInput
+                            placeholder="Dial code..."
+                            className="h-9"
+                          />
+                          <CommandList>
+                            <CommandEmpty>No dial code found.</CommandEmpty>
+                            <CommandGroup>
+                              {countries.map((item) => (
+                                <CommandItem
+                                  value={`${item.name} - ${item.dial_code}`}
+                                  key={`${item.name} - ${item.dial_code}`}
+                                  onSelect={() => {
+                                    form.setValue(
+                                      "countryCode",
+                                      item.dial_code,
+                                      { shouldValidate: true },
+                                    );
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {item.name} {item.dial_code}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      item.dial_code === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
+                    <FormControl className="mt-[1.38rem]">
                       <Input
-                        placeholder="Your phone number"
-                        autoComplete="phone"
-                        className="w-full border-gray-400 focus:outline-none"
+                        placeholder="Phone eg, 123456789"
+                        className="max-w-xs"
                         {...field}
-                        onBlur={() => {
-                          if (field.value) {
-                            field.onChange(
-                              field.value.trim().replace(/^0+/, ""),
-                            );
-                          }
-                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -420,161 +414,14 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
             <div className="md:col-span-2">
               <p>Address</p>
             </div>
-            <FormField
-              control={form.control}
-              name="line1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Line 1</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter address line 1" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="line2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Line 2 (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter address line 2" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={countries.map((item) => ({
-                          label: `${item.code} - ${item.name}(${item.flag})`,
-                          value: item.name,
-                        }))}
-                        open={countryOpen}
-                        setOpen={setCountryOpen}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="country"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="state"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          form.watch("country")
-                            ? states
-                                .filter(
-                                  (item) =>
-                                    item.country === form.watch("country"),
-                                )
-                                .map((item) => ({
-                                  label: item.name,
-                                  value: item.name,
-                                }))
-                            : []
-                        }
-                        open={stateOpen}
-                        setOpen={setStateOpen}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="state"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          form.watch("state")
-                            ? cities
-                                .filter(
-                                  (item) => item.state === form.watch("state"),
-                                )
-                                .map((item) => ({
-                                  label: item.name,
-                                  value: item.name,
-                                }))
-                            : []
-                        }
-                        open={cityOpen}
-                        setOpen={setCityOpen}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="city"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="postalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Postal Code</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Combobox
-                        data={
-                          cities
-                            .find((item) => item.name === form.watch("city"))
-                            ?.postalCodes.map(
-                              (item) =>
-                                ({
-                                  label: item,
-                                  value: item,
-                                }) as { label: string; value: string },
-                            ) ?? []
-                        }
-                        open={openPostalCode}
-                        setOpen={setOpenPostalCode}
-                        value={field.value}
-                        setValue={field.onChange}
-                        fieldName="Postal Code"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col gap-2">
+              <p className="ml-1 text-sm">Enter your address</p>
+              <GoogleMapAddressSearchBox
+                onSelect={(data) => {
+                  setAddress(data);
+                }}
+              />
+            </div>
           </div>
 
           <div className="grid gap-7 bg-white p-6 md:grid-cols-2">
@@ -586,181 +433,19 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                 onCheckedChange={(checked) =>
                   form.setValue("sameAsAddress", checked as boolean)
                 }
+                defaultValue={officeAddress ? officeAddress.line1 : ""}
               />
               <label htmlFor="sameAsAddress">Same as Address</label>
             </div>
             {!form.watch("sameAsAddress") && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="officeLine1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Line 1</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter address line 1"
-                          {...field}
-                          disabled={sameAsAddress}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="flex flex-col gap-2">
+                <p className="ml-1 text-sm">Enter your business address</p>
+                <GoogleMapAddressSearchBox
+                  onSelect={(data) => {
+                    setofficeAddress(data);
+                  }}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="officeLine2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Line 2 (Optional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter address line 2"
-                          {...field}
-                          disabled={sameAsAddress}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="officeCountry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Combobox
-                            data={countries.map((item) => ({
-                              label: `${item.code} - ${item.name}(${item.flag})`,
-                              value: item.name,
-                            }))}
-                            open={openOfficeCountry}
-                            setOpen={setOpenOfficeCountry}
-                            value={field.value as string}
-                            setValue={field.onChange}
-                            fieldName="Country"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="officeState"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Combobox
-                            data={
-                              form.watch("officeCountry")
-                                ? states
-                                    .filter(
-                                      (item) =>
-                                        item.country ===
-                                        form.watch("officeCountry"),
-                                    )
-                                    .map((item) => ({
-                                      label: item.name,
-                                      value: item.name,
-                                    }))
-                                : []
-                            }
-                            open={openOfficeState}
-                            setOpen={setOpenOfficeState}
-                            value={field.value as string}
-                            setValue={field.onChange}
-                            fieldName="State"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="officeCity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Combobox
-                            data={
-                              form.watch("officeState")
-                                ? cities
-                                    .filter(
-                                      (item) =>
-                                        item.state ===
-                                        form.watch("officeState"),
-                                    )
-                                    .map((item) => ({
-                                      label: item.name,
-                                      value: item.name,
-                                    }))
-                                : []
-                            }
-                            open={openOfficeCity}
-                            setOpen={setOpenOfficeCity}
-                            value={field.value as string}
-                            setValue={field.onChange}
-                            fieldName="City"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="officePostalCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Postal Code</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Combobox
-                            data={
-                              cities
-                                .find(
-                                  (item) =>
-                                    item.name === form.watch("officeCity"),
-                                )
-                                ?.postalCodes.map(
-                                  (item) =>
-                                    ({
-                                      label: item,
-                                      value: item,
-                                    }) as { label: string; value: string },
-                                ) ?? []
-                            }
-                            open={openOfficePostalCode}
-                            setOpen={setOpenOfficePostalCode}
-                            value={field.value as string}
-                            setValue={field.onChange}
-                            fieldName="Postal Code"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
+              </div>
             )}
           </div>
 
