@@ -2,6 +2,7 @@ import {
   createStripeCheckoutApi,
   getAllPlansApi,
   getCurrentPlanApi,
+  updateSessionApi,
 } from "@/apis/payments/payments.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -23,5 +24,12 @@ export const useCurrentPlanQuery = () => {
   return useQuery({
     queryKey: ["currentPlan"],
     queryFn: getCurrentPlanApi,
+  });
+};
+
+export const useUpdateSessionMutation = () => {
+  return useMutation({
+    mutationKey: ["updateSession"],
+    mutationFn: updateSessionApi,
   });
 };

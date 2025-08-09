@@ -140,7 +140,7 @@ export class StripeService implements OnModuleInit {
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${frontendUrl}/dashboard/membership/success?plan=${planName}`,
+      success_url: `${frontendUrl}/dashboard/membership/success?plan=${planName}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${frontendUrl}/dashboard/membership/cancel?plan=${planName}`,
       metadata: {
         userId,
@@ -152,8 +152,7 @@ export class StripeService implements OnModuleInit {
     return new ApiResponse({ url: session.url }, 'Checkout session created');
   }
 
-  async handleWebhook(req: Request) {
-    const sig = req.headers['stripe-signature'];
+  async handleWebhook(rawBody: Buffer, signature: string) {
     const stripeWebhookSecret = this.configService.get(
       'payments.stripe.webhookSecret',
     );
@@ -162,8 +161,8 @@ export class StripeService implements OnModuleInit {
 
     try {
       event = this.stripe.webhooks.constructEvent(
-        req.body,
-        sig,
+        rawBody,
+        signature,
         stripeWebhookSecret,
       );
     } catch (err) {
@@ -193,6 +192,23 @@ export class StripeService implements OnModuleInit {
         throw new UnprocessableEntityException('User not found');
       }
 
+      if (!interval) {
+        throw new UnprocessableEntityException('Interval not specified');
+      }
+
+      const alreadyHandled = await this.prismaService.userPlan.findFirst({
+        where: {
+          paymentId: session.id,
+        },
+      });
+
+      if (alreadyHandled) {
+        this.logger.warn(
+          `Webhook for session ${session.id} already handled, skipping`,
+        );
+        return;
+      }
+
       const startDate = new Date();
       const endDate = new Date();
 
@@ -219,5 +235,87 @@ export class StripeService implements OnModuleInit {
         `User ${userId} subscribed to ${planName} (${interval})`,
       );
     }
+  }
+
+  async updateSession(sessionId: string) {
+    const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+
+    if (!session) {
+      throw new UnprocessableEntityException('Session not found');
+    }
+
+    const userId = session.metadata.userId;
+    const planName = session.metadata.planName;
+    const interval = session.metadata.interval;
+
+    const plan = await this.prismaService.plan.findFirst({
+      where: { name: planName },
+    });
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
+
+    const alreadyHandled = await this.prismaService.userPlan.findFirst({
+      where: {
+        paymentId: session.id,
+      },
+    });
+
+    if (alreadyHandled) {
+      throw new UnprocessableEntityException('Session already handled');
+    }
+
+    if (!plan) {
+      throw new UnprocessableEntityException('Invalid plan');
+    }
+    if (!user) {
+      throw new UnprocessableEntityException('User not found');
+    }
+
+    if (!interval) {
+      throw new UnprocessableEntityException('Interval not specified');
+    }
+
+    const subscription = await this.stripe.subscriptions.retrieve(
+      session.subscription as string,
+    );
+
+    if (subscription.status !== 'active') {
+      throw new UnprocessableEntityException('Subscription not active');
+    }
+
+    if (session.payment_status !== 'paid') {
+      throw new UnprocessableEntityException('Payment not completed');
+    }
+
+    if (session.mode !== 'subscription') {
+      throw new UnprocessableEntityException('Not a subscription session');
+    }
+
+    const startDate = new Date();
+    const endDate = new Date();
+
+    if (interval === 'year') {
+      endDate.setFullYear(startDate.getFullYear() + 1);
+    } else if (interval === 'month') {
+      endDate.setMonth(startDate.getMonth() + 1);
+    }
+
+    await this.prismaService.userPlan.create({
+      data: {
+        userId: user.id,
+        planId: plan.id,
+        startDate: startDate,
+        endDate: endDate,
+        type: interval === 'year' ? 'YEARLY' : 'MONTHLY',
+        paymentId: session.id,
+        mode: 'PAID',
+        amount: plan.amount,
+      },
+    });
+
+    this.logger.debug(`User ${userId} subscribed to ${planName} (${interval})`);
+
+    return new ApiResponse({ session }, 'Session updated successfully');
   }
 }

@@ -7,6 +7,7 @@ import {
   Libraries,
 } from "@react-google-maps/api";
 import { Address } from "@/apis/addresses";
+import { GOOGLE_MAPS_API_KEY } from "@/config";
 
 const libraries = ["places"];
 
@@ -26,7 +27,7 @@ export default function GoogleMapAddressSearchBox({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY!,
     libraries: libraries as Libraries,
   });
 

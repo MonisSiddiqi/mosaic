@@ -13,6 +13,7 @@ import {
   UsersIcon,
   BellIcon,
   XIcon,
+  Contact2Icon,
 } from "lucide-react";
 
 import { SidebarLink } from "@/app/dashboard/-components/sidebar-link";
@@ -107,6 +108,13 @@ export const routes = [
     icon: <BellIcon className="h-5 min-h-5 w-5 min-w-5" />,
     text: "Notifications",
     roles: [],
+  },
+
+  {
+    href: "/dashboard/contact",
+    icon: <Contact2Icon className="h-5 min-h-5 w-5 min-w-5" />,
+    text: "Contact Us",
+    roles: [UserRole.VENDOR],
   },
 ];
 

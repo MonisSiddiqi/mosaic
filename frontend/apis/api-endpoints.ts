@@ -63,6 +63,8 @@ export const apiEndpoints = {
       createCheckout: `/api/v1/payments/create-checkout`,
     },
     currentPlan: `/api/v1/payments/current-plan`,
+    updateSession: (sessionId: string) =>
+      `/api/v1/payments/update-session/${sessionId}`,
   },
 
   bids: {

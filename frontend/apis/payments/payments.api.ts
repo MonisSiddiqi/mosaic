@@ -27,3 +27,10 @@ export const getCurrentPlanApi =
     const response = await httpClient.get(apiEndpoints.payments.currentPlan);
     return response.data.result;
   };
+
+export const updateSessionApi = async (sessionId: string) => {
+  const response = await httpClient.post(
+    apiEndpoints.payments.updateSession(sessionId),
+  );
+  return response.data.result;
+};

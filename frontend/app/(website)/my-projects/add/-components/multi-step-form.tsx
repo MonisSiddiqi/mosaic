@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { LoaderComponent } from "@/components/loader-component";
 
 export function MultiStepForm() {
-  const { currentStep, formData } = useAddProject();
+  const { currentStep } = useAddProject();
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -63,9 +63,6 @@ export function MultiStepForm() {
 
   return (
     <div className="mx-auto max-w-4xl md:p-4">
-      <pre className="mb-6 overflow-auto rounded bg-gray-800 p-4 text-sm text-white">
-        {JSON.stringify(formData, null, 2)}
-      </pre>
       <div className="mb-7 flex flex-col items-start gap-6 md:flex-row md:justify-between">
         {steps.map((step, index) => (
           <div key={step.title} className="flex items-center gap-4 md:flex-col">

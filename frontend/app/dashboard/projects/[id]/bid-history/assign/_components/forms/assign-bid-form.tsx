@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Users } from "lucide-react";
+import { CheckCircleIcon, ClockIcon, Users } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +22,23 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 
-import { Combobox } from "@/components/ui/combobox";
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { useUsersQuery } from "@/queries/users.queries";
 import { UserRole } from "@/apis/users";
 import { useState } from "react";
@@ -31,6 +47,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 const formSchema = z.object({
   vendorId: z.string().min(1, "Vendor is required"),
@@ -93,24 +110,95 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
             <FormField
               control={form.control}
               name="vendorId"
-              render={({ field }) => (
+              render={({}) => (
                 <FormItem>
                   <FormLabel>Vendor</FormLabel>
 
-                  <Combobox
-                    data={
-                      data?.list.map((item) => ({
-                        label: `${item.UserProfile?.name} - ${item.email}`,
-                        value: item.id,
-                      })) || []
-                    }
-                    placeHolder="Select Vendor"
-                    fieldName={field.name}
-                    value={field.value}
-                    setValue={field.onChange}
-                    open={open}
-                    setOpen={setOpen}
-                  />
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className={cn("w-full min-w-96 justify-between", "")}
+                      >
+                        {form.watch("vendorId")
+                          ? data?.list.find(
+                              (item) => item.id === form.watch("vendorId"),
+                            )?.UserProfile?.name
+                          : "Select Vendor"}
+
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="flex w-96 flex-col gap-2 bg-muted p-2">
+                      <Command>
+                        <CommandInput
+                          placeholder={"Select Vendor..."}
+                          className="h-9 border-none shadow-none"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No Vendor found.</CommandEmpty>
+                          <CommandGroup className="bg-muted p-0">
+                            {data?.list.map((item) => (
+                              <CommandItem
+                                key={item.id}
+                                value={`${item.email}`}
+                                disabled={!item.isAvailable}
+                                className="relative mt-2 border border-white bg-white p-4 data-[selected=true]:border data-[selected=true]:border-brand-secondary data-[selected=true]:bg-white data-[selected=true]:text-accent-foreground"
+                                onSelect={(val) => {
+                                  const selectedItem = data?.list.find(
+                                    (item) => item.email === val,
+                                  );
+
+                                  if (!selectedItem) return;
+
+                                  const previousVal =
+                                    form.getValues("vendorId");
+
+                                  if (previousVal === selectedItem.id) {
+                                    form.setValue("vendorId", "");
+                                  } else {
+                                    form.setValue("vendorId", selectedItem.id, {
+                                      shouldValidate: true,
+                                    });
+                                  }
+
+                                  setOpen(false);
+                                }}
+                              >
+                                <div>
+                                  <p> {item.UserProfile?.name} </p>
+                                  <p> {item.email} </p>
+                                </div>
+
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    form.getValues("vendorId") === item.id
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+
+                                {item.isAvailable ? (
+                                  <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-green-600 bg-green-200 text-green-600 hover:bg-green-200 hover:text-green-600">
+                                    <CheckCircleIcon className="size-4" />
+                                    Available
+                                  </Badge>
+                                ) : (
+                                  <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-yellow-600 bg-yellow-200 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-600">
+                                    <ClockIcon className="size-4" />
+                                    Busy
+                                  </Badge>
+                                )}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
 
                   <FormDescription>
                     Select Vendor for this project.

@@ -309,4 +309,55 @@ export class ProjectsService {
       'Project fetched successfully',
     );
   }
+
+  async remove(projectId: string, authUser: User) {
+    const projectWhereInput: Prisma.ProjectWhereInput = {};
+
+    projectWhereInput.id = projectId;
+
+    if (authUser.role !== UserRole.ADMIN) {
+      projectWhereInput.userId = authUser.id;
+    }
+
+    const project = await this.prismaService.project.findFirst({
+      where: projectWhereInput,
+      include: {
+        ProjectFile: true,
+        SampleFile: true,
+      },
+    });
+
+    if (!project) {
+      throw new UnprocessableEntityException('Project not found');
+    }
+
+    if (project.status !== ProjectStatus.IN_PROGRESS) {
+      throw new UnprocessableEntityException(
+        'Project can only be deleted when it is in progress',
+      );
+    }
+
+    // Delete project files from storage
+    await Promise.all(
+      project.ProjectFile.map((file) =>
+        this.storageService.deleteFile(file.url),
+      ),
+    );
+    // Delete sample files from storage
+    await Promise.all(
+      project.SampleFile.map((file) =>
+        this.storageService.deleteFile(file.url),
+      ),
+    );
+
+    // Delete project
+    await this.prismaService.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
+    this.logger.log(`Project ${projectId} deleted by user ${authUser.id}`);
+
+    return new ApiResponse(project, 'Project deleted successfully');
+  }
 }

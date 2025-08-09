@@ -61,6 +61,13 @@ export const useProjectQuery = (id: string) => {
   });
 };
 
+export const useDeletProjectMutation = () => {
+  return useMutation({
+    mutationKey: ["deleteProject"],
+    mutationFn: deleteProjectUpdateApi,
+  });
+};
+
 export const useAddProjectUpdateMutation = () => {
   return useMutation({
     mutationKey: ["addProjectUpdate"],

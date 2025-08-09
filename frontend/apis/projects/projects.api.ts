@@ -125,3 +125,9 @@ export const deleteProjectUpdateApi = async (
 
   return response.data.result;
 };
+
+export const deleteProjectApi = async (id: string): Promise<Project> => {
+  const response = await httpClient.delete(apiEndpoints.projects.delete(id));
+
+  return response.data.result;
+};

@@ -513,6 +513,10 @@ export class BidsService implements OnModuleInit {
       );
     }
 
+    if (!vendor.isAvailable) {
+      throw new UnprocessableEntityException('Vendor is not available');
+    }
+
     const isPreviouslyAssigned = project.Bid.some(
       (item) => item.vendorId === vendorId,
     );

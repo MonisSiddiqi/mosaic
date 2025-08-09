@@ -3,7 +3,10 @@ import {
   Controller,
   Get,
   Header,
+  Headers,
+  Param,
   Post,
+  RawBody,
   Req,
   Res,
   UseGuards,
@@ -17,6 +20,7 @@ import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User, UserRole } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { SkipAuth } from 'src/auth/decorators/skip-auth.decorator';
 
 @Controller('payments')
 export class PaymentsController {
@@ -42,11 +46,24 @@ export class PaymentsController {
     return this.paymentsService.currentPlan(authUser);
   }
 
-  @Post('webhook')
+  @Post('update-session/:sessionId')
+  @Roles(UserRole.VENDOR)
+  @UseGuards(RolesGuard)
+  updateSession(@Param('sessionId') sessionId: string) {
+    return this.stripeService.updateSession(sessionId);
+  }
+
+  @SkipAuth()
+  @Post('stripe-webhook')
   @Header('Content-Type', 'application/json')
-  async handleStripeWebhook(@Req() req: Request, @Res() res: Response) {
+  async handleStripeWebhook(
+    @RawBody() rawBody: Buffer,
+    @Headers('stripe-signature') signature: string,
+    @Res() res: Response,
+  ) {
     try {
-      await this.stripeService.handleWebhook(req);
+      console.log('Received Stripe webhook');
+      await this.stripeService.handleWebhook(rawBody, signature);
       res.status(200).send('Webhook received');
     } catch (err) {
       res.status(400).send(`Webhook Error: ${(err as Error).message}`);

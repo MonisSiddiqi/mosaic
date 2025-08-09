@@ -23,6 +23,7 @@ import { BidHistoryContainer } from "@/app/dashboard/projects/[id]/bid-history/_
 import { BidStatus } from "@/apis/bids";
 import { ContactDetailsContainer } from "./contact-details-container";
 import { MarkProjectCompleteContainer } from "./mark-project-complete-container";
+import BidRejectionNotice from "./bid-limit-notice";
 
 export const ProjectDetails = () => {
   const params = useParams();
@@ -64,6 +65,10 @@ export const ProjectDetails = () => {
   );
 
   if (data) {
+    const isBidRejectionLimitReached =
+      data?.Bid?.filter((item) => item.userStatus === BidStatus.REJECTED)
+        .length >= 3;
+
     return (
       <div className="flex min-h-screen flex-col gap-6 rounded border border-gray-200 bg-white p-6">
         <BackButton className="w-fit" href={backButtonHref} />
@@ -99,6 +104,8 @@ export const ProjectDetails = () => {
           awardedBid && (
             <ProjectUpdatesContainer project={data} awardedBid={awardedBid} />
           )}
+
+        {isBidRejectionLimitReached && <BidRejectionNotice id={data.id} />}
 
         <BidHistoryContainer
           bids={data.Bid}
