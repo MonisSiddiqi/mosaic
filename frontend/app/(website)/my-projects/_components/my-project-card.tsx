@@ -31,7 +31,7 @@ export const MyProjectsCard: FC<GetAllProjectApiResponseItem> = ({
 
   return (
     <Link href={`/my-projects/${id}`} className="w-full">
-      <Card className="w-full overflow-hidden transition-shadow hover:shadow-lg">
+      <Card className="h-full w-full overflow-hidden transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="relative flex h-[240px] w-full items-center justify-center overflow-hidden rounded bg-gray-100 text-gray-500">
             {!isLoaded && firstFile && (
