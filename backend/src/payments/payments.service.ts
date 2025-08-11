@@ -17,6 +17,7 @@ export class PaymentsService {
     const plans = await this.prismaService.plan.findMany({
       include: {
         Service: true,
+        UserPlan: true,
       },
       orderBy: {
         amount: 'asc',

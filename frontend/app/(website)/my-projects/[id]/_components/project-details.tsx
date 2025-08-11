@@ -8,7 +8,12 @@ import { P3 } from "@/components/typography/P3";
 import { H3 } from "@/components/typography/H3";
 import { ShowFile } from "./show-file";
 import { AddressCard } from "./project-address";
-import { Building2Icon, MapPinnedIcon, RulerIcon } from "lucide-react";
+import {
+  ArrowDownIcon,
+  Building2Icon,
+  MapPinnedIcon,
+  RulerIcon,
+} from "lucide-react";
 import { SiteMeasurementCard } from "./site-measurement";
 import BudgetPreferenceCard from "./budget-preference";
 import { ProjectTags } from "./project-tags";
@@ -24,6 +29,9 @@ import { BidStatus } from "@/apis/bids";
 import { ContactDetailsContainer } from "./contact-details-container";
 import { MarkProjectCompleteContainer } from "./mark-project-complete-container";
 import BidRejectionNotice from "./bid-limit-notice";
+import { DeleteProject } from "./delete-project";
+import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 export const ProjectDetails = () => {
   const params = useParams();
@@ -33,6 +41,8 @@ export const ProjectDetails = () => {
   const { data, isLoading, isError, error } = useProjectQuery(id);
 
   const { user } = useAuth();
+
+  const deleteProjectRef = useRef<HTMLDivElement | null>(null);
 
   if (isLoading) {
     <LoaderComponent />;
@@ -71,7 +81,17 @@ export const ProjectDetails = () => {
 
     return (
       <div className="flex min-h-screen flex-col gap-6 rounded border border-gray-200 bg-white p-6">
-        <BackButton className="w-fit" href={backButtonHref} />
+        <div className="flex items-center justify-between">
+          <BackButton className="w-fit" href={backButtonHref} />
+          <Button
+            onClick={() =>
+              deleteProjectRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
+            variant="destructive"
+          >
+            Delete Project <ArrowDownIcon />
+          </Button>
+        </div>
 
         {user?.role === UserRole.USER && (
           <ProjectDetailsAlert status={data.status} />
@@ -200,6 +220,10 @@ export const ProjectDetails = () => {
               <ProjectTags tags={data.ProjectTag} service={data.Service} />
             </div>
           )}
+        </div>
+
+        <div ref={deleteProjectRef}>
+          <DeleteProject id={data.id} status={data.status} />
         </div>
       </div>
     );

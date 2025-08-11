@@ -42,7 +42,10 @@ export enum PaymentMode {
   COUPON = "COUPON",
 }
 
-export type GetAllPlansApiResponseItem = Plan & { Service: Service[] };
+export type GetAllPlansApiResponseItem = Plan & {
+  Service: Service[];
+  UserPlan: UserPlan[];
+};
 
 export type GetAllPlansApiResponse = GetAllPlansApiResponseItem[];
 

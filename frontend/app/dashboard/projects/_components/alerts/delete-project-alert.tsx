@@ -23,9 +23,10 @@ import { Button } from "@/components/ui/button";
 type Props = {
   id: string;
   text?: string;
+  disabled?: boolean;
 };
 
-export const DeleteProjectAlert: FC<Props> = ({ id, text }) => {
+export const DeleteProjectAlert: FC<Props> = ({ id, text, disabled }) => {
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
@@ -65,11 +66,12 @@ export const DeleteProjectAlert: FC<Props> = ({ id, text }) => {
     <AlertDialog open={open}>
       <AlertDialogTrigger onClick={() => setOpen(true)} asChild>
         <Button
-          variant="outline"
+          variant="destructive"
           type="button"
-          className="flex-1 border-red-200 bg-transparent text-red-600 hover:border-red-300 hover:bg-red-50"
+          className="w-fit"
+          disabled={disabled}
         >
-          <Trash2Icon className="mr-2 h-4 w-4" />
+          <Trash2Icon />
           {text ? text : "Delete Project"}
         </Button>
       </AlertDialogTrigger>

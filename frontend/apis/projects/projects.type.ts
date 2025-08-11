@@ -93,8 +93,9 @@ export enum Unit {
 
 export const statusOptions = [
   { value: ProjectStatusEnum.IN_PROGRESS, label: "In Progress" },
-  { value: ProjectStatusEnum.COMPLETED, label: "Completed" },
+  { value: ProjectStatusEnum.VENDOR_FOUND, label: "Vendor Found" },
   { value: ProjectStatusEnum.AWARDED, label: "Awarded" },
+  { value: ProjectStatusEnum.COMPLETED, label: "Completed" },
 ];
 
 export type ProjectUpdate = {
