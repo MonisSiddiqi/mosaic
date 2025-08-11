@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { SaveNotificationDto } from './dto/save-notification.dto';
 import { ApiResponse } from '../common/dto/api-response.dto';

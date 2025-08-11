@@ -13,13 +13,12 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { getFileUrl, getInitials } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { BellIcon, Building2Icon, LogOutIcon, UserCircle } from "lucide-react";
+import { Building2Icon, LogOutIcon, UserCircle } from "lucide-react";
 import { UserRole } from "@/apis/users";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useListenNotifications } from "@/hooks/use-listen-notifications";
-import humanFormat from "human-format";
 import { useQueryClient } from "@tanstack/react-query";
+import { NotificationsNav } from "./notifications-nav";
 
 export function UserProfile() {
   const { user, logout } = useAuth();
@@ -43,8 +42,6 @@ export function UserProfile() {
       });
     }
   };
-
-  const { unreadCount } = useListenNotifications();
 
   useEffect(() => {
     if (user && user.role !== UserRole.USER) {
@@ -83,18 +80,7 @@ export function UserProfile() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link href="/notifications" className="hover:cursor-pointer">
-            <BellIcon /> Notifications{" "}
-            {unreadCount > 0 && (
-              <div className="rounded-full p-1">
-                <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
-                  <p className="text-basf-red whitespace-nowrap text-sm">
-                    {humanFormat(unreadCount)}
-                  </p>
-                </div>
-              </div>
-            )}
-          </Link>
+          <NotificationsNav />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
