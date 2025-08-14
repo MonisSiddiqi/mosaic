@@ -15,7 +15,6 @@ import {
   Patch,
   Delete,
   BadRequestException,
-  NotAcceptableException,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -62,15 +61,15 @@ export class ProjectsController {
       const isImage = file.mimetype.startsWith('image/');
 
       if (isVideo) {
-        if (file.size > 20 * 1024 * 1024) {
+        if (file.size > 500 * 1024 * 1024) {
           throw new BadRequestException(
-            `Video file ${file.originalname} exceeds 20MB limit`,
+            `Video file ${file.originalname} exceeds 500MB limit`,
           );
         }
       } else if (isImage) {
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 50 * 1024 * 1024) {
           throw new BadRequestException(
-            `Image file ${file.originalname} exceeds 5MB limit`,
+            `Image file ${file.originalname} exceeds 50MB limit`,
           );
         }
       } else {
@@ -146,6 +145,11 @@ export class ProjectsController {
       editProjectUpdateDto,
       authUser,
     );
+  }
+
+  @Delete(':id')
+  deleteProject(@Param('id') id: string, @GetUser() authUser: User) {
+    return this.projectsService.remove(id, authUser);
   }
 
   @Delete('updates/:id')

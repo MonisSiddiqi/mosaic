@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { useAddProject } from "@/hooks/use-add-project";
+import Image from "next/image";
 
 const optionSchema = z.object({
   label: z.string(),
@@ -54,7 +55,9 @@ const formSchema = z.object({
 
 export const ProjectDetails = ({}) => {
   const { formData, setFormData, handleNext } = useAddProject();
-  const { data: services, isLoading: isServicesLoading } = useServicesQuery();
+  const { data: services, isLoading: isServicesLoading } = useServicesQuery({
+    sorting: [{ id: "name", desc: false }],
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,6 +76,7 @@ export const ProjectDetails = ({}) => {
         value: form.watch("serviceId"),
       },
     ],
+    sorting: [{ id: "name", desc: false }],
   });
 
   const [open, setOpen] = useState(false);
@@ -171,7 +175,7 @@ export const ProjectDetails = ({}) => {
                             <ChevronsUpDown className="opacity-50" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
+                        <PopoverContent className="min-w-72 p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search Category..."
@@ -179,11 +183,12 @@ export const ProjectDetails = ({}) => {
                             />
                             <CommandList>
                               <CommandEmpty>No service found.</CommandEmpty>
-                              <CommandGroup>
+                              <CommandGroup className="bg-muted">
                                 {services?.list.map((service) => (
                                   <CommandItem
                                     key={service.id}
                                     value={service.name}
+                                    className="mt-2 border border-transparent bg-white data-[selected=true]:border-brand-secondary data-[selected=true]:bg-white"
                                     onSelect={(value) => {
                                       const service = services.list.find(
                                         (item) => item.name === value,
@@ -208,7 +213,25 @@ export const ProjectDetails = ({}) => {
                                       setOpen(false);
                                     }}
                                   >
-                                    {service.name}
+                                    <div className="flex gap-2">
+                                      <div className="h-14 min-h-14 w-14 min-w-14 overflow-hidden rounded">
+                                        {service.iconUrl ? (
+                                          <Image
+                                            src={service.iconUrl}
+                                            alt={service.name}
+                                            width={64}
+                                            height={64}
+                                            className="bg-gray-100 p-2"
+                                            priority
+                                          />
+                                        ) : (
+                                          <div className="flex size-full items-center justify-center bg-gray-100 text-center text-xs text-gray-500">
+                                            <p> No Icon</p>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <p>{service.name} </p>
+                                    </div>
                                     <CheckIcon
                                       className={cn(
                                         "ml-auto",

@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
 import { useAddProjectMutation } from "@/queries/projects.queries";
@@ -22,9 +22,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { PlusIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import { AddProjectDto } from "@/apis/projects";
+import { FileSizeNote } from "../file-size-note";
 
-const MAX_VIDEO_SIZE = 20 * 1024 * 1024;
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 50 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024;
 
 const budgetSchema = z.object({
   budgetPreference: z.number(),
@@ -34,6 +35,8 @@ const budgetSchema = z.object({
 
 export const BudgetStep = () => {
   const { formData, handlePrev, setFormData } = useAddProject();
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [filePreviews, setFilePreviews] = useState<
     { file: File; url: string }[]
@@ -58,12 +61,31 @@ export const BudgetStep = () => {
   const form = useForm<z.infer<typeof budgetSchema>>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
-      budgetPreference: 5,
+      budgetPreference: formData.budgetPreference || 5,
+      preferenceMessage: formData.preferenceMessage,
+      sampleFiles: formData.sampleFiles,
     },
   });
 
   const mutation = useAddProjectMutation();
   const router = useRouter();
+
+  const handleBack = () => {
+    const budgetPreference = form.getValues("budgetPreference");
+    const preferenceMessage = form.getValues("preferenceMessage");
+    const sampleFiles = form.getValues("sampleFiles");
+
+    const updatedFormData = {
+      ...formData,
+      budgetPreference,
+      preferenceMessage,
+      sampleFiles,
+    };
+
+    setFormData(updatedFormData);
+
+    handlePrev();
+  };
 
   const onSubmit = async (values: z.infer<typeof budgetSchema>) => {
     const updatedFormData = {
@@ -84,7 +106,7 @@ export const BudgetStep = () => {
         title: "Project Added Successfully",
         variant: "success",
       });
-      router.push("/");
+      router.push("/my-projects");
     } catch (e) {
       toast({
         title: e instanceof Error ? e.message : "Failed to Add Project",
@@ -98,19 +120,34 @@ export const BudgetStep = () => {
     const fileArray = Array.from(files);
 
     for (const file of fileArray) {
+      const isDuplicate = form
+        .getValues("sampleFiles")
+        ?.some((item) => item.name === file.name);
+
+      if (isDuplicate) {
+        toast({
+          title: `File "${file.name}" already uploaded, duplicate files are not allowed`,
+          variant: "destructive",
+        });
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+        return;
+      }
+
       const isVideo = file.type.startsWith("video/");
       const isImage = file.type.startsWith("image/");
 
       if (isVideo && file.size > MAX_VIDEO_SIZE) {
         toast({
-          title: `Video file ${file.name} exceeds 20MB limit`,
+          title: `Video file ${file.name} exceeds 500MB limit`,
           variant: "destructive",
         });
         return;
       }
       if (isImage && file.size > MAX_IMAGE_SIZE) {
         toast({
-          title: `Image file ${file.name} exceeds 5MB limit`,
+          title: `Image file ${file.name} exceeds 50MB limit`,
           variant: "destructive",
         });
         return;
@@ -133,6 +170,10 @@ export const BudgetStep = () => {
       ...(form.getValues("sampleFiles") || []),
       ...fileArray,
     ]);
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const handleRemoveFile = (index: number) => {
@@ -224,8 +265,9 @@ export const BudgetStep = () => {
                 onChange={(e) => handleFileChange(e.target.files)}
                 className="hidden"
                 id="file-upload"
+                ref={inputRef}
               />
-              <div className="mt-3 flex gap-3">
+              <div className="mt-3 flex shrink-0 flex-wrap gap-3">
                 {filePreviews.map(({ file, url }, index) => (
                   <div
                     key={index}
@@ -253,24 +295,39 @@ export const BudgetStep = () => {
                     </button>
                   </div>
                 ))}
-                <label
-                  htmlFor="file-upload"
-                  className="flex h-40 w-40 cursor-pointer items-center justify-center rounded-lg border"
-                >
-                  <PlusIcon size={24} className="text-gray-500" />
-                </label>
+
+                {(form.watch("sampleFiles") || []).length < 20 && (
+                  <label
+                    htmlFor="file-upload"
+                    className="flex h-40 w-40 cursor-pointer items-center justify-center rounded-lg border"
+                  >
+                    <PlusIcon size={24} className="text-gray-500" />
+                  </label>
+                )}
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        <div className="mt-4 text-sm">
+          {(form.watch("sampleFiles") || []).length}/20
+        </div>
+
+        <FileSizeNote className="mt-7">
+          <li>
+            Max <span className="font-semibold">20</span> sample files are
+            allowed.
+          </li>
+          <li>Duplicate sample files are not allowed.</li>
+        </FileSizeNote>
+
         <div className="mt-8 flex w-full justify-between">
           <Button
             disabled={mutation.isPending}
             type="button"
             variant="outline"
-            onClick={handlePrev}
+            onClick={handleBack}
           >
             Previous
           </Button>

@@ -1,6 +1,7 @@
 import {
   addProjectApi,
   addProjectUpdateApi,
+  deleteProjectApi,
   deleteProjectUpdateApi,
   getAllProjectsApi,
   getProjectApi,
@@ -64,7 +65,7 @@ export const useProjectQuery = (id: string) => {
 export const useDeletProjectMutation = () => {
   return useMutation({
     mutationKey: ["deleteProject"],
-    mutationFn: deleteProjectUpdateApi,
+    mutationFn: deleteProjectApi,
   });
 };
 

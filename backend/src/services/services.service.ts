@@ -80,6 +80,8 @@ export class ServicesService {
   async findAll(getServicesDto: GetServicesDto, authUser?: User) {
     const { filter, limit, page, sortField, sortValue } = getServicesDto;
 
+    console.log(getServicesDto);
+
     const serviceWhereInput: Prisma.ServiceWhereInput = {};
 
     const textFilter = filter?.find((item) => item.id === 'name');
@@ -94,6 +96,8 @@ export class ServicesService {
     } else {
       orderBy[sortField] = sortValue;
     }
+
+    console.log(orderBy);
 
     if (textFilter) {
       serviceWhereInput.name = {

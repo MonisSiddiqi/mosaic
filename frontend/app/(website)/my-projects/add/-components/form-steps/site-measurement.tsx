@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { PlusIcon, XIcon } from "lucide-react";
 import { useAddProject } from "@/hooks/use-add-project";
@@ -25,9 +25,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { FileSizeNote } from "../file-size-note";
 
-const MAX_VIDEO_SIZE = 20 * 1024 * 1024;
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 50 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024;
 
 const measurementsSchema = z.object({
   unit: z.enum([Unit.FEET, Unit.METER, Unit.YARD]),
@@ -41,6 +42,8 @@ const measurementsSchema = z.object({
 
 export const SiteMeasurements = () => {
   const { formData, handlePrev, handleNext, setFormData } = useAddProject();
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [filePreviews, setFilePreviews] = useState<
     { file: File; url: string }[]
@@ -77,20 +80,37 @@ export const SiteMeasurements = () => {
     if (!files) return;
     const fileArray = Array.from(files);
 
+    console.log(fileArray);
+
     for (const file of fileArray) {
+      const isDuplicate = form
+        .getValues("files")
+        ?.some((item) => item.name === file.name);
+
+      if (isDuplicate) {
+        toast({
+          title: `File "${file.name}" already uploaded, duplicate files are not allowed`,
+          variant: "destructive",
+        });
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+        return;
+      }
+
       const isVideo = file.type.startsWith("video/");
       const isImage = file.type.startsWith("image/");
 
       if (isVideo && file.size > MAX_VIDEO_SIZE) {
         toast({
-          title: `Video file ${file.name} exceeds 20MB limit`,
+          title: `Video file ${file.name} exceeds 500MB limit`,
           variant: "destructive",
         });
         return;
       }
       if (isImage && file.size > MAX_IMAGE_SIZE) {
         toast({
-          title: `Image file ${file.name} exceeds 5MB limit`,
+          title: `Image file ${file.name} exceeds 50MB limit`,
           variant: "destructive",
         });
         return;
@@ -110,6 +130,10 @@ export const SiteMeasurements = () => {
     }));
     setFilePreviews((prev) => [...prev, ...newPreviews]);
     form.setValue("files", [...(form.getValues("files") || []), ...fileArray]);
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const handleRemoveFile = (index: number) => {
@@ -284,8 +308,9 @@ export const SiteMeasurements = () => {
                   onChange={(e) => handleFileChange(e.target.files)}
                   className="hidden"
                   id="file-upload"
+                  ref={inputRef}
                 />
-                <div className="mt-3 flex gap-3">
+                <div className="mt-3 flex flex-wrap gap-3">
                   {filePreviews.map(({ file, url }, index) => (
                     <div
                       key={index}
@@ -313,17 +338,28 @@ export const SiteMeasurements = () => {
                       </button>
                     </div>
                   ))}
-                  <label
-                    htmlFor="file-upload"
-                    className="flex h-40 w-40 cursor-pointer items-center justify-center rounded-lg border"
-                  >
-                    <PlusIcon size={24} className="text-gray-500" />
-                  </label>
+                  {(form.watch("files") || []).length < 20 && (
+                    <label
+                      htmlFor="file-upload"
+                      className="flex h-40 w-40 cursor-pointer items-center justify-center rounded-lg border"
+                    >
+                      <PlusIcon size={24} className="text-gray-500" />
+                    </label>
+                  )}
                 </div>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <div className="text-sm">{(form.watch("files") || []).length}/20</div>
+
+          <FileSizeNote>
+            <li>
+              Max <span className="font-semibold">20</span> files are allowed.
+            </li>
+            <li>Duplicate files are not allowed.</li>
+          </FileSizeNote>
 
           <div className="mt-4 flex w-full justify-between">
             <Button type="button" variant="outline" onClick={handlePrev}>
