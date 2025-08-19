@@ -11,12 +11,14 @@ import { steps } from "@/context/add-project-context";
 import { Progress } from "@/components/ui/progress";
 
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderComponent } from "@/components/loader-component";
 
 export function MultiStepForm() {
   const { currentStep } = useAddProject();
+
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -26,6 +28,12 @@ export function MultiStepForm() {
       router.push("/auth?redirect=/my-projects/add");
     }
   }, [isAuthenticated, router]);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentStep]);
 
   if (!isAuthenticated) {
     return <LoaderComponent />;
@@ -62,7 +70,7 @@ export function MultiStepForm() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl md:p-4">
+    <div ref={formRef} className="mx-auto max-w-4xl md:p-4">
       <div className="mb-7 flex flex-col items-start gap-6 md:flex-row md:justify-between">
         {steps.map((step, index) => (
           <div key={step.title} className="flex items-center gap-4 md:flex-col">

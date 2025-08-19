@@ -23,9 +23,19 @@ import { Input } from "@/components/ui/input";
 import { PlusIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import { AddProjectDto } from "@/apis/projects";
 import { FileSizeNote } from "../file-size-note";
+import { AnimatedMessage } from "../animated-message";
 
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 500 * 1024 * 1024;
+
+const submissionMessages = [
+  "Uploading your files to our servers. Please wait...",
+  "Still working on it. Almost there...",
+  "This is taking longer than expected. Please hold on...",
+  "Finalizing your submission. Thank you!",
+  "Your files are being processed. Please wait a moment longer...",
+  "Your submission is being processed. Please wait...",
+];
 
 const budgetSchema = z.object({
   budgetPreference: z.number(),
@@ -37,6 +47,10 @@ export const BudgetStep = () => {
   const { formData, handlePrev, setFormData } = useAddProject();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [filePreviews, setFilePreviews] = useState<
     { file: File; url: string }[]
@@ -98,6 +112,17 @@ export const BudgetStep = () => {
     setFormData(updatedFormData);
 
     try {
+      let i = 0;
+
+      timeoutRef.current = setInterval(() => {
+        if (i < submissionMessages.length) {
+          setMessage(submissionMessages[i]);
+        } else {
+          i = 0;
+          setMessage(submissionMessages[i]);
+        }
+        i++;
+      }, 10000);
       await mutation.mutateAsync({
         ...updatedFormData,
         tags: updatedFormData.tags?.map((item) => item.value),
@@ -112,6 +137,12 @@ export const BudgetStep = () => {
         title: e instanceof Error ? e.message : "Failed to Add Project",
         variant: "destructive",
       });
+    } finally {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setMessage(null);
     }
   };
 
@@ -339,6 +370,7 @@ export const BudgetStep = () => {
             Submit
           </Button>
         </div>
+        {message && <AnimatedMessage className="mt-7" message={message} />}
       </form>
     </Form>
   );
