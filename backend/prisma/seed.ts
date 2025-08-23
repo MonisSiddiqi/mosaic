@@ -5,22 +5,7 @@ import { plans } from './data';
 const prisma = new PrismaClient();
 
 async function main() {
-  const plans = await prisma.plan.findMany();
-
-  for (const plan of plans) {
-    await prisma.plan.update({
-      where: {
-        id: plan.id,
-      },
-      data: {
-        priceId: null,
-        productId: null,
-        yearlyPriceId: null,
-        yearlyProductId: null,
-      },
-    });
-  }
-}
+resetPlans();}
 
 async function connectServicePlan() {
   for (const plan of plans) {
@@ -44,6 +29,24 @@ async function connectServicePlan() {
         }
       }
     }
+  }
+}
+
+async function resetPlans() {
+  const plans = await prisma.plan.findMany();
+
+  for (const plan of plans) {
+    await prisma.plan.update({
+      where: {
+        id: plan.id,
+      },
+      data: {
+        priceId: null,
+        productId: null,
+        yearlyPriceId: null,
+        yearlyProductId: null,
+      },
+    });
   }
 }
 
