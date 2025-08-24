@@ -1,5 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ClipboardList, UserCheck, Calendar, ThumbsUp } from "lucide-react";
+import {
+  ClipboardList,
+  UserCheck,
+  ThumbsUp,
+  HandshakeIcon,
+} from "lucide-react";
 
 export function HowItWorksSection() {
   return (
@@ -18,9 +23,9 @@ export function HowItWorksSection() {
             description="We'll connect you with qualified professionals."
           />
           <StepCard
-            icon={<Calendar className="h-12 w-12 text-yellow-500" />}
-            title="3. Schedule Service"
-            description="Choose a convenient time for your service."
+            icon={<HandshakeIcon className="h-12 w-12 text-yellow-500" />}
+            title="3. Accept Proposal"
+            description="Accept the proposal that fits your needs and budget."
           />
           <StepCard
             icon={<ThumbsUp className="h-12 w-12 text-purple-500" />}

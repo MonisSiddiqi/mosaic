@@ -19,9 +19,7 @@ export class ProjectsUpdatesService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
-  ) {
-    console.log('PrismaService injected:', !!prismaService);
-  }
+  ) {}
 
   async addProjectUpdates(
     addProjectUpdatesDto: AddProjectUpdatesDto,

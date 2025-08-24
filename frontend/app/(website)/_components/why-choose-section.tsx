@@ -1,4 +1,4 @@
-import { Shield, ThumbsUp, Clock, Users } from "lucide-react";
+import { Shield, ThumbsUp, Users, HandshakeIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const features = [
@@ -15,10 +15,10 @@ const features = [
       "We bring you the best vendors who are committed to delivering top-notch services for your projects.",
   },
   {
-    icon: Clock,
-    title: "Effortless Booking",
+    icon: HandshakeIcon,
+    title: "Effortless Matching",
     description:
-      "Experience a hassle-free booking process tailored to connect you with the right professional quickly and efficiently.",
+      "Experience a seamless matching process that connects you with the right professionals for your needs.",
   },
   {
     icon: Users,

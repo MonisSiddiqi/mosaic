@@ -224,6 +224,11 @@ export class ProjectsService {
         Service: true,
         Bid: { include: { vendor: true } },
         user: { omit: { password: true } },
+        ProjectUpdate: {
+          include: {
+            ProjectUpdateFile: true,
+          },
+        },
       },
       ...(page > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
       orderBy: {
@@ -242,6 +247,19 @@ export class ProjectsService {
           project.ProjectFile.map(async (projectFile) => ({
             ...projectFile,
             url: await this.storageService.getSignedFileUrl(projectFile.url),
+          })),
+        ),
+        ProjectUpdate: await Promise.all(
+          project.ProjectUpdate.map(async (update) => ({
+            ...update,
+            ProjectUpdateFile: await Promise.all(
+              update.ProjectUpdateFile.map(async (file) => ({
+                ...file,
+                fileUrl: await this.storageService.getSignedFileUrl(
+                  file.fileUrl,
+                ),
+              })),
+            ),
           })),
         ),
       })),

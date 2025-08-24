@@ -21,6 +21,7 @@ export type Project = {
 
 export type GetAllProjectApiResponseItem = Project & {
   ProjectFile: ProjectFile[];
+  ProjectUpdate: (ProjectUpdate & { ProjectUpdateFile: ProjectUpdateFile[] })[];
   Service: Service;
   Bid: (Bid & { vendor: User })[];
   user: User;

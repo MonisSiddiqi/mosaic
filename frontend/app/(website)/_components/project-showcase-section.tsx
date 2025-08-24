@@ -13,42 +13,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import Project1BeforeImage from "@/app/assets/project-1-before-picture.png";
-import Project1AfterImage from "@/app/assets/project-1-after-image.jpg";
-import Project2BeforeImage from "@/app/assets/project-1-before-picture.png";
-import Project2AfterImage from "@/app/assets/project-1-after-image.jpg";
 import { Badge } from "@/components/ui/badge";
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  beforeImage: string;
-  afterImage: string;
-}
-
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Revitalized Spaces",
-    description:
-      "Experience the remarkable transformation as we breathe new life into outdated spaces, turning them into modern, functional, and visually stunning environments.",
-    beforeImage: Project1BeforeImage.src,
-    afterImage: Project1AfterImage.src,
-  },
-  {
-    id: 2,
-    title: "Structural Excellence",
-    description:
-      "Discover how we transform outdated spaces into modern, functional environments. Through innovative design and expert craftsmanship, we reimagine every detail.",
-    beforeImage: Project2BeforeImage.src,
-    afterImage: Project2AfterImage.src,
-  },
-];
+import { useProjectsQuery } from "@/queries/projects.queries";
+import { LoaderComponent } from "@/components/loader-component";
+import { EmptyUI } from "@/components/empty-ui";
 
 export function ProjectShowcaseSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const totalItems = projects.length;
+  const { data, isLoading } = useProjectsQuery();
+
+  const filterdProjects =
+    data?.list.filter((item) => item.ProjectUpdate.length > 0) || [];
+
+  const totalItems = filterdProjects.length;
 
   const carouselNextRef = useRef<HTMLButtonElement | null>(null);
   const carouselPrevRef = useRef<HTMLButtonElement | null>(null);
@@ -72,11 +49,11 @@ export function ProjectShowcaseSection() {
       <div className="container mx-auto px-4">
         <div className="grid gap-16 lg:grid-cols-12">
           {/* Text Content */}
-          <div className="space-y-6 px-4 lg:col-span-4">
-            <h2 className="text-[40px] font-bold text-[#1e3a8a]">
+          <div className="px-4 lg:col-span-4">
+            <h2 className="text-4xl font-bold text-[#1e3a8a]">
               Projects we have done
             </h2>
-            <h3 className="text-[32px] text-[#94a3b8]">
+            <h3 className="mt-4 text-4xl text-[#94a3b8]">
               Discover our recent work
             </h3>
             <p className="text-lg leading-relaxed text-[#94a3b8]">
@@ -129,58 +106,81 @@ export function ProjectShowcaseSection() {
           {/* Carousel */}
           <div className="lg:col-span-8">
             <Carousel className="w-full">
-              <CarouselContent>
-                {projects.map((project) => (
-                  <CarouselItem key={project.id}>
-                    <Card className="border-none bg-transparent">
-                      <CardContent className="p-0">
-                        <div className="space-y-8">
-                          {/* Before/After Images */}
-                          <div className="grid gap-6 md:grid-cols-2">
-                            <div className="relative aspect-[4/3]">
-                              <Image
-                                src={project.beforeImage}
-                                alt={`${project.title} Before`}
-                                fill
-                                className="object-cover"
-                              />
-                              <Badge
-                                variant={"secondary"}
-                                className="absolute left-4 top-4 hover:bg-secondary"
-                              >
-                                Before
-                              </Badge>
-                            </div>
-                            <div className="relative aspect-[4/3]">
-                              <Image
-                                src={project.afterImage}
-                                alt={`${project.title} After`}
-                                fill
-                                className="object-cover"
-                              />
-                              <Badge
-                                variant={"secondary"}
-                                className="absolute left-4 top-4 bg-brand-gold hover:bg-brand-gold"
-                              >
-                                After
-                              </Badge>
-                            </div>
-                          </div>
+              <CarouselContent className="p-2">
+                {isLoading ? (
+                  <LoaderComponent
+                    className="flex h-full w-full items-center justify-center"
+                    text="Loading Recent Projects"
+                  />
+                ) : filterdProjects.length > 0 ? (
+                  filterdProjects?.map((project) => {
+                    const projectUpdate = project.ProjectUpdate[0];
 
-                          {/* Project Info */}
-                          <div className="space-y-4">
-                            <h3 className="text-[28px] font-semibold text-[#1e3a8a]">
-                              {project.title}
-                            </h3>
-                            <p className="text-lg leading-relaxed text-[#94a3b8]">
-                              {project.description}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                ))}
+                    const beforeImage = projectUpdate.ProjectUpdateFile.find(
+                      (item) => item.type === "BEFORE",
+                    );
+                    const afterImage = projectUpdate.ProjectUpdateFile.find(
+                      (item) => item.type === "AFTER",
+                    );
+
+                    return (
+                      <CarouselItem key={project.id}>
+                        <Card className="border-none bg-transparent shadow-none">
+                          <CardContent className="p-0">
+                            <div className="space-y-8">
+                              {/* Before/After Images */}
+                              <div className="grid gap-6 md:grid-cols-2">
+                                <div className="relative aspect-[4/3]">
+                                  <Image
+                                    src={beforeImage?.fileUrl as string}
+                                    alt={`${project.title} Before`}
+                                    fill
+                                    className="bg-white object-cover"
+                                  />
+                                  <Badge
+                                    variant={"secondary"}
+                                    className="absolute left-4 top-4 hover:bg-secondary"
+                                  >
+                                    Before
+                                  </Badge>
+                                </div>
+                                <div className="relative aspect-[4/3]">
+                                  <Image
+                                    src={afterImage?.fileUrl as string}
+                                    alt={`${project.title} After`}
+                                    fill
+                                    className="bg-white object-cover"
+                                  />
+                                  <Badge
+                                    variant={"secondary"}
+                                    className="absolute left-4 top-4 bg-brand-gold hover:bg-brand-gold"
+                                  >
+                                    After
+                                  </Badge>
+                                </div>
+                              </div>
+
+                              {/* Project Info */}
+                              <div>
+                                <h3 className="text-[28px] font-semibold text-[#1e3a8a]">
+                                  {project.title}
+                                </h3>
+                                <p className="text-lg leading-relaxed text-[#94a3b8]">
+                                  {project.description}
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })
+                ) : (
+                  <EmptyUI
+                    className="flex h-full w-full items-center justify-center"
+                    text="No Projects to show yet"
+                  />
+                )}
               </CarouselContent>
               <CarouselPrevious className="hidden" ref={carouselPrevRef} />
               <CarouselNext className="hidden" ref={carouselNextRef} />

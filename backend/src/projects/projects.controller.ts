@@ -114,8 +114,8 @@ export class ProjectsController {
 
     const validators = [
       new MaxFileSizeValidator({
-        maxSize: 10 * 1024 * 1024,
-        message: 'Expected size is 10mb',
+        maxSize: 50 * 1024 * 1024,
+        message: 'Expected size is 50mb',
       }),
       new FileTypeValidator({ fileType: /^image\// }),
     ];
