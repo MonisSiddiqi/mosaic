@@ -26,6 +26,7 @@ import Logo from "@/app/assets/logo-white.svg";
 import useMediaQuery from "@/hooks/use-media-query";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useListenNotifications } from "@/hooks/use-listen-notifications";
 
 export const routes = [
   {
@@ -137,6 +138,8 @@ export function Sidebar({ hideSidebar, setHideSidebar }: Props) {
     }
   });
 
+  const { unreadCount } = useListenNotifications();
+
   const pathname = usePathname();
 
   useEffect(() => {
@@ -171,7 +174,13 @@ export function Sidebar({ hideSidebar, setHideSidebar }: Props) {
         </div>
         <nav className="mt-2 flex flex-col gap-1">
           {filteredRoutes.map(({ href, icon, text }) => (
-            <SidebarLink key={href} href={href} icon={icon} text={text} />
+            <SidebarLink
+              key={href}
+              href={href}
+              icon={icon}
+              text={text}
+              unreadCount={unreadCount}
+            />
           ))}
         </nav>
       </div>

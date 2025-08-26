@@ -1,6 +1,5 @@
 "use client";
 
-import { useListenNotifications } from "@/hooks/use-listen-notifications";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import humanFormat from "human-format";
@@ -9,14 +8,14 @@ export function SidebarLink({
   href,
   icon,
   text,
+  unreadCount = 0,
 }: {
   href: string;
   icon: React.ReactNode;
   text: string;
+  unreadCount?: number;
 }) {
   const pathname = usePathname();
-
-  const { unreadCount } = useListenNotifications();
 
   const isActive =
     href === "/dashboard" ? pathname === href : pathname.includes(href);
@@ -34,7 +33,7 @@ export function SidebarLink({
       {text === "Notifications" && unreadCount > 0 && (
         <div className="rounded-full p-1">
           <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
-            <p className="text-basf-red whitespace-nowrap text-sm">
+            <p className="text-basf-red whitespace-nowrap text-xs">
               {humanFormat(unreadCount)}
             </p>
           </div>

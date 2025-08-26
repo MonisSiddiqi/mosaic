@@ -7,6 +7,8 @@ import Link from "next/link";
 import useMediaQuery from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
+import { useListenNotifications } from "@/hooks/use-listen-notifications";
+import humanFormat from "human-format";
 
 type Props = {
   hideSidebar: boolean;
@@ -15,6 +17,8 @@ type Props = {
 
 export function Header({ setHideSidebar }: Props) {
   const pathname = usePathname();
+
+  const { unreadCount } = useListenNotifications();
 
   const title =
     pathname === "/dashboard"
@@ -34,13 +38,23 @@ export function Header({ setHideSidebar }: Props) {
             <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
           )}
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-7">
           <Link
             href={"/dashboard/notifications"}
-            className="rounded-full bg-gray-100 p-2 transition duration-150 ease-in-out hover:bg-gray-200"
+            className="relative rounded-full bg-gray-100 p-2 transition duration-150 ease-in-out hover:bg-gray-200"
           >
-            <Bell className="h-5 w-5 text-gray-600" />
+            <Bell className="h-5 w-5 text-gray-600" />{" "}
+            {unreadCount ? (
+              <div className="absolute -top-4 left-5 rounded-full p-1">
+                <div className="flex max-h-4 min-h-4 min-w-4 items-center justify-center rounded-full bg-red-500 p-2.5 text-white">
+                  <p className="text-basf-red whitespace-nowrap text-xs">
+                    {humanFormat(unreadCount)}
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </Link>
+
           <Link
             href={"/dashboard/profile"}
             className="rounded-full bg-gray-100 p-2 transition duration-150 ease-in-out hover:bg-gray-200"
