@@ -18,7 +18,7 @@ import { UserRole } from "@/apis/users";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { NotificationsNav } from "./notifications-nav";
+import { NotificationsNav } from "../../-components/notifications-nav";
 
 export function UserProfile() {
   const { user, logout } = useAuth();
@@ -52,7 +52,7 @@ export function UserProfile() {
   return user ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="relative h-11 w-11 rounded-full">
           <Avatar className="h-11 w-11">
             <AvatarImage
               src={getFileUrl(user.UserProfile?.image as string)}
@@ -64,10 +64,10 @@ export function UserProfile() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 p-2" align="end" forceMount>
+      <DropdownMenuContent className="min-w-56 p-2" align="end" forceMount>
         <DropdownMenuItem className="flex flex-col items-start hover:bg-none">
           <div className="text-sm font-medium">{user.UserProfile?.name}</div>
-          <div className="text-xs text-muted-foreground">{user.email}</div>
+          <div className="text-muted-foreground">{user.email}</div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 

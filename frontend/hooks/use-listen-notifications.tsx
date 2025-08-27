@@ -5,17 +5,17 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/hooks/use-toast";
 import { API_URL } from "@/config";
 
-//TODO:play sound
-// import NotificationSound from "@/app/assets/notification-sound.wav";
+import NotificationSound from "@/app/assets/notification-sound.wav";
 
 type EventData = {
-  userId: string;
+  userIds: string[];
   heading: string;
   message: string;
+  isGlobal: boolean;
+  projectId?: string;
   data?: {
     [key: string]: any;
   };
-  isGlobal: boolean;
 };
 
 export const useListenNotifications = () => {
@@ -32,27 +32,41 @@ export const useListenNotifications = () => {
       const notification = JSON.parse(event.data) as EventData;
 
       if (notification.isGlobal) {
-        if (notification.userId !== user?.id) {
+        const isExcluded = notification.userIds.some((id) => id === user?.id);
+
+        if (!isExcluded) {
+          console.log("Showing notification:", notification.heading);
+
           toast({
-            className: "bg-stone-200 text-stone-700",
+            className: "bg-brand-primary text-white z-50 border-brand-primary",
             title: notification.heading,
             description: notification.message,
           });
 
-          // const audio = new Audio(NotificationSound);
-          // audio.play();
+          const audio = new Audio(NotificationSound);
+          audio
+            .play()
+            .catch((error) => console.log("Audio play error:", error?.message));
           refetch();
         }
-      } else if (notification.userId === user?.id) {
-        toast({
-          className: "bg-stone-200 text-stone-700",
-          title: notification.heading,
-          description: notification.message,
-        });
+      } else {
+        console.log("Notification is targeted");
+        const isIncluded = notification.userIds.some((id) => id === user?.id);
 
-        // const audio = new Audio(NotificationSound);
-        // audio.play();
-        refetch();
+        if (isIncluded) {
+          toast({
+            className: "bg-brand-primary text-white z-50 border-brand-primary",
+            title: notification.heading,
+            description: notification.message,
+          });
+
+          const audio = new Audio(NotificationSound);
+          audio
+            .play()
+            .catch((error) => console.log("Audio play error:", error?.message));
+
+          refetch();
+        }
       }
     };
 

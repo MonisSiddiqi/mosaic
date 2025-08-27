@@ -73,3 +73,8 @@ export const isImageUrl = (url: string) =>
 
 export const isVideoUrl = (url: string) =>
   /\.(mp4|webm|mov|avi)(\?|$)/i.test(url);
+
+export const trimText = (text: string, maxLength: number = 24) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+};

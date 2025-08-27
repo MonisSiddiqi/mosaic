@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} flex h-screen w-screen flex-col items-center overflow-hidden antialiased`}
       >
         <RouterSpinner />
-        <Providers>{children}</Providers>
+        <Providers> {children}</Providers>
       </body>
     </html>
   );

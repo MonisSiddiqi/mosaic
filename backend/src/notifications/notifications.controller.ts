@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Query, Res } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { NotificationsService } from './notifications.service';
@@ -18,6 +18,11 @@ export class NotificationsController {
   @Patch()
   markAsRead(@GetUser() authUser: User) {
     return this.notificationService.markAsRead(authUser);
+  }
+
+  @Post('/test')
+  testNotification() {
+    return this.notificationService.testNotification();
   }
 
   @Get('/receive')

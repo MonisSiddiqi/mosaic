@@ -1,5 +1,4 @@
-import { ConfigService } from '@nestjs/config';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { SaveNotificationDto } from './dto/save-notification.dto';
 import { ApiResponse } from '../common/dto/api-response.dto';
@@ -224,5 +223,16 @@ export class NotificationsService {
     };
 
     return this.saveNotification(saveNotificationDto);
+  }
+
+  testNotification() {
+    const notifiction = {
+      userIds: [],
+      heading: 'Test Notification',
+      message: 'This is a test notification sent on module init.',
+      isGlobal: true,
+    };
+
+    this.notificationsSubject.next(JSON.stringify(notifiction));
   }
 }
