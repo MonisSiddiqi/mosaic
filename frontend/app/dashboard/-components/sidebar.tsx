@@ -148,7 +148,7 @@ export function Sidebar({ hideSidebar, setHideSidebar }: Props) {
 
   return (
     <div
-      className={`absolute inset-y-0 left-0 z-10 flex w-64 transform flex-col justify-between space-y-2 bg-gray-800 px-2 py-2 text-white transition duration-200 ease-in-out md:relative md:translate-x-0 ${isSmallScreen && hideSidebar ? `-translate-x-full` : "translate-x-0"}`}
+      className={`absolute inset-y-0 left-0 z-10 flex w-64 transform flex-col justify-between space-y-2 bg-gray-800 px-2 py-2 text-white transition duration-200 ease-in-out lg:relative lg:translate-x-0 ${isSmallScreen && hideSidebar ? `-translate-x-full` : "translate-x-0"}`}
     >
       <div>
         {" "}

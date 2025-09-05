@@ -37,11 +37,21 @@ export class UsersService {
     const locationFilter = filter?.find((item) => item.id === 'location');
     const isActiveFilter = filter?.find((item) => item.id === 'isActive');
 
-    if (emailFilter) {
-      userWhereInput.email = {
-        contains: (emailFilter.value as string) || undefined,
-        mode: 'insensitive',
-      };
+    if (emailFilter && emailFilter.value) {
+      userWhereInput.OR = [
+        {
+          email: {
+            contains: emailFilter.value,
+            mode: 'insensitive',
+          },
+          UserProfile: {
+            name: {
+              contains: emailFilter.value,
+              mode: 'insensitive',
+            },
+          },
+        },
+      ];
     }
 
     if (roleFilter) {
@@ -80,12 +90,18 @@ export class UsersService {
       },
       include: {
         UserProfile: true,
+        UserPlan: {
+          where: {
+            endDate: {
+              gte: new Date(),
+            },
+          },
+        },
       },
       orderBy: {
         [sortField]: sortValue,
       },
-      skip: offset,
-      take: +limit,
+      ...(page > 0 ? { skip: offset, take: limit } : {}),
     });
 
     const count = await this.prismaService.user.count({

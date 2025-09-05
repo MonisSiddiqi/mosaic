@@ -25,7 +25,7 @@ export const StatisticsCard: FC<Props> = ({
   const Icon = icon;
 
   return (
-    <Card className={cn(`overflow-hidden text-gray-800`, className)}>
+    <Card className={cn(`h-full overflow-hidden text-gray-800`, className)}>
       <CardHeader
         className={cn(
           `bg-gradient-to-r from-emerald-500 to-teal-600 text-white`,

@@ -24,7 +24,10 @@ export const ServicesTable = () => {
 
   const { data, error, isLoading } = useServicesQuery({
     filter,
-    pagination,
+    pagination: {
+      pageIndex: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    },
     sorting,
   });
 

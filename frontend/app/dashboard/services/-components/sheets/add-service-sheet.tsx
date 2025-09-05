@@ -21,7 +21,7 @@ export const AddServiceSheet = () => {
     <Sheet open={open} onOpenChange={() => setOpen(!open)} modal={false}>
       <SheetTrigger asChild>
         <Button>
-          <PlusIcon className="mr-2 h-4 w-4 text-gray-100" />
+          <PlusIcon className="h-4 w-4 text-gray-100" />
           Create
         </Button>
       </SheetTrigger>

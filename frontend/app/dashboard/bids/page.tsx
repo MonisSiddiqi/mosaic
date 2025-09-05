@@ -9,7 +9,7 @@ import { UserRole } from "@/apis/users";
 export default function VendorBidsPage() {
   const { user } = useAuth();
   return (
-    <div className="container mx-auto space-y-6 bg-white p-4">
+    <div className="container mx-auto space-y-6 rounded-md border border-gray-200 bg-white p-4">
       <PageHeader
         title="Manage Bids"
         description="View and manage all your project bids in one place"

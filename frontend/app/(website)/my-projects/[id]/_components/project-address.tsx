@@ -1,13 +1,20 @@
 import { Address } from "@/apis/addresses";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type Props = {
   address: Address;
+  className?: string;
 };
 
-export const AddressCard: React.FC<Props> = ({ address }) => {
+export const AddressCard: React.FC<Props> = ({ address, className }) => {
   return (
-    <div className="h-full rounded-md bg-white p-5">
+    <div
+      className={cn(
+        "h-full rounded-md border border-gray-200 bg-white p-5",
+        className,
+      )}
+    >
       <div className="space-y-1">
         <h3 className="text-base font-semibold text-gray-800">
           {address.line1}

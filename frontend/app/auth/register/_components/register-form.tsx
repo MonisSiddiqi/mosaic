@@ -6,6 +6,8 @@ import {
   ExternalLinkIcon,
   EyeIcon,
   EyeOffIcon,
+  ChevronsUpDownIcon,
+  CheckIcon,
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -30,9 +32,25 @@ import { OtpType } from "@/apis/auth";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
-import { Combobox } from "@/components/ui/combobox";
 
 import validator from "validator";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Command } from "cmdk";
+import {
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+import CountryList from "country-list-with-dial-code-and-flag";
+
+const countries = CountryList.getAll();
 
 const formSchema = z
   .object({
@@ -167,52 +185,79 @@ export const RegisterForm: FC<Props> = ({ className }) => {
             )}
           />
 
-          <div className="flex items-baseline">
+          <div className="flex w-full">
             <FormField
               control={form.control}
               name="countryCode"
               render={({ field }) => (
-                <FormItem className="flex max-h-10 flex-col">
-                  <FormLabel className="mb-1">Dial Code</FormLabel>
-                  <FormControl>
-                    <Combobox
-                      data={[{ name: "USA", dialCode: "+1", flag: "🇺🇸" }].map(
-                        (item) => ({
-                          label: `${item.dialCode} - ${item.name}(${item.flag})`,
-                          value: item.dialCode,
-                        }),
-                      )}
-                      className="w-32 min-w-32 max-w-32 border border-gray-400 bg-transparent"
-                      fieldName="countryCode"
-                      value={field.value as string}
-                      open={open}
-                      setOpen={setOpen}
-                      setValue={field.onChange}
-                      placeHolder="Dial code"
-                    />
-                  </FormControl>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Phone Number</FormLabel>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[150px] justify-between bg-transparent",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value || "Dial Code"}
+                          <ChevronsUpDownIcon className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[350px] p-0" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder="Dial code..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No dial code found.</CommandEmpty>
+                          <CommandGroup>
+                            {countries.map((item) => (
+                              <CommandItem
+                                value={`${item.name} - ${item.dial_code}`}
+                                key={`${item.name} - ${item.dial_code}`}
+                                onSelect={() => {
+                                  form.setValue("countryCode", item.dial_code, {
+                                    shouldValidate: true,
+                                  });
+                                  setOpen(false);
+                                }}
+                              >
+                                {item.name} {item.dial_code}
+                                <CheckIcon
+                                  className={cn(
+                                    "ml-auto",
+                                    item.dial_code === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem className="mt-2 w-full">
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
+                <FormItem className="w-full">
+                  <FormControl className="mt-[1.38rem]">
                     <Input
-                      placeholder="Your phone number"
-                      autoComplete="phone"
-                      className="w-full border-gray-400 focus:outline-none"
+                      placeholder="Phone eg, 123456789"
+                      className="max-w-xs"
                       {...field}
-                      onBlur={() => {
-                        if (field.value) {
-                          field.onChange(field.value.trim().replace(/^0+/, ""));
-                        }
-                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -220,6 +265,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="password"

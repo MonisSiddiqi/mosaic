@@ -21,7 +21,7 @@ export const ContactDetailsCard: FC<Props> = ({ user }) => {
   return (
     <div className="w-full overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
       <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-        <MapPinIcon className="h-5 w-5 text-blue-600" />
+        <MapPinIcon className="h-5 min-h-5 w-5 min-w-5 text-blue-600" />
         {user.role === UserRole.USER
           ? "Homeowner Contact Details"
           : "Vendor Contact Details"}

@@ -54,7 +54,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
       <DataTableColumnHeader column={column} title="Description" />
     ),
     cell: ({ row }) => {
-      return <div> {row.original.description}</div>;
+      return <div className="min-w-96"> {row.original.description}</div>;
     },
   },
 
@@ -81,7 +81,7 @@ export const servicesColumns: ColumnDef<Service>[] = [
         return (
           <Badge
             variant={"secondary"}
-            className="w-32 whitespace-nowrap bg-primary text-white hover:bg-primary"
+            className="bg-primary text-white hover:bg-primary"
           >
             {name}
           </Badge>

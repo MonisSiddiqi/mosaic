@@ -85,7 +85,7 @@ export const NotificationsContainer = () => {
   const paginationItems = getPaginationItems(page, totalPages);
 
   return (
-    <main className="w-full max-w-[calc(100vw)] p-4">
+    <main className="w-full max-w-[calc(100vw)]">
       <div className="flex flex-col gap-4">
         {data.notifications.length > 0 ? (
           data.notifications.map((notification) => {

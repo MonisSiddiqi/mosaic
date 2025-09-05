@@ -23,7 +23,7 @@ export default function UserDetailsPage() {
       <div className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-6">
-            <Avatar className="h-24 w-24">
+            <Avatar className="h-24 min-h-24 w-24 min-w-24">
               <AvatarImage
                 src={user?.UserProfile?.image || undefined}
                 alt={user?.UserProfile?.name}
@@ -117,9 +117,9 @@ export default function UserDetailsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         {login.status ? (
-                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                          <CheckCircleIcon className="h-4 min-h-4 w-4 min-w-4 text-green-500" />
                         ) : (
-                          <XCircleIcon className="h-4 w-4 text-red-500" />
+                          <XCircleIcon className="h-4 min-h-4 w-4 min-w-4 text-red-500" />
                         )}
                         <div>
                           <p className="text-sm font-medium">{login.message}</p>

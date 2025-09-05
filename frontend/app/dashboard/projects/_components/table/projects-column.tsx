@@ -45,7 +45,7 @@ export const projectsColumns: ColumnDef<GetAllProjectApiResponseItem>[] = [
       <DataTableColumnHeader column={column} title="Description" />
     ),
     cell: ({ row }) => {
-      return <div> {row.original.description}</div>;
+      return <div className="min-w-96"> {row.original.description}</div>;
     },
   },
 

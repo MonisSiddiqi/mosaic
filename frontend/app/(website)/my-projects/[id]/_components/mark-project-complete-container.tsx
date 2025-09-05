@@ -24,10 +24,10 @@ export const MarkProjectCompleteContainer: FC<Props> = ({
   const isCompleted = project.status === ProjectStatusEnum.COMPLETED;
 
   return (
-    <div className="rounded border border-gray-200 p-4">
+    <div className="rounded border border-gray-200 bg-white p-4">
       <h3 className="mb-4 text-sm text-gray-500">Completion Status</h3>
 
-      <div className="rounded border border-r-gray-200 bg-muted p-4">
+      <div className="rounded border border-r-gray-200 bg-muted bg-stone-50 p-4">
         {isCompleted ? (
           <div className="space-y-3">
             <div className="flex items-center gap-2">

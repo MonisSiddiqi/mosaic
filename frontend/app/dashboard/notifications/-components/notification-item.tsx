@@ -9,7 +9,7 @@ export const NotificationItem: FC<Notification & { className?: string }> = (
   return (
     <div
       className={cn(
-        `flex cursor-default flex-col gap-4 border border-gray-300 bg-white p-4 ${!notification.isRead && "bg-green-100"}`,
+        `flex cursor-default flex-col gap-4 rounded-md border border-gray-300 bg-white p-6 ${!notification.isRead && "bg-green-100"}`,
         notification.className,
       )}
     >

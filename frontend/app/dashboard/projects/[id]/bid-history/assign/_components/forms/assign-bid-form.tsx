@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { CheckCircleIcon, ClockIcon, Users } from "lucide-react";
+import { CheckCircleIcon, CircleXIcon, ClockIcon, Users } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,6 +65,7 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
 
   const { data } = useUsersQuery({
     filter: [{ id: "role", value: [UserRole.VENDOR] }],
+    pagination: { pageIndex: -1, pageSize: 10 },
   });
 
   const mutation = useAssignBidMutation();
@@ -81,7 +82,7 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
       await queryClient.invalidateQueries({
         queryKey: ["projects"],
       });
-      await toast({
+      toast({
         title: "Vendor assigned successfully!",
         variant: "success",
       });
@@ -131,7 +132,7 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
                         <ChevronsUpDown className="opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="flex w-96 flex-col gap-2 bg-muted p-2">
+                    <PopoverContent className="flex w-full max-w-2xl flex-col gap-2 bg-muted p-2 md:min-w-96">
                       <Command>
                         <CommandInput
                           placeholder={"Select Vendor..."}
@@ -144,7 +145,10 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
                               <CommandItem
                                 key={item.id}
                                 value={`${item.email}`}
-                                disabled={!item.isAvailable}
+                                disabled={
+                                  !item.isAvailable ||
+                                  item.UserPlan.length === 0
+                                }
                                 className="relative mt-2 border border-white bg-white p-4 data-[selected=true]:border data-[selected=true]:border-brand-secondary data-[selected=true]:bg-white data-[selected=true]:text-accent-foreground"
                                 onSelect={(val) => {
                                   const selectedItem = data?.list.find(
@@ -181,15 +185,22 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
                                   )}
                                 />
 
-                                {item.isAvailable ? (
-                                  <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-green-600 bg-green-200 text-green-600 hover:bg-green-200 hover:text-green-600">
-                                    <CheckCircleIcon className="size-4" />
-                                    Available
-                                  </Badge>
+                                {item.UserPlan.length > 0 ? (
+                                  item.isAvailable ? (
+                                    <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-green-600 bg-green-200 text-green-600 hover:bg-green-200 hover:text-green-600">
+                                      <CheckCircleIcon className="size-4" />
+                                      Available
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-yellow-600 bg-yellow-200 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-600">
+                                      <ClockIcon className="size-4" />
+                                      Busy
+                                    </Badge>
+                                  )
                                 ) : (
-                                  <Badge className="abosolute right-1 top-1 flex w-24 gap-1 border border-yellow-600 bg-yellow-200 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-600">
-                                    <ClockIcon className="size-4" />
-                                    Busy
+                                  <Badge className="abosolute itec right-1 top-1 flex gap-1 whitespace-nowrap border border-red-600 bg-red-200 text-red-600 hover:bg-red-200 hover:text-red-600">
+                                    <CircleXIcon className="size-4 min-h-4 min-w-4" />
+                                    No Active Plan
                                   </Badge>
                                 )}
                               </CommandItem>

@@ -10,7 +10,7 @@ export const ProjectTags = ({
   service: Service;
 }) => {
   return (
-    <div className="flex w-fit flex-col gap-5 rounded-md bg-white p-4">
+    <div className="flex w-fit flex-col gap-5 rounded-md border border-gray-200 bg-white p-4">
       <p className="text-lg font-semibold text-gray-700">{service?.name}</p>
       <div className="flex gap-2">
         {tags.map((tag) => (

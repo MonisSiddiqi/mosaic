@@ -9,7 +9,7 @@ type Props = {
 
 export const ContactDetailsContainer: FC<Props> = ({ homeowner, vendor }) => {
   return (
-    <div className="rounded border border-gray-200 p-4">
+    <div className="rounded border border-gray-200 bg-white p-4">
       <p className="text-sm text-gray-500">Contact Details</p>
       <p className="mb-4 text-sm text-gray-500">
         We are showing contact details because you have both agreed to the

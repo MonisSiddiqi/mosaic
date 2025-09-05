@@ -16,8 +16,8 @@ export function TagsTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-1 flex-wrap items-center gap-4 md:gap-2">
         <Input
           placeholder="Filter name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -38,7 +38,7 @@ export function TagsTableToolbar<TData>({
         )}
       </div>
 
-      <div className="flex items-end gap-4">
+      <div className="-order-1 flex items-end gap-4 md:order-none">
         <DataTableViewOptions table={table} />
         <AddTagSheet />
       </div>

@@ -35,7 +35,7 @@ export const ProjectUpdatesContainer = ({
   const userUpdates = data?.filter((item) => !item.vendorId);
 
   return (
-    <div className="grid gap-5 rounded-md bg-muted p-5 md:grid-cols-2">
+    <div className="grid gap-5 rounded-md border border-gray-200 bg-muted bg-white p-5 md:grid-cols-2">
       {userUpdates && (
         <ProjectUpdates
           title="Updates From Home Owner"
@@ -65,7 +65,7 @@ type Props = {
 
 const ProjectUpdates = ({ title, updates, isOwner, project }: Props) => {
   return (
-    <div className="flex flex-col gap-5 rounded-md bg-white p-5 pr-2">
+    <div className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white p-5 pr-2">
       <div className="flex gap-2">
         <MilestoneIcon />
         <p>{title}</p>

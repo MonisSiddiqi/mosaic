@@ -1,4 +1,5 @@
 import { ContactDetails } from "@/app/-components/contact-details";
+import { VERSION } from "@/config";
 import Link from "next/link";
 
 export function Footer() {
@@ -99,7 +100,8 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm">
-          © {new Date().getFullYear()} Crafty Future. All rights reserved.
+          © {new Date().getFullYear()} Crafty Future. All rights reserved.{" "}
+          <br />v{VERSION}
         </div>
       </div>
     </footer>

@@ -1,6 +1,7 @@
 import AboutImage from "@/app/assets/about-page.png";
 import Image from "next/image";
 import { ContactDetails } from "@/app/-components/contact-details";
+import { Version } from "@/app/-components/version";
 
 export function AboutSection() {
   return (
@@ -17,7 +18,9 @@ export function AboutSection() {
         </p>
 
         {/* Contact Box */}
-        <ContactDetails />
+        <ContactDetails className="mb-8" />
+
+        <Version />
       </div>
 
       {/* Image Column */}

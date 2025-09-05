@@ -40,7 +40,6 @@ import BudgetPreferenceField from "./budget-preference-field";
 import GoogleMapAddressSearchBox from "@/components/google-map-address-search-box";
 import { Address } from "@/apis/addresses";
 
-import CountryList from "country-list-with-dial-code-and-flag";
 import {
   Popover,
   PopoverContent,
@@ -54,6 +53,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+
+import CountryList from "country-list-with-dial-code-and-flag";
 
 const countries = CountryList.getAll();
 
