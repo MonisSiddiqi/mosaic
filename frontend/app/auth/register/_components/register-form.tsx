@@ -99,6 +99,8 @@ export const RegisterForm: FC<Props> = ({ className }) => {
     },
   });
 
+  const [selectedFlag, setSelectedFlag] = useState("");
+
   const registerMutation = useRegisterMutation();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -193,8 +195,11 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Phone Number</FormLabel>
                   <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
+                    <PopoverTrigger
+                      asChild
+                      className="border border-r-gray-300"
+                    >
+                      <FormControl className="border border-gray-400">
                         <Button
                           variant="outline"
                           role="combobox"
@@ -203,12 +208,16 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                             !field.value && "text-muted-foreground",
                           )}
                         >
-                          {field.value || "Dial Code"}
+                          {field.value || "Dial Code"}{" "}
+                          {selectedFlag ? `(${selectedFlag})` : null}
                           <ChevronsUpDownIcon className="opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[350px] p-0" align="start">
+                    <PopoverContent
+                      className="w-[350px] border border-r-gray-300 p-0"
+                      align="start"
+                    >
                       <Command>
                         <CommandInput
                           placeholder="Dial code..."
@@ -225,10 +234,11 @@ export const RegisterForm: FC<Props> = ({ className }) => {
                                   form.setValue("countryCode", item.dial_code, {
                                     shouldValidate: true,
                                   });
+                                  setSelectedFlag(item.flag);
                                   setOpen(false);
                                 }}
                               >
-                                {item.name} {item.dial_code}
+                                {item.name} {item.dial_code} ({item.flag})
                                 <CheckIcon
                                   className={cn(
                                     "ml-auto",
@@ -253,7 +263,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
               name="phone"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormControl className="mt-[1.38rem]">
+                  <FormControl className="mt-[1.38rem] border border-gray-400">
                     <Input
                       placeholder="Phone eg, 123456789"
                       className="max-w-xs"

@@ -122,6 +122,8 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
 
   const sameAsAddress = form.watch("sameAsAddress");
 
+  const [selectedFlag, setSelectedFlag] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -345,7 +347,8 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                               !field.value && "text-muted-foreground",
                             )}
                           >
-                            {field.value || "Dial Code"}
+                            {field.value || "Dial Code"}{" "}
+                            {selectedFlag ? `(${selectedFlag})` : null}
                             <ChevronsUpDown className="opacity-50" />
                           </Button>
                         </FormControl>
@@ -369,10 +372,12 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
                                       item.dial_code,
                                       { shouldValidate: true },
                                     );
+
+                                    setSelectedFlag(item.flag);
                                     setOpen(false);
                                   }}
                                 >
-                                  {item.name} {item.dial_code}
+                                  {item.name} {item.dial_code} ({item.flag})
                                   <Check
                                     className={cn(
                                       "ml-auto",
