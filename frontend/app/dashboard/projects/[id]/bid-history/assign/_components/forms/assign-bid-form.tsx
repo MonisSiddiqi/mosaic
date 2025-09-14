@@ -145,6 +145,7 @@ export default function AssignBidForm({ projectId }: { projectId: string }) {
                               <CommandItem
                                 key={item.id}
                                 value={`${item.email}`}
+                                keywords={[item.UserProfile?.name || ""]}
                                 disabled={
                                   !item.isAvailable ||
                                   item.UserPlan.length === 0

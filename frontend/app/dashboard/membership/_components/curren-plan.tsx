@@ -48,7 +48,7 @@ export const CurrentPlan: FC<GetCurrentPlanApiResponse> = (data) => {
       <CardContent className="space-y-4">
         <div className="rounded-lg border border-blue-100 bg-white py-4 text-center">
           <h3 className="mb-1 text-2xl font-bold text-gray-900">
-            {data.Plan.name}
+            {data?.Plan?.name}
           </h3>
           <div className="flex items-center justify-center gap-2">
             <span className="text-3xl font-bold text-blue-600">

@@ -21,14 +21,14 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { EditProfileDto } from './dto/edit-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetLoginHistoryDto } from './dto/get-login-history-dto';
+import { SkipAuth } from 'src/auth/decorators/skip-auth.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @SkipAuth()
   findAll(@Query() getUsersDto: GetUsersDto, @GetUser() authUser: User) {
     return this.usersService.findAll(getUsersDto, authUser);
   }

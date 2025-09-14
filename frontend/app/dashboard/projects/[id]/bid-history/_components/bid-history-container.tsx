@@ -70,7 +70,7 @@ export const BidHistoryContainer: FC<Props> = ({
               </div>
             ))
           ) : (
-            <EmptyUI text="No Bids found" />
+            <EmptyUI text="No Bid history found" />
           )}
         </div>
       </div>

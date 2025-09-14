@@ -39,12 +39,6 @@ export const getBidsStatisticsApi =
   async (): Promise<GetBidsStatisticsApiResponse> => {
     const response = await httpClient.get(apiEndpoints.bids.statistics);
 
-    await new Promise((res, rej) =>
-      setTimeout(() => {
-        res("");
-      }, 3000),
-    );
-
     return response.data.result;
   };
 

@@ -234,12 +234,16 @@ export const EditServiceForm: FC<Props> = ({
             )}
           />
         </div>
-        <div className="mt-7 flex w-full justify-end">
+        <div className="mt-7 flex w-full justify-end gap-4">
           <Button
-            disabled={mutation.isPending}
-            type="submit"
-            className="mt-4 px-5 py-2"
+            type="button"
+            variant={"outline"}
+            onClick={() => handleClose(false)}
           >
+            Close
+          </Button>
+
+          <Button disabled={mutation.isPending} type="submit">
             {mutation.isPending && (
               <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
             )}

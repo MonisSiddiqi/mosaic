@@ -61,5 +61,5 @@ export type ServicesItem = Service & {
 };
 
 export type GetCurrentPlanApiResponse = UserPlan & {
-  Plan: Plan & { Service: ServicesItem[] };
+  Plan: (Plan & { Service: ServicesItem[] }) | null;
 };

@@ -21,14 +21,14 @@ export class UsersService {
 
   logger = new Logger(UsersService.name);
 
-  async findAll(getUsersDto: GetUsersDto, authUser: User) {
+  async findAll(getUsersDto: GetUsersDto, authUser?: User) {
     const { filter, sortField, sortValue, page = 1, limit = 10 } = getUsersDto;
 
     const offset = (page - 1) * limit;
 
     const userWhereInput: Prisma.UserWhereInput = {
       NOT: {
-        id: authUser.id,
+        id: authUser?.id,
       },
     };
 
@@ -44,6 +44,8 @@ export class UsersService {
             contains: emailFilter.value,
             mode: 'insensitive',
           },
+        },
+        {
           UserProfile: {
             name: {
               contains: emailFilter.value,
@@ -96,6 +98,10 @@ export class UsersService {
               gte: new Date(),
             },
           },
+        },
+        Address: true,
+        vendorServices: {
+          include: { service: true },
         },
       },
       orderBy: {

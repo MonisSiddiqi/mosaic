@@ -16,6 +16,7 @@ import * as z from "zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -60,6 +61,12 @@ const countries = CountryList.getAll();
 
 export const formSchema = z
   .object({
+    file: z
+      .instanceof(File)
+      .refine((file) => file.type.startsWith("image/"), {
+        message: "Only Image files are allowed.",
+      })
+      .optional(),
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email({ message: "Please enter a valid email address." }),
     countryCode: z.string().min(1, { message: "Dial code is required." }),
@@ -104,6 +111,7 @@ type Props = {
   className?: string;
 };
 export const VendorRegisterForm: FC<Props> = ({ className }) => {
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -223,6 +231,58 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
         className={cn("", className)}
       >
         <div className="grid w-full items-center gap-6">
+          <div className="grid w-full gap-4 bg-white p-6 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <p>Profile Picture</p>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="file"
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel>Profile Picture (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.readAsDataURL(file);
+                          reader.onload = (event) => {
+                            setFilePreview(event.target?.result as string);
+                          };
+                        }
+                        field.onChange(file);
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Upload your profile picture. A preview will be displayed
+                    below.
+                  </FormDescription>
+                  <FormMessage />
+                  {filePreview && (
+                    <div className="mt-3">
+                      <p className="text-sm font-semibold">
+                        Profile Picture Preview:
+                      </p>
+                      <div className="mt-2 flex justify-center rounded-lg border bg-gray-50 p-2">
+                        <img
+                          src={filePreview}
+                          alt="Profile Preview"
+                          className="h-40"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+
           <div className="grid w-full gap-4 bg-white p-6 md:grid-cols-2">
             <div className="md:col-span-2">
               <p>Details</p>

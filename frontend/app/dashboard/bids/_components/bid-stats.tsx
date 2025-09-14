@@ -10,7 +10,6 @@ import Link from "next/link";
 const font = Roboto({ subsets: ["latin"], weight: "500" });
 
 export function BidStats() {
-  // Dummy data
   const stats = [
     {
       title: "Total Bids",
@@ -47,7 +46,7 @@ export function BidStats() {
   return (
     <div>
       <PageHeader
-        title="Dashboard"
+        title="Bids"
         description="Showing relavant data for your ease"
         className="mb-7"
       />

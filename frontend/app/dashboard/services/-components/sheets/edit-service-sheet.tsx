@@ -30,7 +30,10 @@ export const EditServiceSheet: FC<Props> = ({
 
   return (
     <Sheet open={open} onOpenChange={() => setOpen(!open)}>
-      <SheetContent className="overflow-auto">
+      <SheetContent
+        onInteractOutside={(e) => e.preventDefault()}
+        className="overflow-auto"
+      >
         <SheetHeader>
           <SheetTitle>Edit Service</SheetTitle>
           <SheetDescription>

@@ -81,17 +81,19 @@ export const ProjectDetails = () => {
 
     return (
       <div className="flex min-h-screen flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <BackButton className="w-fit" href={backButtonHref} />
-          <Button
-            onClick={() =>
-              deleteProjectRef.current?.scrollIntoView({ behavior: "smooth" })
-            }
-            variant="destructive"
-          >
-            Delete Project <ArrowDownIcon />
-          </Button>
-        </div>
+        {user?.id === data.userId && (
+          <div className="flex items-center justify-between">
+            <BackButton className="w-fit" href={backButtonHref} />
+            <Button
+              onClick={() =>
+                deleteProjectRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
+              variant="destructive"
+            >
+              Delete Project <ArrowDownIcon />
+            </Button>
+          </div>
+        )}
 
         {user?.role === UserRole.USER && (
           <ProjectDetailsAlert status={data.status} />
@@ -222,9 +224,11 @@ export const ProjectDetails = () => {
           )}
         </div>
 
-        <div ref={deleteProjectRef}>
-          <DeleteProject id={data.id} status={data.status} />
-        </div>
+        {user?.id === data.userId && (
+          <div ref={deleteProjectRef}>
+            <DeleteProject id={data.id} status={data.status} />
+          </div>
+        )}
       </div>
     );
   }

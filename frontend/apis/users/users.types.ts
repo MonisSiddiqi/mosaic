@@ -1,5 +1,6 @@
 import { Address } from "@/apis/addresses";
 import { UserPlan } from "@/apis/payments";
+import { Service, VendorService } from "@/apis/services";
 
 export type LoginResponse = {
   token_type: string;
@@ -38,6 +39,8 @@ export type ProfileApiResponse = User & {
 export type GetAllUsersApiResponseItem = User & {
   UserProfile: UserProfile | null;
   UserPlan: UserPlan[];
+  Address: Address | null;
+  vendorServices: (VendorService & { service: Service })[];
 };
 
 export type GetAllUsersApiResponse = {

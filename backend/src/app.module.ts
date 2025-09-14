@@ -13,7 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
-import { ServicesController } from './services/service.controller';
+import { ServicesController } from './services/services.controller';
 import { StorageModule } from './storage/storage.module';
 import { ServicesModule } from './services/services.module';
 import { UsersController } from './users/users.controller';

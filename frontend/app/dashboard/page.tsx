@@ -10,16 +10,30 @@ import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/apis/users";
 import { BidStats } from "./bids/_components/bid-stats";
 import Link from "next/link";
+import { ServicesStats } from "./bids/_components/services-stats";
+import { useCurrentPlanQuery } from "@/queries/payments.queries";
+import { LoaderComponent } from "@/components/loader-component";
+import { NoActivePlanNotice } from "./membership/_components/no-active-plan-notice";
 
 export default function Dashboard() {
   const { data, isLoading } = useDashboardQuery();
 
   const { user } = useAuth();
+  const { data: plan, isLoading: isPlanLoading } = useCurrentPlanQuery();
 
   if (user?.role === UserRole.VENDOR) {
     return (
-      <div className="rounded-md bg-white p-5">
-        <BidStats />
+      <div className="flex flex-col gap-6">
+        <div className="rounded-md border border-gray-200 bg-white p-5">
+          <BidStats />
+        </div>
+        {isPlanLoading ? (
+          <LoaderComponent />
+        ) : plan ? (
+          <ServicesStats />
+        ) : (
+          <NoActivePlanNotice />
+        )}
       </div>
     );
   }

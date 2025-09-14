@@ -18,14 +18,17 @@ export const AddServiceSheet = () => {
   const toggleOpen = (open: boolean) => setOpen(open);
 
   return (
-    <Sheet open={open} onOpenChange={() => setOpen(!open)} modal={false}>
-      <SheetTrigger asChild>
+    <Sheet open={open} onOpenChange={(val) => toggleOpen(val)}>
+      <SheetTrigger asChild onClick={() => toggleOpen(true)}>
         <Button>
           <PlusIcon className="h-4 w-4 text-gray-100" />
           Create
         </Button>
       </SheetTrigger>
-      <SheetContent className="overflow-auto">
+      <SheetContent
+        onInteractOutside={(e) => e.preventDefault()}
+        className="overflow-auto"
+      >
         <SheetHeader>
           <SheetTitle>New Service</SheetTitle>
           <SheetDescription>Add new service and press submit</SheetDescription>

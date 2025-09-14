@@ -32,7 +32,11 @@ export const checkSessionApi = async (): Promise<boolean> => {
 };
 
 export const registerApi = async (values: RegisterDto): Promise<null> => {
-  const response = await httpClient.post(apiEndpoints.auth.register, values);
+  const response = await httpClient.post(apiEndpoints.auth.register, values, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
   return response.data.result;
 };
@@ -43,6 +47,7 @@ export const vendorRegisterApi = async (
   const response = await httpClient.post(
     apiEndpoints.auth.vendorRegister,
     values,
+    { headers: { "Content-Type": "multipart/form-data" } },
   );
 
   return response.data.result;

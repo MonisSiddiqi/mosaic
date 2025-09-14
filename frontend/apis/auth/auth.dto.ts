@@ -8,6 +8,7 @@ export type LoginDto = {
 export type RegisterDto = LoginDto & {
   name: string;
   phone: string;
+  file?: File;
 };
 
 export type VendorRegisterDto = RegisterDto & {

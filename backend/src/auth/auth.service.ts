@@ -21,6 +21,8 @@ import { MailService } from 'src/mail/mail.service';
 import { Prisma } from '@prisma/client';
 import { VendorRegisterDto } from './dto/vendor-register.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
+import { StorageService } from 'src/storage/storage.service';
+import { StorageFolderEnum } from 'src/storage/storage-folder.enum';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +31,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
+    private readonly storageService: StorageService,
   ) {}
 
   logger = new Logger(AuthService.name);
 
-  async register(registerDto: RegisterDto): Promise<ApiResponse> {
+  async register(
+    registerDto: RegisterDto,
+    file: Express.Multer.File,
+  ): Promise<ApiResponse> {
     const { name, email, password, phone } = registerDto;
 
     const isExist = await this.prismaService.user.findUnique({
@@ -72,6 +78,24 @@ export class AuthService {
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+    let profileUrl = null;
+
+    if (file) {
+      try {
+        profileUrl = await this.storageService.uploadFile(
+          file,
+          StorageFolderEnum.USERS,
+        );
+      } catch (err) {
+        this.logger.error(
+          err instanceof Error ? err.message : 'Could not upload profile image',
+        );
+        throw new InternalServerErrorException(
+          'Could not upload profile image',
+        );
+      }
+    }
+
     const user = await this.prismaService.user.upsert({
       where: {
         email,
@@ -82,6 +106,7 @@ export class AuthService {
         UserProfile: {
           update: {
             name,
+            image: profileUrl,
           },
         },
       },
@@ -92,6 +117,7 @@ export class AuthService {
         UserProfile: {
           create: {
             name,
+            image: profileUrl,
           },
         },
       },
@@ -126,6 +152,7 @@ export class AuthService {
 
   async vendorRegister(
     vendorRegisterDto: VendorRegisterDto,
+    file: Express.Multer.File,
   ): Promise<ApiResponse> {
     const {
       name,
@@ -187,6 +214,24 @@ export class AuthService {
     //create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+    let profileUrl = null;
+
+    if (file) {
+      try {
+        profileUrl = await this.storageService.uploadFile(
+          file,
+          StorageFolderEnum.USERS,
+        );
+      } catch (err) {
+        this.logger.error(
+          err instanceof Error ? err.message : 'Could not upload profile image',
+        );
+        throw new InternalServerErrorException(
+          'Could not upload profile image',
+        );
+      }
+    }
+
     const user = await this.prismaService.user.upsert({
       where: {
         email,
@@ -200,6 +245,7 @@ export class AuthService {
         UserProfile: {
           update: {
             name,
+            image: profileUrl,
           },
         },
         Address: {
@@ -244,6 +290,7 @@ export class AuthService {
         UserProfile: {
           create: {
             name,
+            image: profileUrl,
           },
         },
         Address: {

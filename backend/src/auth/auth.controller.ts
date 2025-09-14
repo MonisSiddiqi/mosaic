@@ -9,6 +9,11 @@ import {
   Res,
   Delete,
   Patch,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -26,6 +31,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { VendorRegisterDto } from './dto/vendor-register.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -36,18 +42,40 @@ export class AuthController {
 
   @Post('register')
   @SkipAuth()
+  @UseInterceptors(FileInterceptor('file'))
   register(
     @Body() registerDto: RegisterDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB limit
+          new FileTypeValidator({ fileType: /^image\/.*/ }), // only images
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ): Promise<ApiResponse<SignInResponse>> {
-    return this.authService.register(registerDto);
+    return this.authService.register(registerDto, file);
   }
 
   @Post('vendor-register')
   @SkipAuth()
+  @UseInterceptors(FileInterceptor('file'))
   vendorRegister(
     @Body() vendorRegisterDto: VendorRegisterDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB limit
+          new FileTypeValidator({ fileType: /^image\/.*/ }), // only images
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ): Promise<ApiResponse<SignInResponse>> {
-    return this.authService.vendorRegister(vendorRegisterDto);
+    return this.authService.vendorRegister(vendorRegisterDto, file);
   }
 
   @Post('verify-otp')

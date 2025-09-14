@@ -40,10 +40,12 @@ export class VendorRegisterDto extends RegisterDto {
   postalCode: string;
 
   @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false })
   lat: number;
 
   @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false })
   lng: number;
 
@@ -97,11 +99,13 @@ export class VendorRegisterDto extends RegisterDto {
 
   @ValidateIf((data) => data.sameAsAddress === false)
   @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false })
   officeLat: number;
 
   @ValidateIf((data) => data.sameAsAddress === false)
   @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false })
   officeLng: number;
 }

@@ -5,7 +5,8 @@ import { plans } from './data';
 const prisma = new PrismaClient();
 
 async function main() {
-resetPlans();}
+  assignRandomService();
+}
 
 async function connectServicePlan() {
   for (const plan of plans) {
@@ -63,4 +64,30 @@ main()
 async function createHash(password: string): Promise<string> {
   const salt = await bcrypt.genSalt();
   return bcrypt.hash(password, salt);
+}
+
+async function assignRandomService() {
+  const vendors = await prisma.user.findMany();
+
+  const services = await prisma.service.findMany();
+
+  for (const vendor of vendors) {
+    for (const service of services.slice(0, 7)) {
+      const existingVendorService = await prisma.vendorService.findFirst({
+        where: {
+          userId: vendor.id,
+          serviceId: service.id,
+        },
+      });
+
+      if (!existingVendorService) {
+        await prisma.vendorService.create({
+          data: {
+            userId: vendor.id,
+            serviceId: service.id,
+          },
+        });
+      }
+    }
+  }
 }
