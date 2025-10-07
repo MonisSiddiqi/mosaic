@@ -32,9 +32,12 @@ import { CreateNewPasswordDto } from './dto/create-new-password.dto';
 import { VendorRegisterDto } from './dto/vendor-register.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { OnlyImageValidator } from 'src/common/validators/only-image-validator';
 
 @Controller('auth')
 export class AuthController {
+  static imageRegex = 'image/(jpg|jpeg|png|gif|bmp|tiff|webp|svg+xml)';
+
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
@@ -50,7 +53,7 @@ export class AuthController {
         fileIsRequired: false,
         validators: [
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB limit
-          new FileTypeValidator({ fileType: /^image\/.*/ }), // only images
+          new OnlyImageValidator({}), // allows ALL image types including svg+xml
         ],
       }),
     )
@@ -69,7 +72,7 @@ export class AuthController {
         fileIsRequired: false,
         validators: [
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB limit
-          new FileTypeValidator({ fileType: /^image\/.*/ }), // only images
+          new OnlyImageValidator({}), // allows ALL image types including svg+xml
         ],
       }),
     )

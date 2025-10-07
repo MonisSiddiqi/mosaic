@@ -214,7 +214,7 @@ export const VendorRegisterForm: FC<Props> = ({ className }) => {
       });
 
       router.push(
-        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${form.getValues("email")}&role=${UserRole.VENDOR}`,
+        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${encodeURIComponent(form.getValues("email"))}&role=${UserRole.VENDOR}`,
       );
     } catch (err) {
       toast({

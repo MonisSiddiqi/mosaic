@@ -141,7 +141,7 @@ export const RegisterForm: FC<Props> = ({ className }) => {
       });
 
       router.push(
-        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${form.getValues("email")}`,
+        `/auth/verify-otp?type=${OtpType.REGISTRATION}&email=${encodeURIComponent(form.getValues("email"))}`,
       );
     } catch (err) {
       toast({
