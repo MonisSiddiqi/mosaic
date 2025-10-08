@@ -16,7 +16,6 @@ import * as z from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -50,6 +49,7 @@ import {
 } from "@/components/ui/command";
 
 import CountryList from "country-list-with-dial-code-and-flag";
+import { FileUploadField } from "@/app/-components/file-upload-field";
 
 const countries = CountryList.getAll();
 
@@ -93,7 +93,6 @@ type Props = {
   className?: string;
 };
 export const RegisterForm: FC<Props> = ({ className }) => {
-  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -157,50 +156,8 @@ export const RegisterForm: FC<Props> = ({ className }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("", className)}
       >
-        <FormField
-          control={form.control}
-          name="file"
-          render={({ field }) => (
-            <FormItem className="mb-4">
-              <FormLabel>Profile Picture (Optional)</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.readAsDataURL(file);
-                      reader.onload = (event) => {
-                        setFilePreview(event.target?.result as string);
-                      };
-                    }
-                    field.onChange(file);
-                  }}
-                />
-              </FormControl>
-              <FormDescription>
-                Upload your profile picture. A preview will be displayed below.
-              </FormDescription>
-              <FormMessage />
-              {filePreview && (
-                <div className="mt-3">
-                  <p className="text-sm font-semibold">
-                    Profile Picture Preview:
-                  </p>
-                  <div className="mt-2 flex justify-center rounded-lg border bg-gray-50 p-2">
-                    <img
-                      src={filePreview}
-                      alt="Profile Preview"
-                      className="h-40"
-                    />
-                  </div>
-                </div>
-              )}
-            </FormItem>
-          )}
-        />
+        <FileUploadField form={form} name="file" />
+
         <div className="grid w-full items-center gap-6">
           <FormField
             control={form.control}
